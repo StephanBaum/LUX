@@ -13,6 +13,10 @@
   border-bottom: 2px solid var(--color-black);
 }
 
+.accordion__item:last-child {
+  border-bottom: none;
+}
+
 .accordion__header {
   display: grid;
   grid-template-columns: minmax(140px, 1fr) 2fr auto;
@@ -76,20 +80,24 @@
 .accordion__inner {
   overflow: hidden;
   display: grid;
-  /* Match header grid: label column + title column (minus arrow) */
-  grid-template-columns: minmax(140px, 1fr) 2fr;
+  /* Match header grid exactly: label + title + arrow placeholder */
+  grid-template-columns: minmax(140px, 1fr) 2fr 20px;
   gap: var(--space-lg);
   padding-bottom: 0;
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease, padding-bottom 0.4s ease;
+  /* Sync all transitions with same timing as grid-template-rows */
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    padding-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .accordion__item.is-open .accordion__inner {
   padding-bottom: var(--space-xl);
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 0.1s;
+  transition-delay: 0.05s;
 }
 
 /* Profile text - left column */
@@ -202,6 +210,13 @@
 
   .accordion__description {
     grid-column: 1;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Ensure description spans only column 2, not into the arrow placeholder */
+  .accordion__description {
+    grid-column: 2 / span 1;
   }
 }
 
