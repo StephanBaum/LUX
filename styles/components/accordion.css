@@ -6,11 +6,11 @@
 .accordion {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--color-black);
+  border-top: 2px solid var(--color-black);
 }
 
 .accordion__item {
-  border-bottom: 1px solid var(--color-black);
+  border-bottom: 2px solid var(--color-black);
 }
 
 .accordion__header {
