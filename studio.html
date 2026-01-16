@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/components/profile.css">
   <link rel="stylesheet" href="styles/components/page-header.css">
+  <link rel="stylesheet" href="styles/components/accordion.css">
 </head>
 <body>
   <!-- Header -->
@@ -84,20 +85,18 @@
   </div>
 
   <main>
-    <!-- Studio Header with Image Collage -->
-    <section class="studio-header">
-      <div class="studio-header__container grid">
-        <h1 class="studio-header__title" data-animate="fade-up">Studio</h1>
-        <div class="studio-header__collage" data-animate="fade-up">
-          <div class="studio-header__image studio-header__image--1">
-            <img src="../Assets/img/image 1.png" alt="" loading="lazy">
-          </div>
-          <div class="studio-header__image studio-header__image--2">
-            <img src="../Assets/img/image 2.png" alt="" loading="lazy">
-          </div>
-          <div class="studio-header__image studio-header__image--3">
-            <img src="../Assets/img/image 3.png" alt="" loading="lazy">
-          </div>
+    <!-- Page Header with Image -->
+    <section class="page-header page-header--with-image">
+      <div class="page-header__container grid">
+        <h1 class="page-header__title" data-animate="fade-up">Studio</h1>
+        <div class="page-header__image" data-animate="fade-up">
+          <img src="../Assets/img/image 1.png" alt="" loading="lazy">
+        </div>
+        <div class="page-header__content">
+          <p class="page-header__text" data-animate="text-reveal">
+            Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci.
+            Cras volutpat eget elit porta facilisis.
+          </p>
         </div>
       </div>
     </section>
@@ -110,58 +109,125 @@
       </div>
     </section>
 
-    <!-- Profile Section -->
-    <section class="profile" data-parallax="0.1">
+    <!-- Team Accordions -->
+    <section class="subpage-section">
       <div class="grid">
-        <div class="profile__header" data-animate="fade-up">
-          <p class="profile__breadcrumb">Die Menschen</p>
-          <div class="profile__divider"></div>
-        </div>
-
-        <div class="profile__content">
-          <div class="profile__text" data-animate="fade-up">
-            <div class="profile__intro">
-              <h2 class="profile__title">Untitled (Profile)</h2>
-              <a href="mailto:hello@example.com" class="profile__email">hello@example.com</a>
-              <a href="#" class="profile__social">Instagram</a>
+        <div class="subpage-section__content" data-animate="fade-up">
+          <h2 class="accordion__section-title" style="font-size: 1rem; font-weight: var(--font-weight-medium); margin-bottom: var(--space-lg); color: var(--color-black);">Die Menschen</h2>
+          <div class="accordion" data-accordion>
+            <!-- Team Member 1 -->
+            <div class="accordion__item" data-accordion-item>
+              <button class="accordion__header" data-accordion-trigger>
+                <span class="accordion__label">Founder</span>
+                <span class="accordion__title">Florian Luxenburger</span>
+                <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <div class="accordion__content" data-accordion-content>
+                <div class="accordion__inner">
+                  <div class="accordion__text">
+                    <div class="accordion__profile-intro">
+                      <h3 class="accordion__profile-title">Florian Luxenburger</h3>
+                      <a href="mailto:florian@luxenburger.de" class="accordion__profile-email">florian@luxenburger.de</a>
+                      <a href="#" class="accordion__profile-social">Instagram</a>
+                    </div>
+                    <div class="accordion__profile-section">
+                      <h4 class="accordion__profile-section-title">Education</h4>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Vestibulum Euismod (Ultrices)</span>
+                        <span class="accordion__profile-item-detail">Suspendisse Aenean Lec</span>
+                        <span class="accordion__profile-item-year">2023</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Aliquam Faucibus Tellus</span>
+                        <span class="accordion__profile-item-detail">Vestibulum Ultricies</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion__image" data-accordion-image>
+                    <img src="../Assets/img/image 1.png" alt="" loading="lazy">
+                  </div>
+                  <div class="accordion__bio">
+                    <p>Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac.</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <p class="profile__bio">
-              Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci.
-              Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus
-              nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus
-              ultrices euismod. Quisque eu purus convallis, gravida.
-            </p>
-
-            <div class="profile__section">
-              <h3 class="profile__section-title">Education</h3>
-              <div class="profile__education-item">
-                <span class="profile__education-title">Vestibulum Euismod (Ultrices)</span>
-                <span class="profile__education-detail">Suspendisse Aenean Lec</span>
-                <span class="profile__education-year">2023</span>
-              </div>
-              <div class="profile__education-item">
-                <span class="profile__education-title">Aliquam Faucibus Tellus</span>
-                <span class="profile__education-detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+            <!-- Team Member 2 -->
+            <div class="accordion__item" data-accordion-item>
+              <button class="accordion__header" data-accordion-trigger>
+                <span class="accordion__label">Founder</span>
+                <span class="accordion__title">Martin Luxenburger</span>
+                <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <div class="accordion__content" data-accordion-content>
+                <div class="accordion__inner">
+                  <div class="accordion__text">
+                    <div class="accordion__profile-intro">
+                      <h3 class="accordion__profile-title">Martin Luxenburger</h3>
+                      <a href="mailto:martin@luxenburger.de" class="accordion__profile-email">martin@luxenburger.de</a>
+                      <a href="#" class="accordion__profile-social">Instagram</a>
+                    </div>
+                    <div class="accordion__profile-section">
+                      <h4 class="accordion__profile-section-title">Education</h4>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Aliquam Faucibus</span>
+                        <span class="accordion__profile-item-detail">Vestibulum Ultricies Suspendisse</span>
+                        <span class="accordion__profile-item-year">2020</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion__image" data-accordion-image>
+                    <img src="../Assets/img/image 2.png" alt="" loading="lazy">
+                  </div>
+                  <div class="accordion__bio">
+                    <p>Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod. Quisque eu purus convallis, gravida.</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="profile__gallery" data-animate="fade-up">
-            <div class="profile__gallery-row profile__gallery-row--top">
-              <div class="profile__image profile__image--landscape">
-                <img src="../Assets/img/image 1.png" alt="" loading="lazy">
-              </div>
-              <div class="profile__image profile__image--portrait-sm">
-                <img src="../Assets/img/image 2.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="profile__gallery-row profile__gallery-row--bottom">
-              <div class="profile__image profile__image--portrait-md">
-                <img src="../Assets/img/image 3.png" alt="" loading="lazy">
-              </div>
-              <div class="profile__image profile__image--portrait-lg">
-                <img src="../Assets/img/image 4.png" alt="" loading="lazy">
+            <!-- Team Member 3 - Open by default -->
+            <div class="accordion__item is-open" data-accordion-item>
+              <button class="accordion__header" data-accordion-trigger>
+                <span class="accordion__label">Creative</span>
+                <span class="accordion__title">Team Member 3</span>
+                <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <div class="accordion__content" data-accordion-content>
+                <div class="accordion__inner">
+                  <div class="accordion__text">
+                    <div class="accordion__profile-intro">
+                      <h3 class="accordion__profile-title">Team Member 3</h3>
+                      <a href="mailto:hello@luxenburger.de" class="accordion__profile-email">hello@luxenburger.de</a>
+                      <a href="#" class="accordion__profile-social">Instagram</a>
+                    </div>
+                    <div class="accordion__profile-section">
+                      <h4 class="accordion__profile-section-title">Education</h4>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Vestibulum Euismod</span>
+                        <span class="accordion__profile-item-detail">Suspendisse Aenean</span>
+                        <span class="accordion__profile-item-year">2022</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Aliquam Faucibus Tellus</span>
+                        <span class="accordion__profile-item-detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion__image" data-accordion-image>
+                    <img src="../Assets/img/image 3.png" alt="" loading="lazy">
+                  </div>
+                  <div class="accordion__bio">
+                    <p>Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -308,5 +374,6 @@
   <script src="js/slider.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/animations.js"></script>
+  <script src="js/accordion.js"></script>
 </body>
 </html>
