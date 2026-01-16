@@ -50,13 +50,13 @@
 }
 
 .page-header--with-image .page-header__title {
-  grid-column: 1 / span 4;
+  grid-column: 1 / span 3;
   grid-row: 1;
-  align-self: end;
+  align-self: start;
 }
 
 .page-header--with-image .page-header__image {
-  grid-column: 6 / span 5;
+  grid-column: 7 / -1;
   grid-row: 1;
 }
 
@@ -64,11 +64,19 @@
   width: 100%;
   height: auto;
   display: block;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
 
 .page-header--with-image .page-header__content {
-  grid-column: 6 / span 6;
+  grid-column: 4 / span 7;
   grid-row: 2;
+}
+
+.page-header--with-image .page-header__text {
+  font-size: 2rem;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.35;
 }
 
 /* Subpage variant - more bottom spacing before accordion */
@@ -91,11 +99,19 @@
   }
 
   .page-header--with-image .page-header__title {
-    grid-column: 1 / span 5;
+    grid-column: 1 / span 4;
   }
 
   .page-header--with-image .page-header__image {
     grid-column: 6 / -1;
+  }
+
+  .page-header--with-image .page-header__content {
+    grid-column: 4 / -1;
+  }
+
+  .page-header--with-image .page-header__text {
+    font-size: 1.5rem;
   }
 }
 
@@ -136,5 +152,9 @@
   .page-header--with-image .page-header__content {
     grid-column: 1 / -1;
     grid-row: auto;
+  }
+
+  .page-header--with-image .page-header__text {
+    font-size: 1.25rem;
   }
 }
