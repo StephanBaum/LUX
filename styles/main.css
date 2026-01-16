@@ -1324,6 +1324,11 @@ body.menu-open .header {
   grid-column: 4 / -1;
 }
 
+/* Workshops variant - starts at column 1, spans 8 */
+.subpage-section__content--wide {
+  grid-column: 1 / span 8;
+}
+
 .subpage-section--tight {
   padding: var(--space-lg) 0;
 }
@@ -1332,6 +1337,10 @@ body.menu-open .header {
   .subpage-section__content {
     grid-column: 3 / -1;
   }
+
+  .subpage-section__content--wide {
+    grid-column: 1 / span 9;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1339,7 +1348,8 @@ body.menu-open .header {
     padding: var(--space-lg) 0 var(--space-xl) 0;
   }
 
-  .subpage-section__content {
+  .subpage-section__content,
+  .subpage-section__content--wide {
     grid-column: 1 / -1;
   }
 }
