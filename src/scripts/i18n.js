@@ -15,76 +15,66 @@
       this.currentLang = this.detectLanguage();
       this.translations = {};
       this.globalStrings = {};
+      this.initialized = false;
     }
 
-    // Detect language: cookie > URL param > browser > default
     detectLanguage() {
-      // Check cookie
       const cookie = document.cookie
         .split('; ')
-        .find(row => row.startsWith(COOKIE_NAME + '='));
+        .find(function(row) { return row.startsWith(COOKIE_NAME + '='); });
       if (cookie) {
         const lang = cookie.split('=')[1];
-        if (SUPPORTED_LANGS.includes(lang)) return lang;
+        if (SUPPORTED_LANGS.indexOf(lang) !== -1) return lang;
       }
 
-      // Check URL parameter
       const params = new URLSearchParams(window.location.search);
       const urlLang = params.get('lang');
-      if (urlLang && SUPPORTED_LANGS.includes(urlLang)) {
+      if (urlLang && SUPPORTED_LANGS.indexOf(urlLang) !== -1) {
         this.setLanguageCookie(urlLang);
         return urlLang;
       }
 
-      // Check browser language
       const browserLang = navigator.language.split('-')[0];
-      if (SUPPORTED_LANGS.includes(browserLang)) return browserLang;
+      if (SUPPORTED_LANGS.indexOf(browserLang) !== -1) return browserLang;
 
       return DEFAULT_LANG;
     }
 
     setLanguageCookie(lang) {
       const expires = new Date(Date.now() + COOKIE_DAYS * 864e5).toUTCString();
-      document.cookie = `${COOKIE_NAME}=${lang}; expires=${expires}; path=/; SameSite=Lax`;
+      document.cookie = COOKIE_NAME + '=' + lang + '; expires=' + expires + '; path=/; SameSite=Lax';
     }
 
     async init() {
-      // Load global strings
-      await this.loadContent('_global');
+      // Clear previous state for View Transitions
+      this.translations = {};
+      this.globalStrings = {};
 
-      // Load page-specific content
+      await this.loadContent('_global');
       const page = this.getCurrentPage();
       await this.loadContent(page);
 
-      // Apply translations
       this.translate();
-
-      // Mark as ready (removes CSS hiding)
       document.documentElement.setAttribute('data-i18n-ready', '');
-
-      // Update HTML lang attribute
       document.documentElement.lang = this.currentLang;
-
-      // Setup language switcher
       this.setupSwitcher();
+      this.initialized = true;
     }
 
     getCurrentPage() {
       const path = window.location.pathname;
       const filename = path.split('/').pop().replace('.html', '') || 'index';
-      // Handle root path
       return filename === '' ? 'index' : filename;
     }
 
     async loadContent(name) {
       try {
-        const url = `/content/${this.currentLang}/${name}.md`;
+        const url = '/content/' + this.currentLang + '/' + name + '.md';
         const response = await fetch(url);
 
         if (!response.ok) {
-          // Fallback to German if translation missing
           if (this.currentLang !== DEFAULT_LANG) {
-            const fallback = await fetch(`/content/${DEFAULT_LANG}/${name}.md`);
+            const fallback = await fetch('/content/' + DEFAULT_LANG + '/' + name + '.md');
             if (fallback.ok) {
               const text = await fallback.text();
               this.parseMarkdown(name, text);
@@ -96,12 +86,11 @@
         const text = await response.text();
         this.parseMarkdown(name, text);
       } catch (err) {
-        console.warn(`i18n: Could not load ${name}.md`, err);
+        console.warn('i18n: Could not load ' + name + '.md', err);
       }
     }
 
     parseMarkdown(name, text) {
-      // Split frontmatter and body
       const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
 
       if (match) {
@@ -111,21 +100,18 @@
         if (name === '_global') {
           this.globalStrings = frontmatter;
         } else {
-          this.translations[name] = { ...frontmatter, _body: body };
+          this.translations[name] = Object.assign({}, frontmatter, { _body: body });
         }
       }
     }
 
-    // Simple YAML parser for flat/nested objects
     parseYaml(yaml) {
       const result = {};
       let currentSection = null;
 
-      yaml.split(/\r?\n/).forEach(line => {
-        // Skip empty lines and comments
+      yaml.split(/\r?\n/).forEach(function(line) {
         if (!line.trim() || line.trim().startsWith('#')) return;
 
-        // Check for section header (no leading spaces)
         const sectionMatch = line.match(/^(\w+):$/);
         if (sectionMatch) {
           currentSection = sectionMatch[1];
@@ -133,10 +119,10 @@
           return;
         }
 
-        // Key-value pair
         const kvMatch = line.match(/^\s*(\w+):\s*["']?(.+?)["']?$/);
         if (kvMatch) {
-          const [, key, value] = kvMatch;
+          const key = kvMatch[1];
+          const value = kvMatch[2];
           if (currentSection) {
             result[currentSection][key] = value;
           } else {
@@ -148,38 +134,36 @@
       return result;
     }
 
-    // Get translation by dot notation: "nav.workshops" or "form.submit"
     t(key) {
       const parts = key.split('.');
+      const self = this;
 
-      // Check global strings first
       let value = this.globalStrings;
-      for (const part of parts) {
-        value = value?.[part];
+      for (let i = 0; i < parts.length; i++) {
+        value = value ? value[parts[i]] : undefined;
         if (value === undefined) break;
       }
       if (value !== undefined) return value;
 
-      // Check page translations
       const page = this.getCurrentPage();
       value = this.translations[page];
-      for (const part of parts) {
-        value = value?.[part];
+      for (let i = 0; i < parts.length; i++) {
+        value = value ? value[parts[i]] : undefined;
         if (value === undefined) break;
       }
 
-      return value || key; // Return key if not found
+      return value || key;
     }
 
-    translate(animate = false) {
-      const duration = 200; // ms for fade transition
+    translate(animate) {
+      const duration = 200;
+      const self = this;
 
-      // Helper to update element with optional animation
-      const updateElement = (el, newContent, isHTML = false) => {
+      var updateElement = function(el, newContent, isHTML) {
         if (animate) {
-          el.style.transition = `opacity ${duration}ms ease`;
+          el.style.transition = 'opacity ' + duration + 'ms ease';
           el.style.opacity = '0';
-          setTimeout(() => {
+          setTimeout(function() {
             if (isHTML) {
               el.innerHTML = newContent;
             } else {
@@ -196,37 +180,33 @@
         }
       };
 
-      // Translate elements with data-i18n attribute
-      document.querySelectorAll('[data-i18n]').forEach(el => {
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
         const key = el.getAttribute('data-i18n');
-        const translated = this.t(key);
+        const translated = self.t(key);
         if (translated !== key) {
-          updateElement(el, translated);
+          updateElement(el, translated, false);
         }
       });
 
-      // Translate placeholders (no animation needed)
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
         const key = el.getAttribute('data-i18n-placeholder');
-        const translated = this.t(key);
+        const translated = self.t(key);
         if (translated !== key) {
           el.placeholder = translated;
         }
       });
 
-      // Translate aria-labels (no animation needed)
-      document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      document.querySelectorAll('[data-i18n-aria]').forEach(function(el) {
         const key = el.getAttribute('data-i18n-aria');
-        const translated = this.t(key);
+        const translated = self.t(key);
         if (translated !== key) {
           el.setAttribute('aria-label', translated);
         }
       });
 
-      // Translate HTML content (for elements with markup)
-      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
         const key = el.getAttribute('data-i18n-html');
-        const translated = this.t(key);
+        const translated = self.t(key);
         if (translated !== key) {
           updateElement(el, translated, true);
         }
@@ -234,91 +214,96 @@
     }
 
     setupSwitcher() {
-      // Update active state on language links
-      document.querySelectorAll('.footer__lang-link').forEach(link => {
+      const self = this;
+
+      document.querySelectorAll('.footer__lang-link').forEach(function(link) {
         const lang = link.getAttribute('data-lang');
         if (!lang) return;
 
-        // Set active class
-        link.classList.toggle('footer__lang-link--active', lang === this.currentLang);
+        link.classList.toggle('footer__lang-link--active', lang === self.currentLang);
 
-        // Add click handler
-        link.addEventListener('click', (e) => {
+        // Remove old listeners by cloning
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+
+        newLink.addEventListener('click', function(e) {
           e.preventDefault();
-          this.switchLanguage(lang);
+          self.switchLanguage(lang);
         });
       });
 
-      // Also handle menu overlay language links if they exist
-      document.querySelectorAll('[data-lang]').forEach(link => {
+      document.querySelectorAll('[data-lang]').forEach(function(link) {
         const lang = link.getAttribute('data-lang');
-        if (!lang) return;
+        if (!lang || link.classList.contains('footer__lang-link')) return;
 
-        link.addEventListener('click', (e) => {
+        // Remove old listeners by cloning
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+
+        newLink.addEventListener('click', function(e) {
           e.preventDefault();
-          this.switchLanguage(lang);
+          self.switchLanguage(lang);
         });
       });
     }
 
     async switchLanguage(lang) {
-      if (!SUPPORTED_LANGS.includes(lang)) return;
+      if (SUPPORTED_LANGS.indexOf(lang) === -1) return;
       if (lang === this.currentLang) return;
 
-      // Update current language
       this.currentLang = lang;
       this.setLanguageCookie(lang);
 
-      // Clear existing translations
       this.translations = {};
       this.globalStrings = {};
 
-      // Reload content for new language
       await this.loadContent('_global');
       const page = this.getCurrentPage();
       await this.loadContent(page);
 
-      // Re-apply translations with animation
       this.translate(true);
-
-      // Update HTML lang attribute
       document.documentElement.lang = lang;
-
-      // Update switcher active states
       this.updateSwitcherStates();
 
-      // Dispatch event for other scripts after animation completes (200ms fade + 50ms buffer)
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+      const self = this;
+      setTimeout(function() {
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: lang } }));
       }, 250);
     }
 
     updateSwitcherStates() {
-      // Footer switcher
-      document.querySelectorAll('.footer__lang-link').forEach(link => {
+      const self = this;
+
+      document.querySelectorAll('.footer__lang-link').forEach(function(link) {
         const linkLang = link.getAttribute('data-lang');
-        link.classList.toggle('footer__lang-link--active', linkLang === this.currentLang);
+        link.classList.toggle('footer__lang-link--active', linkLang === self.currentLang);
       });
 
-      // Menu switcher
-      document.querySelectorAll('.menu-overlay__lang-link').forEach(link => {
+      document.querySelectorAll('.menu-overlay__lang-link').forEach(function(link) {
         const linkLang = link.getAttribute('data-lang');
-        link.classList.toggle('menu-overlay__lang-link--active', linkLang === this.currentLang);
+        link.classList.toggle('menu-overlay__lang-link--active', linkLang === self.currentLang);
       });
     }
 
-    // Expose translation function globally
     getTranslation(key) {
       return this.t(key);
     }
   }
 
-  // Initialize on DOM ready
-  window.i18n = new I18n();
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.i18n.init());
-  } else {
+  // Create or reinitialize i18n
+  function initI18n() {
+    if (!window.i18n) {
+      window.i18n = new I18n();
+    }
     window.i18n.init();
   }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initI18n);
+  } else {
+    initI18n();
+  }
+
+  // Re-initialize after View Transitions page swap
+  document.addEventListener('astro:page-load', initI18n);
 })();

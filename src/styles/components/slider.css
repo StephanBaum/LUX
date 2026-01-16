@@ -9,6 +9,7 @@
   overflow: hidden;
 }
 
+
 /* Container for drag hint - uses grid for alignment */
 .slider__container {
   position: relative;
@@ -21,7 +22,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  color: var(--color-gray-500);
+  color: var(--color-black);
   user-select: none;
 }
 
@@ -31,10 +32,7 @@
 }
 
 
-/* Hide drag hint when actively dragging */
-.slider.is-dragging .slider__drag-hint {
-  opacity: 0;
-}
+/* Drag hint stays visible during drag */
 
 /* Track wrapper - starts at grid margin, extends full width */
 .slider__track-wrapper {

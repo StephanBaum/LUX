@@ -1,0 +1,154 @@
+---
+// Preloader component - shows LUX logo with image cycling until page is ready
+---
+
+<div class="preloader" id="preloader">
+  <div class="preloader__bg"></div>
+  <div class="preloader__logo-container">
+    <div class="preloader__images" id="preloader-images"></div>
+  </div>
+</div>
+
+<style>
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .preloader.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .preloader__bg {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    transition: opacity 0.6s linear 0.1s;
+  }
+
+  .preloader.is-complete .preloader__bg {
+    opacity: 0;
+  }
+
+  .preloader__logo-container {
+    position: relative;
+    width: clamp(150px, 30vw, 300px);
+    aspect-ratio: 198 / 76;
+    transform: scale(0.7);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  }
+
+  .preloader.is-active .preloader__logo-container {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .preloader.is-complete .preloader__logo-container {
+    transform: scale(1.5);
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.33, 0, 0.67, 1), opacity 0.25s linear 0.1s;
+  }
+
+  .preloader__images {
+    position: absolute;
+    inset: 0;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 198 76'%3E%3Cpath fill='%23fff' d='M198 73.0345H170.62L158.278 55.157L146.032 73.0358H118.548L144.576 35.2565L120.121 0H147.499L158.276 15.3533L169.057 0H196.532L172.081 35.2558L198 73.0345Z'/%3E%3Cpath fill='%23fff' d='M91.817 0.170084L114.389 0.160767V44.5525C114.377 63.7199 102.747 76.1629 83.183 75.9984C65.7784 75.852 52.4605 64.148 51.9767 44.0672V0.162052H74.5687V43.7191C74.8793 52.8918 81.8778 53.1233 82.7974 53.1562C85.0334 53.2361 91.8166 52.6479 91.8168 43.554V0.169923L91.817 0.170084Z'/%3E%3Cpath fill='%23fff' d='M45.5845 50.3028L45.5889 73.0335H0V0.00427246H22.484V50.3028H45.5845Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 198 76'%3E%3Cpath fill='%23fff' d='M198 73.0345H170.62L158.278 55.157L146.032 73.0358H118.548L144.576 35.2565L120.121 0H147.499L158.276 15.3533L169.057 0H196.532L172.081 35.2558L198 73.0345Z'/%3E%3Cpath fill='%23fff' d='M91.817 0.170084L114.389 0.160767V44.5525C114.377 63.7199 102.747 76.1629 83.183 75.9984C65.7784 75.852 52.4605 64.148 51.9767 44.0672V0.162052H74.5687V43.7191C74.8793 52.8918 81.8778 53.1233 82.7974 53.1562C85.0334 53.2361 91.8166 52.6479 91.8168 43.554V0.169923L91.817 0.170084Z'/%3E%3Cpath fill='%23fff' d='M45.5845 50.3028L45.5889 73.0335H0V0.00427246H22.484V50.3028H45.5845Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+
+  .preloader__images img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+
+<script is:inline>
+(function() {
+  var preloader = document.getElementById('preloader');
+  var imagesContainer = document.getElementById('preloader-images');
+
+  if (!preloader || !imagesContainer) return;
+
+  var imageSources = [
+    '/Assets/img/image 0.png',
+    '/Assets/img/image 1.png',
+    '/Assets/img/image 2.png',
+    '/Assets/img/image 3.png',
+    '/Assets/img/image 4.png',
+    '/Assets/img/image 5.png',
+    '/Assets/img/image 6.png',
+    '/Assets/img/image 7.png'
+  ];
+
+  var currentIndex = 0;
+  var cycleInterval = null;
+  var loadStartTime = Date.now();
+  var minDisplayTime = 800;
+
+  // Skip preloader on return visits or if page already loaded
+  if (sessionStorage.getItem('lux-visited') || document.readyState === 'complete') {
+    preloader.remove();
+    document.body.classList.add('has-visited');
+    return;
+  }
+
+  // Add loading class to body to prevent animations until ready
+  document.body.classList.add('is-loading');
+
+  // Create a single image element and cycle its src
+  var displayImg = document.createElement('img');
+  displayImg.src = imageSources[0];
+  displayImg.alt = '';
+  imagesContainer.appendChild(displayImg);
+
+  // Cycle by changing the src at 24fps
+  function cycleImages() {
+    currentIndex = (currentIndex + 1) % imageSources.length;
+    displayImg.src = imageSources[currentIndex];
+  }
+
+  // Start cycling immediately at 24fps (~42ms)
+  cycleInterval = setInterval(cycleImages, 42);
+
+  // Show preloader with animation after a frame renders
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      preloader.classList.add('is-active');
+    });
+  });
+
+  function hidePreloader() {
+    var elapsed = Date.now() - loadStartTime;
+    var delay = Math.max(0, minDisplayTime - elapsed);
+
+    setTimeout(function() {
+      preloader.classList.add('is-complete');
+
+      // Remove loading class and trigger page animations
+      document.body.classList.remove('is-loading');
+      document.body.classList.add('is-loaded');
+      window.dispatchEvent(new CustomEvent('preloaderComplete'));
+
+      setTimeout(function() {
+        clearInterval(cycleInterval);
+        preloader.remove();
+      }, 750);
+    }, delay);
+  }
+
+  window.addEventListener('load', hidePreloader);
+})();
+</script>

@@ -7,52 +7,72 @@
 (function() {
   'use strict';
 
-  function initAccordions() {
-    const accordions = document.querySelectorAll('[data-accordion]');
+  let cleanup = null;
 
-    accordions.forEach(accordion => {
-      const items = accordion.querySelectorAll('[data-accordion-item]');
-      const hasExternalImages = accordion.hasAttribute('data-accordion-images');
+  function initAccordions() {
+    // Cleanup previous instance
+    if (cleanup) {
+      cleanup();
+      cleanup = null;
+    }
+
+    var clickHandlers = [];
+    var accordions = document.querySelectorAll('[data-accordion]');
+
+    accordions.forEach(function(accordion) {
+      var items = accordion.querySelectorAll('[data-accordion-item]');
+      var hasExternalImages = accordion.hasAttribute('data-accordion-images');
 
       // Find external image container (sibling in parent grid)
-      let imageTarget = null;
+      var imageTarget = null;
       if (hasExternalImages) {
-        const parent = accordion.closest('.grid');
+        var parent = accordion.closest('.grid');
         if (parent) {
           imageTarget = parent.querySelector('[data-accordion-image-target]');
         }
       }
 
-      items.forEach(item => {
-        const trigger = item.querySelector('[data-accordion-trigger]');
+      items.forEach(function(item) {
+        var trigger = item.querySelector('[data-accordion-trigger]');
 
         if (trigger) {
-          trigger.addEventListener('click', (e) => {
+          var handler = function(e) {
             // Don't toggle if clicking on checkbox
             if (e.target.closest('.accordion__checkbox')) {
               e.stopPropagation();
               return;
             }
             toggleItem(item, items, imageTarget);
-          });
+          };
+
+          trigger.addEventListener('click', handler);
+          clickHandlers.push({ trigger: trigger, handler: handler });
         }
       });
 
       // Initialize image for initially open item
       if (imageTarget) {
-        const openItem = accordion.querySelector('.accordion__item.is-open');
+        var openItem = accordion.querySelector('.accordion__item.is-open');
         if (openItem) {
           updateExternalImage(openItem, imageTarget);
         }
       }
     });
+
+    // Store cleanup function
+    cleanup = function() {
+      clickHandlers.forEach(function(item) {
+        item.trigger.removeEventListener('click', item.handler);
+      });
+      clickHandlers = [];
+    };
   }
 
   function toggleItem(item, allItems, imageTarget) {
-    const isOpen = item.classList.contains('is-open');
+    var isOpen = item.classList.contains('is-open');
 
     // Close all other items
-    allItems.forEach(otherItem => {
+    allItems.forEach(function(otherItem) {
       if (otherItem !== item && otherItem.classList.contains('is-open')) {
         otherItem.classList.remove('is-open');
       }
@@ -73,9 +93,9 @@
       }
 
       // Scroll into view if needed (with slight delay for animation)
-      setTimeout(() => {
-        const rect = item.getBoundingClientRect();
-        const headerHeight = 100; // Account for fixed header
+      setTimeout(function() {
+        var rect = item.getBoundingClientRect();
+        var headerHeight = 100;
 
         if (rect.top < headerHeight) {
           window.scrollBy({
@@ -88,22 +108,22 @@
 
     // Refresh ScrollTrigger after content changes
     if (typeof ScrollTrigger !== 'undefined') {
-      setTimeout(() => {
+      setTimeout(function() {
         ScrollTrigger.refresh();
       }, 500);
     }
   }
 
   function updateExternalImage(item, imageTarget) {
-    const imageSrc = item.getAttribute('data-image');
+    var imageSrc = item.getAttribute('data-image');
     if (imageSrc && imageTarget) {
-      const img = imageTarget.querySelector('img');
+      var img = imageTarget.querySelector('img');
       if (img) {
         // Fade out, change src, fade in
         imageTarget.classList.remove('is-visible');
-        setTimeout(() => {
+        setTimeout(function() {
           img.src = imageSrc;
-          img.onload = () => {
+          img.onload = function() {
             imageTarget.classList.add('is-visible');
           };
           // Fallback if image is cached
@@ -121,4 +141,7 @@
   } else {
     initAccordions();
   }
+
+  // Re-initialize after View Transitions page swap
+  document.addEventListener('astro:page-load', initAccordions);
 })();
