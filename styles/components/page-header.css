@@ -42,7 +42,7 @@
 
 /* With image variant */
 .page-header--with-image {
-  padding-bottom: var(--space-section);
+  padding-bottom: var(--space-xl);
 }
 
 .page-header--with-image .page-header__container {

@@ -264,6 +264,10 @@ button {
   opacity: 0.7;
 }
 
+.menu-overlay__link:last-child {
+  border-bottom: none;
+}
+
 .menu-overlay__arrow {
   width: 25px;
   height: 24px;
@@ -932,6 +936,10 @@ body.menu-open .header {
 
 .footer__nav-link:hover {
   opacity: 0.7;
+}
+
+.footer__nav-link:last-child {
+  border-bottom: none;
 }
 
 .footer__nav-arrow {
