@@ -76,7 +76,7 @@
 .accordion__inner {
   overflow: hidden;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: var(--space-lg);
   padding-bottom: 0;
   opacity: 0;
@@ -94,6 +94,20 @@
 /* Profile text - left column */
 .accordion__text {
   grid-column: 1;
+}
+
+/* Description - right column, Lekton font */
+.accordion__description {
+  grid-column: 2;
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--color-black);
+}
+
+.accordion__description p {
+  margin: 0;
 }
 
 .accordion__profile-intro {
@@ -154,40 +168,6 @@
   color: var(--color-gray-500);
 }
 
-/* Image - right column */
-.accordion__image {
-  grid-column: 2;
-  grid-row: 1;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.accordion__item.is-open .accordion__image {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.25s; /* Delayed fade in */
-}
-
-.accordion__image img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Bio text - below image in right column */
-.accordion__bio {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.accordion__bio p {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-black);
-  margin: 0;
-}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -219,11 +199,7 @@
     grid-column: 1;
   }
 
-  .accordion__image {
-    grid-column: 1;
-  }
-
-  .accordion__bio {
+  .accordion__description {
     grid-column: 1;
   }
 }

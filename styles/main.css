@@ -1329,6 +1329,29 @@ body.menu-open .header {
   grid-column: 1 / span 8;
 }
 
+/* Image container - sits beside accordion */
+.subpage-section__image {
+  grid-column: 9 / -1;
+  grid-row: 1;
+  position: sticky;
+  top: 120px;
+  align-self: start;
+}
+
+.subpage-section__image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.subpage-section__image.is-visible img {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .subpage-section--tight {
   padding: var(--space-lg) 0;
 }
@@ -1339,7 +1362,11 @@ body.menu-open .header {
   }
 
   .subpage-section__content--wide {
-    grid-column: 1 / span 9;
+    grid-column: 1 / span 8;
+  }
+
+  .subpage-section__image {
+    grid-column: 9 / -1;
   }
 }
 
@@ -1351,5 +1378,9 @@ body.menu-open .header {
   .subpage-section__content,
   .subpage-section__content--wide {
     grid-column: 1 / -1;
+  }
+
+  .subpage-section__image {
+    display: none;
   }
 }

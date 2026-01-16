@@ -114,9 +114,9 @@
       <div class="grid">
         <div class="subpage-section__content" data-animate="fade-up">
           <h2 class="accordion__section-title" style="font-size: 1rem; font-weight: var(--font-weight-medium); margin-bottom: var(--space-lg); color: var(--color-black);">Die Menschen</h2>
-          <div class="accordion" data-accordion>
+          <div class="accordion" data-accordion data-accordion-images>
             <!-- Team Member 1 -->
-            <div class="accordion__item" data-accordion-item>
+            <div class="accordion__item is-open" data-accordion-item data-image="../Assets/img/image 1.png">
               <button class="accordion__header" data-accordion-trigger>
                 <span class="accordion__label">Founder</span>
                 <span class="accordion__title">Florian Luxenburger</span>
@@ -145,10 +145,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="accordion__image" data-accordion-image>
-                    <img src="../Assets/img/image 1.png" alt="" loading="lazy">
-                  </div>
-                  <div class="accordion__bio">
+                  <div class="accordion__description">
                     <p>Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac.</p>
                   </div>
                 </div>
@@ -156,7 +153,7 @@
             </div>
 
             <!-- Team Member 2 -->
-            <div class="accordion__item" data-accordion-item>
+            <div class="accordion__item" data-accordion-item data-image="../Assets/img/image 2.png">
               <button class="accordion__header" data-accordion-trigger>
                 <span class="accordion__label">Founder</span>
                 <span class="accordion__title">Martin Luxenburger</span>
@@ -181,18 +178,15 @@
                       </div>
                     </div>
                   </div>
-                  <div class="accordion__image" data-accordion-image>
-                    <img src="../Assets/img/image 2.png" alt="" loading="lazy">
-                  </div>
-                  <div class="accordion__bio">
+                  <div class="accordion__description">
                     <p>Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod. Quisque eu purus convallis, gravida.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Team Member 3 - Open by default -->
-            <div class="accordion__item is-open" data-accordion-item>
+            <!-- Team Member 3 -->
+            <div class="accordion__item" data-accordion-item data-image="../Assets/img/image 3.png">
               <button class="accordion__header" data-accordion-trigger>
                 <span class="accordion__label">Creative</span>
                 <span class="accordion__title">Team Member 3</span>
@@ -221,16 +215,17 @@
                       </div>
                     </div>
                   </div>
-                  <div class="accordion__image" data-accordion-image>
-                    <img src="../Assets/img/image 3.png" alt="" loading="lazy">
-                  </div>
-                  <div class="accordion__bio">
+                  <div class="accordion__description">
                     <p>Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod.</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <!-- Image container - outside accordion -->
+        <div class="subpage-section__image is-visible" data-accordion-image-target>
+          <img src="../Assets/img/image 1.png" alt="" loading="lazy">
         </div>
       </div>
     </section>
