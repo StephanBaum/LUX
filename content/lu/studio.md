@@ -12,7 +12,7 @@ section_studio:
 section_menschen:
   label: "D'Leit"
   title: "Florian & Martin Luxenburger"
-  bio: "Zënter iwwer 15 Joer schaffe mir als Fotografen a Filmemacher. De LUX Studio ass d'Verwierklechnug vun eiser Visioun: En Uert, wou analog Traditioun an digital Innovatioun zesummekommen. Mir gleewen drun, datt déi bescht Biller entstinn, wann Technik a Kreativitéit Hand an Hand ginn."
+  bio: "Papp a Jong. Martin – Portrait an Landschaft. Florian – Reklamm a Portrait. Vereenegt duerch d'analog Fotografie, deele mir de Studio fir Konscht an Optrag."
   education_title: "Expertise"
 
 cta:

@@ -2,7 +2,7 @@
 # Rental page - French
 
 header:
-  title: "Location"
+  title: "Louer"
   text: "Espaces de studio professionnels pour votre production. Réservation flexible, équipement complet, assistance personnalisée sur demande."
 
 sections:

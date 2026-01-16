@@ -11,7 +11,7 @@ section_studio:
 section_menschen:
   label: "L'Équipe"
   title: "Florian & Martin Luxenburger"
-  bio: "En tant que frères, nous partageons non seulement une passion pour l'image, mais aussi la conviction que les grandes prises de vue naissent de la fusion entre précision technique et expression créative. Avec plus de 15 ans d'expérience en photographie et cinéma, nous accompagnons les projets de l'idée initiale à l'œuvre achevée."
+  bio: "Père et fils. Martin – portrait et paysage. Florian – publicité et portrait. Unis par la photographie argentique, nous partageons le studio pour l'art et la commande."
   education_title: "Expertise"
 
 cta:

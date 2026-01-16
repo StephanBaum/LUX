@@ -11,7 +11,7 @@ section_studio:
 section_menschen:
   label: "Die Menschen"
   title: "Florian & Martin Luxenburger"
-  bio: "Als Brüder teilen wir nicht nur die Leidenschaft für das Bild, sondern auch die Überzeugung, dass großartige Aufnahmen durch die Verbindung von technischer Präzision und kreativem Ausdruck entstehen. Mit über 15 Jahren Erfahrung in Fotografie und Film begleiten wir Projekte von der ersten Idee bis zum fertigen Werk."
+  bio: "Vater und Sohn. Martin – Portrait und Landschaft. Florian – Werbung und Portrait. Vereint durch die analoge Fotografie, teilen wir das Studio für Kunst und Auftrag."
   education_title: "Expertise"
 
 cta:

@@ -12,7 +12,7 @@ section_studio:
 section_menschen:
   label: "L'Équipe"
   title: "Florian & Martin Luxenburger"
-  bio: "Depuis plus de 15 ans, nous travaillons comme photographes et cinéastes. LUX Studio est la réalisation de notre vision : un lieu où tradition analogique et innovation numérique se rencontrent. Nous croyons que les meilleures images naissent quand technique et créativité vont de pair."
+  bio: "Père et fils. Martin – portrait et paysage. Florian – publicité et portrait. Unis par la photographie argentique, nous partageons le studio pour l'art et la commande."
   education_title: "Expertise"
 
 cta:

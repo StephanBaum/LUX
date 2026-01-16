@@ -124,6 +124,10 @@
   flex-direction: column;
 }
 
+.checkbox-group__items .checkbox-group__item:last-child {
+  border-bottom: none;
+}
+
 .checkbox-group--multi .checkbox-group__item {
   border-top: none;
 }

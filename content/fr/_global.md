@@ -5,7 +5,7 @@ nav:
   workshops: "Ateliers"
   veranstaltungen: "Événements"
   studio: "Studio"
-  mieten: "Location"
+  mieten: "Louer"
 
 footer:
   partners_label: "Partenaires:"

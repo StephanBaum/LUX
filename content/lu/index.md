@@ -11,7 +11,7 @@ section_studio:
 section_menschen:
   label: "D'Leit"
   title: "Florian & Martin Luxenburger"
-  bio: "Als Bridder deele mir net nëmmen d'Passioun fir d'Bild, mee och d'Iwwerzeegung datt groussaarteg Opnamen duerch d'Verbindung vu technescher Präzisioun a kreativem Ausdrock entstinn. Mat iwwer 15 Joer Erfarung a Fotografie a Film begleede mir Projeten vun der éischter Iddi bis zum fäerdege Wierk."
+  bio: "Papp a Jong. Martin – Portrait an Landschaft. Florian – Reklamm a Portrait. Vereenegt duerch d'analog Fotografie, deele mir de Studio fir Konscht an Optrag."
   education_title: "Expertise"
 
 cta:

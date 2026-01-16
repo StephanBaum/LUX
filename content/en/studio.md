@@ -12,7 +12,7 @@ section_studio:
 section_menschen:
   label: "The People"
   title: "Florian & Martin Luxenburger"
-  bio: "For over 15 years, we've worked as photographers and filmmakers. LUX Studio is the realization of our vision: A place where analog tradition and digital innovation come together. We believe the best images emerge when technique and creativity go hand in hand."
+  bio: "Father and son. Martin – portrait and landscape. Florian – advertising and portrait. United by analog photography, we share the studio for art and commission."
   education_title: "Expertise"
 
 cta:
