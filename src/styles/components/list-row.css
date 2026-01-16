@@ -1,0 +1,89 @@
+/* ============================================
+   List Row Component
+   Clickable row with label, title, and arrow
+   ============================================ */
+
+.list-row__group {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-black);
+}
+
+.list-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) 2fr auto;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-black);
+  text-decoration: none;
+  color: var(--color-black);
+  transition: opacity 0.2s ease;
+}
+
+.list-row:hover {
+  opacity: 0.6;
+}
+
+.list-row:hover .list-row__arrow {
+  transform: translate(4px, -4px);
+}
+
+.list-row__label {
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+}
+
+.list-row__title {
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: -0.02em;
+  color: var(--color-gray-500);
+}
+
+.list-row__arrow {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .list-row {
+    grid-template-columns: 1fr auto;
+    gap: var(--space-md);
+  }
+
+  .list-row__label {
+    grid-column: 1;
+  }
+
+  .list-row__title {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .list-row__arrow {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .list-row {
+    padding: var(--space-sm) 0;
+  }
+
+  .list-row__label,
+  .list-row__title {
+    font-size: 0.9rem;
+  }
+
+  .list-row__arrow {
+    width: 16px;
+    height: 16px;
+  }
+}

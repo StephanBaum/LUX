@@ -1,0 +1,63 @@
+---
+import Header from '../components/Header.astro';
+import MenuOverlay from '../components/MenuOverlay.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  extraStyles?: string[];
+}
+
+const {
+  title = 'LUX Studio',
+  description = 'Professional photography and video studio',
+  extraStyles = []
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content={description}>
+  <title>{title}</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lekton:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="/styles/main.css">
+
+  <!-- Page-specific styles -->
+  {extraStyles.map(style => (
+    <link rel="stylesheet" href={style} />
+  ))}
+</head>
+<body>
+  <Header />
+  <MenuOverlay />
+
+  <main>
+    <slot />
+  </main>
+
+  <Footer />
+
+  <!-- GSAP -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+
+  <!-- Page scripts -->
+  <slot name="scripts" />
+
+  <!-- Global scripts -->
+  <script is:inline src="/js/menu.js"></script>
+  <script is:inline src="/js/animations.js"></script>
+  <script is:inline src="/js/i18n.js"></script>
+</body>
+</html>

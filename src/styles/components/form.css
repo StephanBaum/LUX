@@ -1,0 +1,169 @@
+/* ============================================
+   Form Component
+   Contact/inquiry form with validation
+   ============================================ */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.form__row--two-col {
+  flex-direction: row;
+  gap: var(--space-lg);
+}
+
+.form__row--two-col .form__field {
+  flex: 1;
+}
+
+.form__field {
+  position: relative;
+}
+
+.form__input,
+.form__textarea {
+  width: 100%;
+  padding: var(--space-md);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: -0.02em;
+  color: var(--color-black);
+  background: var(--color-gray-100);
+  border: 2px solid transparent;
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.form__input::placeholder,
+.form__textarea::placeholder {
+  color: var(--color-gray-500);
+}
+
+.form__input:focus,
+.form__textarea:focus {
+  border-color: var(--color-input-focus);
+  background: var(--color-white);
+}
+
+.form__input.is-invalid,
+.form__textarea.is-invalid {
+  border-color: var(--color-error);
+}
+
+.form__textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.form__error {
+  display: none;
+  font-size: 0.8rem;
+  color: var(--color-error);
+  margin-top: var(--space-sm);
+}
+
+.form__field.is-invalid .form__error {
+  display: block;
+}
+
+.form__date-display {
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.5rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  color: var(--color-black);
+}
+
+/* Summary fields for selections */
+.form__field--summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.form__summary-value {
+  font-family: var(--font-family-detail);
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--color-black);
+}
+
+.form__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+  background: var(--color-calendar-selected);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  align-self: flex-start;
+}
+
+.form__button:hover {
+  opacity: 0.9;
+}
+
+.form__button:active {
+  transform: scale(0.98);
+}
+
+.form__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form__success {
+  display: none;
+  padding: var(--space-lg);
+  background: var(--color-gray-100);
+  color: var(--color-black);
+  font-size: 1rem;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.form.is-success .form__success {
+  display: block;
+}
+
+.form.is-success .form__row,
+.form.is-success .form__button {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form__row--two-col {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .form__input,
+  .form__textarea {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.9rem;
+  }
+
+  .form__button {
+    width: 100%;
+    padding: var(--space-md);
+  }
+}

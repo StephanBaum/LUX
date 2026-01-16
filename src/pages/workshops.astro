@@ -1,0 +1,206 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Workshops - LUX Studio"
+  extraStyles={[
+    '/styles/components/page-header.css',
+    '/styles/components/accordion.css'
+  ]}
+>
+  <!-- Page Header -->
+  <section class="page-header page-header--subpage">
+    <div class="page-header__container grid">
+      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">Workshops</h1>
+      <div class="page-header__content page-header__content--wide">
+        <p class="page-header__text" data-animate="text-reveal" data-i18n="header.text">
+          Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci.
+          Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris,
+          eu faucibus nisl blandit ac. Proin eget euismod mauris.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workshop Accordions -->
+  <section class="subpage-section">
+    <div class="grid">
+      <div class="subpage-section__content subpage-section__content--wide" data-animate="fade-up">
+        <div class="accordion" data-accordion data-accordion-images>
+          <!-- Workshop 1 -->
+          <div class="accordion__item is-open" data-accordion-item data-image="/Assets/img/image 1.png">
+            <button class="accordion__header" data-accordion-trigger>
+              <span class="accordion__label">Workshop #1</span>
+              <span class="accordion__title" data-i18n="workshops.item1_title">Dunkelkammer Basics</span>
+              <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+              </svg>
+            </button>
+            <div class="accordion__content" data-accordion-content>
+              <div class="accordion__inner">
+                <div class="accordion__text">
+                  <div class="accordion__profile-intro">
+                    <h3 class="accordion__profile-title" data-i18n="workshops.item1_instructor">Untitled (Profile)</h3>
+                    <a href="mailto:hello@example.com" class="accordion__profile-email">hello@example.com</a>
+                    <a href="#" class="accordion__profile-social">Instagram</a>
+                  </div>
+                  <div class="accordion__profile-section">
+                    <h4 class="accordion__profile-section-title" data-i18n="workshops.registration_label">Anmeldung</h4>
+                    <div class="accordion__profile-item">
+                      <span class="accordion__profile-item-title" data-i18n="workshops.item1_info1_title">Vestibulum Euismod (Ultrices)</span>
+                      <span class="accordion__profile-item-detail" data-i18n="workshops.item1_info1_detail">Suspendisse Aenean Lec</span>
+                      <span class="accordion__profile-item-year">2023</span>
+                    </div>
+                    <div class="accordion__profile-item">
+                      <span class="accordion__profile-item-title" data-i18n="workshops.item1_info2_title">Aliquam Faucibus Tellus</span>
+                      <span class="accordion__profile-item-detail" data-i18n="workshops.item1_info2_detail">Vestibulum Ultricies</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion__description">
+                  <p data-i18n="workshops.item1_desc">Cras ut dictum mi. Sed quis lorem semper, ele mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod. Quisque eu purus convallis, gravida.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Workshop 2 -->
+          <div class="accordion__item" data-accordion-item data-image="/Assets/img/image 2.png">
+            <button class="accordion__header" data-accordion-trigger>
+              <span class="accordion__label">Workshop #2</span>
+              <span class="accordion__title" data-i18n="workshops.item2_title">Schwarzweißfotografie</span>
+              <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+              </svg>
+            </button>
+            <div class="accordion__content" data-accordion-content>
+              <div class="accordion__inner">
+                <div class="accordion__text">
+                  <div class="accordion__profile-intro">
+                    <h3 class="accordion__profile-title" data-i18n="workshops.item2_instructor">Untitled (Profile)</h3>
+                    <a href="mailto:hello@example.com" class="accordion__profile-email">hello@example.com</a>
+                    <a href="#" class="accordion__profile-social">Instagram</a>
+                  </div>
+                  <div class="accordion__profile-section">
+                    <h4 class="accordion__profile-section-title" data-i18n="workshops.registration_label">Anmeldung</h4>
+                    <div class="accordion__profile-item">
+                      <span class="accordion__profile-item-title" data-i18n="workshops.item2_info_title">Vestibulum Euismod (Ultrices)</span>
+                      <span class="accordion__profile-item-detail" data-i18n="workshops.item2_info_detail">Suspendisse Aenean Lec</span>
+                      <span class="accordion__profile-item-year">2023</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion__description">
+                  <p data-i18n="workshops.item2_desc">Cras ut dictum mi. Sed quis lorem semper, ele mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Workshop 3 -->
+          <div class="accordion__item" data-accordion-item data-image="/Assets/img/image 3.png">
+            <button class="accordion__header" data-accordion-trigger>
+              <span class="accordion__label">Workshop #3</span>
+              <span class="accordion__title" data-i18n="workshops.item3_title">Belichtungsmethoden 1</span>
+              <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+              </svg>
+            </button>
+            <div class="accordion__content" data-accordion-content>
+              <div class="accordion__inner">
+                <div class="accordion__text">
+                  <div class="accordion__profile-intro">
+                    <h3 class="accordion__profile-title" data-i18n="workshops.item3_instructor">Untitled (Profile)</h3>
+                    <a href="mailto:hello@example.com" class="accordion__profile-email">hello@example.com</a>
+                    <a href="#" class="accordion__profile-social">Instagram</a>
+                  </div>
+                  <div class="accordion__profile-section">
+                    <h4 class="accordion__profile-section-title" data-i18n="workshops.registration_label">Anmeldung</h4>
+                    <div class="accordion__profile-item">
+                      <span class="accordion__profile-item-title" data-i18n="workshops.item3_info1_title">Vestibulum Euismod (Ultrices)</span>
+                      <span class="accordion__profile-item-detail" data-i18n="workshops.item3_info1_detail">Suspendisse Aenean Lec</span>
+                      <span class="accordion__profile-item-year">2023</span>
+                    </div>
+                    <div class="accordion__profile-item">
+                      <span class="accordion__profile-item-title" data-i18n="workshops.item3_info2_title">Aliquam Faucibus Tellus</span>
+                      <span class="accordion__profile-item-detail" data-i18n="workshops.item3_info2_detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion__description">
+                  <p data-i18n="workshops.item3_desc">Cras ut dictum mi. Sed quis lorem semper, ele mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod. Quisque eu purus convallis, gravida.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Image container - outside accordion -->
+      <div class="subpage-section__image is-visible" data-accordion-image-target>
+        <img src="/Assets/img/image 1.png" alt="" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- Image Slider -->
+  <section class="slider">
+    <div class="slider__cursor">
+      <svg class="slider__cursor-svg" viewBox="0 0 80 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line class="slider__cursor-line" x1="16" y1="12" x2="64" y2="12" stroke="black" stroke-width="1.5"/>
+        <path class="slider__cursor-head slider__cursor-head--left" d="M16 12L24 5M16 12L24 19" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+        <path class="slider__cursor-head slider__cursor-head--right" d="M64 12L56 5M64 12L56 19" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="slider__container grid">
+      <div class="slider__drag-hint">
+        <svg class="slider__drag-arrow" viewBox="0 0 40 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 5H38M38 5L33 1M38 5L33 9" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <span class="slider__drag-text">Workshops</span>
+      </div>
+    </div>
+    <div class="slider__track-wrapper">
+      <div class="slider__track" data-slider-track>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 1.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 2.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 3.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 4.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 5.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 6.png" alt="" draggable="false">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta" data-parallax="0.15">
+    <div class="cta__container grid">
+      <h2 class="cta__title" data-animate="fade-up" data-i18n="cta.title">Anfragen</h2>
+      <div class="cta__content">
+        <p class="cta__text" data-animate="text-reveal" data-i18n="cta.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
+        <a href="/kontakt" class="cta__link" data-animate="fade-up">
+          <svg class="cta__arrow" viewBox="0 0 55 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 8H53M53 8L46 1M53 8L46 15" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span class="cta__link-text" data-i18n="cta.link">Kontakt</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page-specific scripts -->
+  <script is:inline src="/js/slider.js" slot="scripts"></script>
+  <script is:inline src="/js/accordion.js" slot="scripts"></script>
+</Base>

@@ -1,0 +1,143 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Studio - LUX Studio"
+  extraStyles={[
+    '/styles/components/profile.css',
+    '/styles/components/page-header.css'
+  ]}
+>
+  <!-- Page Header with Image -->
+  <section class="page-header page-header--with-image">
+    <div class="page-header__container grid">
+      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">Studio</h1>
+      <div class="page-header__image" data-animate="fade-up">
+        <img src="/Assets/img/image 1.png" alt="" loading="lazy">
+      </div>
+      <div class="page-header__content">
+        <p class="page-header__text" data-animate="text-reveal" data-i18n="header.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profile Section - Die Menschen -->
+  <section class="profile" data-parallax="0.1">
+    <div class="grid" data-animate="fade-up">
+      <div class="profile__header">
+        <p class="profile__breadcrumb" data-i18n="section_menschen.label">Die Menschen</p>
+        <div class="profile__divider"></div>
+      </div>
+
+      <div class="profile__content">
+        <div class="profile__text">
+          <div class="profile__intro">
+            <h2 class="profile__title" data-i18n="section_menschen.title">Untitled (Profile)</h2>
+            <a href="mailto:hello@example.com" class="profile__email">hello@example.com</a>
+            <a href="#" class="profile__social">Instagram</a>
+          </div>
+
+          <p class="profile__bio" data-i18n="section_menschen.bio">
+            Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci.
+            Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus
+            nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus
+            ultrices euismod. Quisque eu purus convallis, gravida.
+          </p>
+
+          <div class="profile__section">
+            <h3 class="profile__section-title" data-i18n="section_menschen.education_title">Expertise</h3>
+            <div class="profile__education-item">
+              <span class="profile__education-title" data-i18n="section_menschen.expertise1_title">Vestibulum Euismod (Ultrices)</span>
+              <span class="profile__education-detail" data-i18n="section_menschen.expertise1_detail">Suspendisse Aenean Lec</span>
+              <span class="profile__education-year" data-i18n="section_menschen.expertise1_year">2023</span>
+            </div>
+            <div class="profile__education-item">
+              <span class="profile__education-title" data-i18n="section_menschen.expertise2_title">Aliquam Faucibus Tellus</span>
+              <span class="profile__education-detail" data-i18n="section_menschen.expertise2_detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile__gallery">
+          <div class="profile__gallery-row profile__gallery-row--top">
+            <div class="profile__image profile__image--landscape">
+              <img src="/Assets/img/image 1.png" alt="" loading="lazy">
+            </div>
+            <div class="profile__image profile__image--portrait-sm">
+              <img src="/Assets/img/image 2.png" alt="" loading="lazy">
+            </div>
+          </div>
+          <div class="profile__gallery-row profile__gallery-row--bottom">
+            <div class="profile__image profile__image--portrait-md">
+              <img src="/Assets/img/image 3.png" alt="" loading="lazy">
+            </div>
+            <div class="profile__image profile__image--portrait-lg">
+              <img src="/Assets/img/image 4.png" alt="" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Image Slider -->
+  <section class="slider">
+    <div class="slider__cursor">
+      <svg class="slider__cursor-svg" viewBox="0 0 80 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line class="slider__cursor-line" x1="16" y1="12" x2="64" y2="12" stroke="black" stroke-width="1.5"/>
+        <path class="slider__cursor-head slider__cursor-head--left" d="M16 12L24 5M16 12L24 19" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+        <path class="slider__cursor-head slider__cursor-head--right" d="M64 12L56 5M64 12L56 19" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="slider__container grid">
+      <div class="slider__drag-hint">
+        <svg class="slider__drag-arrow" viewBox="0 0 40 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 5H38M38 5L33 1M38 5L33 9" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <span class="slider__drag-text">Das Equipment</span>
+      </div>
+    </div>
+    <div class="slider__track-wrapper">
+      <div class="slider__track" data-slider-track>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 1.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 2.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 3.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 4.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 5.png" alt="" draggable="false">
+        </div>
+        <div class="slider__slide">
+          <img src="/Assets/img/image 6.png" alt="" draggable="false">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta" data-parallax="0.15">
+    <div class="cta__container grid">
+      <h2 class="cta__title" data-i18n="cta.title" data-animate="fade-up">Anfragen</h2>
+      <div class="cta__content">
+        <p class="cta__text" data-i18n="cta.text" data-animate="text-reveal">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
+        <a href="/kontakt" class="cta__link" data-animate="fade-up">
+          <svg class="cta__arrow" viewBox="0 0 55 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 8H53M53 8L46 1M53 8L46 15" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span class="cta__link-text" data-i18n="cta.link">Kontakt</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page-specific scripts -->
+  <script is:inline src="/js/slider.js" slot="scripts"></script>
+</Base>
