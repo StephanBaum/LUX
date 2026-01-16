@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Component - LUX Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lekton:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/main.css">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <!-- Floating images with parallax - positions via data attributes -->
+      <div class="hero__images">
+        <div class="hero__image"
+             data-speed="1.2"
+             data-top="15%"
+             data-left="-5%"
+             data-width="38vw"
+             data-height="50vh">
+          <img src="../../../Assets/img/image 0.png" alt="">
+        </div>
+        <div class="hero__image"
+             data-speed="0.6"
+             data-top="-10%"
+             data-right="10%"
+             data-width="35vw"
+             data-height="40vh">
+          <img src="../../../Assets/img/image 4.png" alt="">
+        </div>
+        <div class="hero__image"
+             data-speed="1.5"
+             data-bottom="-5%"
+             data-left="5%"
+             data-width="42vw"
+             data-height="35vh">
+          <img src="../../../Assets/img/image 6.png" alt="">
+        </div>
+        <div class="hero__image"
+             data-speed="0.8"
+             data-bottom="-10%"
+             data-right="-5%"
+             data-width="36vw"
+             data-height="55vh">
+          <img src="../../../Assets/img/image 7.png" alt="">
+        </div>
+      </div>
+
+      <!-- Grid container for content -->
+      <div class="hero__content grid">
+        <!-- Navigation links - parallax speed calculated by index (first=fastest) -->
+        <nav class="hero__nav">
+          <a href="/veranstaltungen" class="hero__nav-link" data-img="../../../Assets/img/image 1.png">
+            <span class="hero__nav-text">Veranstaltung</span>
+            <svg class="hero__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </a>
+          <a href="/workshops" class="hero__nav-link" data-img="../../../Assets/img/image 3.png">
+            <span class="hero__nav-text">Workshops</span>
+            <svg class="hero__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </a>
+          <a href="/studio" class="hero__nav-link" data-img="../../../Assets/img/image 5.png">
+            <span class="hero__nav-text">Studio</span>
+            <svg class="hero__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </a>
+          <a href="/mieten" class="hero__nav-link" data-img="../../../Assets/img/image 8.png">
+            <span class="hero__nav-text">Mieten</span>
+            <svg class="hero__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Mouse-following image (hidden by default) -->
+      <div class="cursor-image">
+        <img src="" alt="">
+      </div>
+    </section>
+  </main>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="../../js/hero.js"></script>
+</body>
+</html>

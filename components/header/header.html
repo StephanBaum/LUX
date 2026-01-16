@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Header Component - LUX Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lekton:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/main.css">
+</head>
+<body class="debug-grid">
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="header__logo">
+      <svg viewBox="0 0 198 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M198 73.0345H170.62L158.278 55.157L146.032 73.0358H118.548L144.576 35.2565L120.121 0H147.499L158.276 15.3533L169.057 0H196.532L172.081 35.2558L198 73.0345Z" fill="currentColor"/>
+        <path d="M91.817 0.170084L114.389 0.160767V44.5525C114.377 63.7199 102.747 76.1629 83.183 75.9984C65.7784 75.852 52.4605 64.148 51.9767 44.0672V0.162052H74.5687V43.7191C74.8793 52.8918 81.8778 53.1233 82.7974 53.1562C85.0334 53.2361 91.8166 52.6479 91.8168 43.554V0.169923L91.817 0.170084Z" fill="currentColor"/>
+        <path d="M45.5845 50.3028L45.5889 73.0335H0V0.00427246H22.484V50.3028H45.5845Z" fill="currentColor"/>
+      </svg>
+    </a>
+    <button class="header__menu-toggle" aria-label="Menu" aria-expanded="false">
+      <span class="header__menu-line"></span>
+      <span class="header__menu-line"></span>
+    </button>
+  </header>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay">
+    <!-- Background image that fades in -->
+    <div class="menu-overlay__bg">
+      <img src="../Assets/img/image 1.png" alt="">
+    </div>
+
+    <!-- Panel that slides in from right -->
+    <div class="menu-overlay__panel">
+      <button class="menu-overlay__close" aria-label="Close menu">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2L26 26M26 2L2 26" stroke="currentColor" stroke-width="4"/>
+        </svg>
+      </button>
+
+      <nav class="menu-overlay__nav">
+        <a href="/workshops" class="menu-overlay__link">
+          <span>Workshops</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/veranstaltungen" class="menu-overlay__link">
+          <span>Veranstaltungen</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/studio" class="menu-overlay__link">
+          <span>Studio</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/mieten" class="menu-overlay__link">
+          <span>Mieten</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+      </nav>
+
+      <div class="menu-overlay__contact">
+        <p>
+          Studio Luxenburger<br>
+          Florian & Martin Luxenburger GbR<br>
+          Rudolf-Diesel-Str. 6<br>
+          66773 Schwalbach
+        </p>
+        <p>
+          T +49 6834 460 74 30<br>
+          F +49 176 211 55 132<br>
+          M +49 176 211 55 065
+        </p>
+        <p>
+          E <a href="mailto:servus@luxenburger.de">servus@luxenburger.de</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/menu.js"></script>
+</body>
+</html>
