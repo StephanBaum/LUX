@@ -107,7 +107,7 @@
 }
 
 .checkbox-group__category {
-  border-top: 1px solid var(--color-black);
+  /* No divider */
 }
 
 .checkbox-group__category-title {

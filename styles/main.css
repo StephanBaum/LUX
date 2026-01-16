@@ -1299,6 +1299,10 @@ body.menu-open .header {
   padding: var(--space-lg) 0;
 }
 
+.mieten-section--form:last-of-type {
+  padding-bottom: var(--space-section);
+}
+
 /* Rooms variant with image on left, accordion on right */
 .mieten-section--rooms {
   padding: var(--space-section) 0;
