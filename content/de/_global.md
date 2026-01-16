@@ -8,7 +8,7 @@ nav:
   mieten: "Mieten"
 
 footer:
-  partners_label: "Studiopartners:"
+  partners_label: "Studiopartner:"
   impressum: "Impressum"
   datenschutz: "Datenschutz"
   agb: "AGB"
@@ -27,9 +27,9 @@ form:
   name_placeholder: "Name"
   email_placeholder: "E-Mail"
   phone_placeholder: "Telefon"
-  message_placeholder: "Anfrage"
+  message_placeholder: "Ihre Nachricht"
   submit: "Abschicken"
-  success: "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze."
+  success: "Vielen Dank für Ihre Anfrage! Wir melden uns innerhalb von 24 Stunden."
   error_name: "Bitte geben Sie Ihren Namen ein"
   error_email: "Bitte geben Sie eine gültige E-Mail ein"
   error_message: "Bitte geben Sie eine Nachricht ein"

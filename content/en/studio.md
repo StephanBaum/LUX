@@ -3,16 +3,20 @@
 
 header:
   title: "Studio"
-  text: "A professional photography studio equipped for all your creative needs. From commercial shoots to artistic projects."
+  text: "400 square meters of creative possibilities. From intimate portraits to elaborate film productions – our studio adapts to your needs."
+
+section_studio:
+  label: "The Spaces"
+  text: "Three areas, endless possibilities: The large studio with 6m ceiling height for elaborate sets, the small studio for focused work, and our fully equipped darkroom for analog processes."
 
 section_menschen:
   label: "The People"
-  title: "Untitled (Profile)"
-  bio: "A creative team dedicated to the art of photography. With years of experience in both analog and digital techniques, we bring vision to life through light and composition."
-  education_title: "Education"
+  title: "Florian & Martin Luxenburger"
+  bio: "For over 15 years, we've worked as photographers and filmmakers. LUX Studio is the realization of our vision: A place where analog tradition and digital innovation come together. We believe the best images emerge when technique and creativity go hand in hand."
+  education_title: "Expertise"
 
 cta:
-  title: "Inquire"
-  text: "Interested in learning more about our studio? Get in touch and we'll show you around."
-  link: "Contact"
+  title: "Visit the Studio"
+  text: "See for yourself. Schedule an appointment for a personal tour of our facilities."
+  link: "Book a Tour"
 ---

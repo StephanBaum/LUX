@@ -6,16 +6,16 @@ slider:
 
 section_studio:
   label: "Das Studio"
-  text: "Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris."
+  text: "Im Herzen des Saarlandes vereinen wir analoge Handwerkskunst mit modernster Technik. Unser 400m² großes Studio bietet den perfekten Rahmen für Fotografie, Film und kreative Projekte – von der Dunkelkammer bis zum vollausgestatteten Filmset."
 
 section_menschen:
   label: "Die Menschen"
-  title: "Untitled (Profile)"
-  bio: "Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus ultrices euismod. Quisque eu purus convallis, gravida."
-  education_title: "Education"
+  title: "Florian & Martin Luxenburger"
+  bio: "Als Brüder teilen wir nicht nur die Leidenschaft für das Bild, sondern auch die Überzeugung, dass großartige Aufnahmen durch die Verbindung von technischer Präzision und kreativem Ausdruck entstehen. Mit über 15 Jahren Erfahrung in Fotografie und Film begleiten wir Projekte von der ersten Idee bis zum fertigen Werk."
+  education_title: "Expertise"
 
 cta:
-  title: "Anfragen"
-  text: "Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris."
-  link: "Kontakt"
+  title: "Projekt starten"
+  text: "Sie haben eine Vision? Wir haben den Raum, das Equipment und das Know-how, um sie zu verwirklichen. Lassen Sie uns gemeinsam etwas Außergewöhnliches schaffen."
+  link: "Kontakt aufnehmen"
 ---
