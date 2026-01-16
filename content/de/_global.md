@@ -37,6 +37,7 @@ form:
 calendar:
   hint: "Zeitraum wählen"
   months: "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember"
+  months_short: "Jan.,Feb.,März,Apr.,Mai,Juni,Juli,Aug.,Sep.,Okt.,Nov.,Dez."
 
 common:
   contact_label: "Kontakt"

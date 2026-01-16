@@ -37,6 +37,7 @@ form:
 calendar:
   hint: "Period wielen"
   months: "Januar,Februar,Mäerz,Abrëll,Mee,Juni,Juli,August,September,Oktober,November,Dezember"
+  months_short: "Jan.,Feb.,Mäe.,Abr.,Mee,Jun.,Jul.,Aug.,Sep.,Okt.,Nov.,Dez."
 
 common:
   contact_label: "Kontakt"

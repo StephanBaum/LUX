@@ -2,6 +2,19 @@
    LUX Design System
    ============================================ */
 
+/* i18n: Hide translated content until ready to prevent flash */
+html:not([data-i18n-ready]) [data-i18n],
+html:not([data-i18n-ready]) [data-i18n-placeholder],
+html:not([data-i18n-ready]) [data-i18n-html] {
+  opacity: 0;
+}
+
+[data-i18n],
+[data-i18n-placeholder],
+[data-i18n-html] {
+  transition: opacity 0.15s ease;
+}
+
 /* Design Tokens */
 :root {
   /* Colors */
@@ -296,6 +309,31 @@ button {
 
 .menu-overlay__contact a:hover {
   text-decoration: none;
+}
+
+/* Language switcher in menu */
+.menu-overlay__lang {
+  display: flex;
+  gap: 16px;
+  margin-top: var(--space-lg);
+}
+
+.menu-overlay__lang-link {
+  font-family: var(--font-family-detail);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.menu-overlay__lang-link--active {
+  opacity: 1;
+}
+
+.menu-overlay__lang-link:hover {
+  opacity: 0.8;
 }
 
 /* Body scroll lock when menu is open */

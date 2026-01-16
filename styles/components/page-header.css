@@ -32,10 +32,10 @@
 }
 
 .page-header__text {
-  font-size: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  font-size: clamp(1.25rem, 1rem + 1.5vw, 2rem);
   font-weight: var(--font-weight-regular);
   letter-spacing: -0.02em;
-  line-height: 1.4;
+  line-height: 1.22;
   color: var(--color-black);
   margin: 0;
 }
@@ -85,7 +85,7 @@
 }
 
 .page-header--subpage .page-header__content--wide {
-  grid-column: 4 / -1;
+  grid-column: 5 / -1;
 }
 
 /* Responsive */

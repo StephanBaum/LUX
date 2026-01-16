@@ -6,12 +6,26 @@ header:
   text: "Apprenez l'art de la photographie analogique depuis les bases. Nos ateliers pratiques enseignent des techniques souvent oubliées à l'ère numérique – pourtant essentielles pour faire la différence entre une bonne image et une image exceptionnelle."
 
 workshops:
+  registration_label: "Inscription"
   item1_title: "Initiation Chambre Noire"
+  item1_instructor: "Martin Luxenburger"
   item1_desc: "Votre entrée dans le développement d'images analogiques. Apprenez le processus complet du film exposé au tirage final."
+  item1_info1_title: "Durée"
+  item1_info1_detail: "2 jours (Sam-Dim)"
+  item1_info2_title: "Prix"
+  item1_info2_detail: "320 € matériel inclus"
   item2_title: "Photographie Noir & Blanc"
+  item2_instructor: "Florian Luxenburger"
   item2_desc: "Maîtrisez le jeu de lumière et d'ombre. Composition, exposition et l'art de voir en nuances de gris."
+  item2_info_title: "Durée"
+  item2_info_detail: "1 jour (Sam)"
   item3_title: "Exposition Avancée"
+  item3_instructor: "Martin Luxenburger"
   item3_desc: "Système de zones, longue exposition et techniques créatives pour les photographes souhaitant approfondir leurs compétences."
+  item3_info1_title: "Durée"
+  item3_info1_detail: "2 jours (Sam-Dim)"
+  item3_info2_title: "Prérequis"
+  item3_info2_detail: "Connaissances de base en photo analogique"
 
 cta:
   title: "Réserver un atelier"

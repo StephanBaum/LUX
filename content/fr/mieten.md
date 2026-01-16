@@ -12,12 +12,21 @@ sections:
   inquiry: "Demande"
 
 rooms:
+  equipment_label: "Équipements"
   large_title: "Grand Studio"
   large_desc: "250m², 6m de hauteur, cyclorama 8x6m, lumière naturelle. Parfait pour véhicules, grands décors et productions cinématographiques."
+  large_feature1: "Hauteur 6m"
+  large_feature2: "Cyclorama 8x6m"
+  large_feature3: "Lumière naturelle"
   small_title: "Petit Studio"
   small_desc: "80m², 4m de hauteur, cyclorama 4x4m. Idéal pour portraits, photographie de produits et petites productions."
+  small_feature1: "Hauteur 4m"
+  small_feature2: "Cyclorama 4x4m"
   analog_title: "Studio Analogique"
   analog_desc: "45m² de chambre noire entièrement équipée. Agrandisseurs, cuves de développement, presse de séchage. N&B et couleur."
+  analog_feature1: "Chambre noire"
+  analog_feature2: "Agrandisseur"
+  analog_feature3: "Cuves de développement"
 
 equipment:
   light: "Éclairage"

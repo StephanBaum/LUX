@@ -6,15 +6,37 @@
 (function() {
   'use strict';
 
-  const MONTHS_DE = [
+  // Fallback month names (German)
+  const MONTHS_SHORT_FALLBACK = [
     'Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni',
     'Juli', 'Aug.', 'Sep.', 'Okt.', 'Nov.', 'Dez.'
   ];
 
-  const MONTHS_FULL_DE = [
+  const MONTHS_FULL_FALLBACK = [
     'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
     'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
   ];
+
+  // Get localized month names from i18n system
+  function getMonthsFull() {
+    if (window.i18n) {
+      const monthsStr = window.i18n.getTranslation('calendar.months');
+      if (monthsStr && monthsStr !== 'calendar.months') {
+        return monthsStr.split(',');
+      }
+    }
+    return MONTHS_FULL_FALLBACK;
+  }
+
+  function getMonthsShort() {
+    if (window.i18n) {
+      const monthsStr = window.i18n.getTranslation('calendar.months_short');
+      if (monthsStr && monthsStr !== 'calendar.months_short') {
+        return monthsStr.split(',');
+      }
+    }
+    return MONTHS_SHORT_FALLBACK;
+  }
 
   class Calendar {
     constructor(container) {
@@ -34,6 +56,9 @@
       this.currentMonth = new Date();
       this.today = new Date();
       this.today.setHours(0, 0, 0, 0);
+
+      // Store instance on container for language change re-rendering
+      this.container._calendarInstance = this;
 
       this.init();
     }
@@ -179,21 +204,24 @@
     updateDisplay() {
       if (!this.display) return;
 
+      const monthsShort = getMonthsShort();
+      const monthsFull = getMonthsFull();
+
       if (this.startDate && this.endDate) {
-        const startStr = `${this.startDate.getDate()}. ${MONTHS_DE[this.startDate.getMonth()]}`;
-        const endStr = `${this.endDate.getDate()}. ${MONTHS_DE[this.endDate.getMonth()]}`;
+        const startStr = `${this.startDate.getDate()}. ${monthsShort[this.startDate.getMonth()]}`;
+        const endStr = `${this.endDate.getDate()}. ${monthsShort[this.endDate.getMonth()]}`;
         this.display.textContent = `${startStr} → ${endStr}`;
         this.container.classList.add('has-selection');
       } else if (this.startDate) {
-        const startStr = `${this.startDate.getDate()}. ${MONTHS_DE[this.startDate.getMonth()]}`;
+        const startStr = `${this.startDate.getDate()}. ${monthsShort[this.startDate.getMonth()]}`;
         this.display.textContent = `${startStr} → ...`;
         this.container.classList.add('has-selection');
       } else {
         // Show current month range
-        const month1 = MONTHS_FULL_DE[this.currentMonth.getMonth()];
+        const month1 = monthsFull[this.currentMonth.getMonth()];
         const nextMonth = new Date(this.currentMonth);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
-        const month2 = MONTHS_FULL_DE[nextMonth.getMonth()];
+        const month2 = monthsFull[nextMonth.getMonth()];
         this.display.textContent = `${month1} / ${month2}`;
         this.container.classList.remove('has-selection');
       }
@@ -239,4 +267,15 @@
   } else {
     initCalendars();
   }
+
+  // Listen for language changes and re-render calendars
+  window.addEventListener('languageChanged', () => {
+    document.querySelectorAll('[data-calendar]').forEach(el => {
+      const calendar = el._calendarInstance;
+      if (calendar) {
+        calendar.render();
+        calendar.updateDisplay();
+      }
+    });
+  });
 })();

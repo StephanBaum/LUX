@@ -59,6 +59,9 @@
       // Apply translations
       this.translate();
 
+      // Mark as ready (removes CSS hiding)
+      document.documentElement.setAttribute('data-i18n-ready', '');
+
       // Update HTML lang attribute
       document.documentElement.lang = this.currentLang;
 
@@ -234,16 +237,48 @@
       });
     }
 
-    switchLanguage(lang) {
+    async switchLanguage(lang) {
       if (!SUPPORTED_LANGS.includes(lang)) return;
+      if (lang === this.currentLang) return;
 
+      // Update current language
+      this.currentLang = lang;
       this.setLanguageCookie(lang);
 
-      // Reload page to apply new language
-      // Remove any lang query param
-      const url = new URL(window.location);
-      url.searchParams.delete('lang');
-      window.location.href = url.toString();
+      // Clear existing translations
+      this.translations = {};
+      this.globalStrings = {};
+
+      // Reload content for new language
+      await this.loadContent('_global');
+      const page = this.getCurrentPage();
+      await this.loadContent(page);
+
+      // Re-apply translations
+      this.translate();
+
+      // Update HTML lang attribute
+      document.documentElement.lang = lang;
+
+      // Update switcher active states
+      this.updateSwitcherStates();
+
+      // Dispatch event for other scripts (calendar, etc.)
+      window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+    }
+
+    updateSwitcherStates() {
+      // Footer switcher
+      document.querySelectorAll('.footer__lang-link').forEach(link => {
+        const linkLang = link.getAttribute('data-lang');
+        link.classList.toggle('footer__lang-link--active', linkLang === this.currentLang);
+      });
+
+      // Menu switcher
+      document.querySelectorAll('.menu-overlay__lang-link').forEach(link => {
+        const linkLang = link.getAttribute('data-lang');
+        link.classList.toggle('menu-overlay__lang-link--active', linkLang === this.currentLang);
+      });
     }
 
     // Expose translation function globally

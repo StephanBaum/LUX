@@ -12,12 +12,21 @@ sections:
   inquiry: "Ufro"
 
 rooms:
+  equipment_label: "Ausstattung"
   large_title: "Grousse Studio"
   large_desc: "250m², 6m Plafondshéicht, Hohlkeel 8x6m, Daagesliicht. Perfekt fir Gefierer, grouss Sets a Filmproduktiounen."
+  large_feature1: "Plafondshéicht 6m"
+  large_feature2: "Hohlkeel 8x6m"
+  large_feature3: "Daagesliicht"
   small_title: "Klenge Studio"
   small_desc: "80m², 4m Plafondshéicht, Hohlkeel 4x4m. Ideal fir Portraiten, Produktfotografie a méi kleng Produktiounen."
+  small_feature1: "Plafondshéicht 4m"
+  small_feature2: "Hohlkeel 4x4m"
   analog_title: "Analog Studio"
   analog_desc: "45m² vollausgestaten Donkelkummer. Vergréisserungsapparat, Entwécklungsbecken, Dréchepresse. SW a Faarf."
+  analog_feature1: "Donkelkummer"
+  analog_feature2: "Vergréisserungsapparat"
+  analog_feature3: "Entwécklungsbecken"
 
 equipment:
   light: "Beliichtung"
