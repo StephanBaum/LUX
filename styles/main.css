@@ -812,7 +812,7 @@ body.menu-open .header {
   align-items: center;
   gap: var(--space-md);
   font-size: clamp(1.25rem, 1rem + 1.5vw, 2rem);
-  font-weight: 600;
+  font-weight: var(--font-weight-medium);
   letter-spacing: -0.02em;
   color: var(--color-black);
   transition: color 0.2s ease;
