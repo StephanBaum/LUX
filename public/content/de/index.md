@@ -11,7 +11,7 @@ section_studio:
 section_menschen:
   label: "Die Menschen"
   title: "Florian & Martin Luxenburger"
-  bio: "Vater und Sohn. Martin – Portrait und Landschaft. Florian – Werbung und Portrait. Vereint durch die analoge Fotografie, teilen wir das Studio für Kunst und Auftrag."
+  bio: "Wie der Vadder so der Sohn. Martin – Portrait & Landschaft. Florian – Werbung & Portrait. Verbunden durch die Leidenschaft für analoge Fotografie teilen wir das Studio für Kunst und Auftragsproduktion."
   education_title: "Expertise"
   expertise1_title: "Analoge Fotografie"
   expertise1_detail: "Großformat, Mittelformat, Dunkelkammer"

@@ -12,7 +12,7 @@ section_studio:
 section_menschen:
   label: "D'Leit"
   title: "Florian & Martin Luxenburger"
-  bio: "Papp a Jong. Martin – Portrait an Landschaft. Florian – Reklamm a Portrait. Vereenegt duerch d'analog Fotografie, deele mir de Studio fir Konscht an Optrag."
+  bio: "Wéi de Papp, esou de Jong. Martin – Portrait & Landschaft. Florian – Reklamm & Portrait. Verbonnen duerch d’Leidenschaft fir analog Fotografie, deele mir de Studio fir Konscht an Optragsproduktiounen."
   education_title: "Expertise"
   expertise1_title: "Analog Fotografie"
   expertise1_detail: "Groussformat, Mëttelformat, Donkelkummer"

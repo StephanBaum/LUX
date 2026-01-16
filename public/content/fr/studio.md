@@ -12,7 +12,7 @@ section_studio:
 section_menschen:
   label: "L'Équipe"
   title: "Florian & Martin Luxenburger"
-  bio: "Père et fils. Martin – portrait et paysage. Florian – publicité et portrait. Unis par la photographie argentique, nous partageons le studio pour l'art et la commande."
+  bio: "Tel père, tel fils. Martin – portrait & paysage. Florian – publicité & portrait. Unis par la passion de la photographie argentique, nous partageons le studio pour l’art et les productions sur commande."
   education_title: "Expertise"
   expertise1_title: "Photographie argentique"
   expertise1_detail: "Grand format, moyen format, chambre noire"

@@ -171,17 +171,41 @@
       return value || key; // Return key if not found
     }
 
-    translate() {
+    translate(animate = false) {
+      const duration = 200; // ms for fade transition
+
+      // Helper to update element with optional animation
+      const updateElement = (el, newContent, isHTML = false) => {
+        if (animate) {
+          el.style.transition = `opacity ${duration}ms ease`;
+          el.style.opacity = '0';
+          setTimeout(() => {
+            if (isHTML) {
+              el.innerHTML = newContent;
+            } else {
+              el.textContent = newContent;
+            }
+            el.style.opacity = '1';
+          }, duration);
+        } else {
+          if (isHTML) {
+            el.innerHTML = newContent;
+          } else {
+            el.textContent = newContent;
+          }
+        }
+      };
+
       // Translate elements with data-i18n attribute
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const translated = this.t(key);
         if (translated !== key) {
-          el.textContent = translated;
+          updateElement(el, translated);
         }
       });
 
-      // Translate placeholders
+      // Translate placeholders (no animation needed)
       document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         const translated = this.t(key);
@@ -190,7 +214,7 @@
         }
       });
 
-      // Translate aria-labels
+      // Translate aria-labels (no animation needed)
       document.querySelectorAll('[data-i18n-aria]').forEach(el => {
         const key = el.getAttribute('data-i18n-aria');
         const translated = this.t(key);
@@ -204,7 +228,7 @@
         const key = el.getAttribute('data-i18n-html');
         const translated = this.t(key);
         if (translated !== key) {
-          el.innerHTML = translated;
+          updateElement(el, translated, true);
         }
       });
     }
@@ -254,8 +278,8 @@
       const page = this.getCurrentPage();
       await this.loadContent(page);
 
-      // Re-apply translations
-      this.translate();
+      // Re-apply translations with animation
+      this.translate(true);
 
       // Update HTML lang attribute
       document.documentElement.lang = lang;
@@ -263,8 +287,10 @@
       // Update switcher active states
       this.updateSwitcherStates();
 
-      // Dispatch event for other scripts (calendar, etc.)
-      window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+      // Dispatch event for other scripts after animation completes (200ms fade + 50ms buffer)
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+      }, 250);
     }
 
     updateSwitcherStates() {
