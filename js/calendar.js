@@ -1,6 +1,6 @@
 /**
  * Calendar Component
- * Fully functional date range picker
+ * Fully functional date range picker with 2-month display
  */
 
 (function() {
@@ -11,11 +11,21 @@
     'Juli', 'Aug.', 'Sep.', 'Okt.', 'Nov.', 'Dez.'
   ];
 
+  const MONTHS_FULL_DE = [
+    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+  ];
+
   class Calendar {
     constructor(container) {
       this.container = container;
-      this.grid = container.querySelector('[data-calendar-grid]');
-      this.rangeDisplay = container.querySelector('[data-calendar-range]');
+      this.grids = [
+        container.querySelector('[data-calendar-grid="0"]'),
+        container.querySelector('[data-calendar-grid="1"]')
+      ];
+      this.display = container.querySelector('[data-calendar-display]');
+      this.prevBtn = container.querySelector('[data-calendar-prev]');
+      this.nextBtn = container.querySelector('[data-calendar-next]');
       this.startInput = container.querySelector('[data-calendar-start]');
       this.endInput = container.querySelector('[data-calendar-end]');
 
@@ -30,20 +40,31 @@
 
     init() {
       this.render();
+      this.updateDisplay();
       this.bindEvents();
     }
 
     render() {
-      const year = this.currentMonth.getFullYear();
-      const month = this.currentMonth.getMonth();
+      // Render current month and next month
+      this.renderMonth(this.grids[0], this.currentMonth);
+
+      const nextMonth = new Date(this.currentMonth);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      this.renderMonth(this.grids[1], nextMonth);
+    }
+
+    renderMonth(grid, monthDate) {
+      if (!grid) return;
+
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
 
       // Get first day of month and total days
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
       const totalDays = lastDay.getDate();
 
-      // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
-      // Adjust for Monday start (0 = Monday, 6 = Sunday)
+      // Get day of week for first day (adjust for Monday start)
       let startDayOfWeek = firstDay.getDay() - 1;
       if (startDayOfWeek < 0) startDayOfWeek = 6;
 
@@ -69,7 +90,7 @@
           classes.push('calendar__day--today');
         }
 
-        // Check if weekend (Saturday = 6, Sunday = 0)
+        // Check if weekend
         const dayOfWeek = date.getDay();
         if (dayOfWeek === 0 || dayOfWeek === 6) {
           classes.push('calendar__day--weekend');
@@ -91,19 +112,38 @@
         html += `<div class="${classes.join(' ')}" data-date="${date.toISOString()}">${day}</div>`;
       }
 
-      this.grid.innerHTML = html;
+      grid.innerHTML = html;
     }
 
     bindEvents() {
-      this.grid.addEventListener('click', (e) => {
-        const dayEl = e.target.closest('.calendar__day');
-        if (!dayEl || dayEl.classList.contains('calendar__day--disabled') || dayEl.classList.contains('calendar__day--empty')) {
-          return;
-        }
+      // Day click for both grids
+      this.grids.forEach(grid => {
+        if (grid) {
+          grid.addEventListener('click', (e) => {
+            const dayEl = e.target.closest('.calendar__day');
+            if (!dayEl || dayEl.classList.contains('calendar__day--disabled') || dayEl.classList.contains('calendar__day--empty')) {
+              return;
+            }
 
-        const date = new Date(dayEl.dataset.date);
-        this.selectDate(date);
+            const date = new Date(dayEl.dataset.date);
+            this.selectDate(date);
+          });
+        }
       });
+
+      // Month navigation
+      if (this.prevBtn) {
+        this.prevBtn.addEventListener('click', () => this.changeMonth(-1));
+      }
+      if (this.nextBtn) {
+        this.nextBtn.addEventListener('click', () => this.changeMonth(1));
+      }
+    }
+
+    changeMonth(delta) {
+      this.currentMonth.setMonth(this.currentMonth.getMonth() + delta);
+      this.render();
+      this.updateDisplay();
     }
 
     selectDate(date) {
@@ -114,12 +154,10 @@
       }
       // If start date exists but no end, set end date
       else if (this.startDate && !this.endDate) {
-        // If clicked date is before start date, swap them
         if (date < this.startDate) {
           this.endDate = this.startDate;
           this.startDate = date;
         } else if (date.getTime() === this.startDate.getTime()) {
-          // Same date clicked, just keep as single day selection
           this.endDate = date;
         } else {
           this.endDate = date;
@@ -132,15 +170,25 @@
     }
 
     updateDisplay() {
+      if (!this.display) return;
+
       if (this.startDate && this.endDate) {
-        const startStr = `${this.startDate.getDate()} ${MONTHS_DE[this.startDate.getMonth()]}`;
-        const endStr = `${this.endDate.getDate()} ${MONTHS_DE[this.endDate.getMonth()]}`;
-        this.rangeDisplay.textContent = `${startStr} → ${endStr}`;
+        const startStr = `${this.startDate.getDate()}. ${MONTHS_DE[this.startDate.getMonth()]}`;
+        const endStr = `${this.endDate.getDate()}. ${MONTHS_DE[this.endDate.getMonth()]}`;
+        this.display.textContent = `${startStr} → ${endStr}`;
+        this.container.classList.add('has-selection');
       } else if (this.startDate) {
-        const startStr = `${this.startDate.getDate()} ${MONTHS_DE[this.startDate.getMonth()]}`;
-        this.rangeDisplay.textContent = `${startStr} → ...`;
+        const startStr = `${this.startDate.getDate()}. ${MONTHS_DE[this.startDate.getMonth()]}`;
+        this.display.textContent = `${startStr} → ...`;
+        this.container.classList.add('has-selection');
       } else {
-        this.rangeDisplay.textContent = 'Zeitraum wählen';
+        // Show current month range
+        const month1 = MONTHS_FULL_DE[this.currentMonth.getMonth()];
+        const nextMonth = new Date(this.currentMonth);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        const month2 = MONTHS_FULL_DE[nextMonth.getMonth()];
+        this.display.textContent = `${month1} / ${month2}`;
+        this.container.classList.remove('has-selection');
       }
     }
 
@@ -152,7 +200,7 @@
         this.endInput.value = this.endDate ? this.formatDate(this.endDate) : '';
       }
 
-      // Dispatch change event for form validation
+      // Dispatch change event for form
       document.dispatchEvent(new CustomEvent('calendar:change', {
         bubbles: true,
         detail: {
@@ -167,12 +215,6 @@
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
       return `${year}-${month}-${day}`;
-    }
-
-    formatDisplayDate(date) {
-      const day = date.getDate();
-      const month = MONTHS_DE[date.getMonth()];
-      return `${day} ${month}`;
     }
   }
 

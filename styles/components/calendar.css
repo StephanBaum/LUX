@@ -4,24 +4,90 @@
    ============================================ */
 
 .calendar {
-  max-width: 400px;
+  width: 100%;
 }
 
 .calendar__header {
-  margin-bottom: var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
 }
 
-.calendar__range {
-  font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+.calendar__display {
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.5rem);
   font-weight: var(--font-weight-medium);
   letter-spacing: -0.02em;
   color: var(--color-black);
 }
 
+.calendar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.calendar__nav-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.calendar__nav-btn:hover {
+  background-color: var(--color-gray-100);
+}
+
+.calendar__nav-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.calendar__months {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+}
+
+.calendar__month-col {
+  min-width: 0;
+}
+
+.calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.calendar__weekdays span {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  padding: var(--space-xs) 0;
+}
+
+.calendar__hint {
+  margin-top: var(--space-md);
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+}
+
+.calendar.has-selection .calendar__hint {
+  display: none;
+}
+
 .calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 2px;
 }
 
 .calendar__day {
@@ -93,12 +159,19 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .calendar__months {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
 @media (max-width: 480px) {
   .calendar__day {
     font-size: 0.8rem;
   }
 
-  .calendar__range {
-    font-size: 1.25rem;
+  .calendar__display {
+    font-size: 1.125rem;
   }
 }
