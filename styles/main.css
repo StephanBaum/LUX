@@ -784,9 +784,9 @@ body.menu-open .header {
 .cta__title {
   grid-column: span 3;
   font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
-  font-weight: 600;
+  font-weight: var(--font-weight-medium);
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.1;
   color: var(--color-black);
   margin: 0;
 }
