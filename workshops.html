@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workshops - LUX Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lekton:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components/profile.css">
+  <link rel="stylesheet" href="styles/components/page-header.css">
+  <link rel="stylesheet" href="styles/components/list-row.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="header__logo">
+      <svg viewBox="0 0 198 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M198 73.0345H170.62L158.278 55.157L146.032 73.0358H118.548L144.576 35.2565L120.121 0H147.499L158.276 15.3533L169.057 0H196.532L172.081 35.2558L198 73.0345Z" fill="currentColor"/>
+        <path d="M91.817 0.170084L114.389 0.160767V44.5525C114.377 63.7199 102.747 76.1629 83.183 75.9984C65.7784 75.852 52.4605 64.148 51.9767 44.0672V0.162052H74.5687V43.7191C74.8793 52.8918 81.8778 53.1233 82.7974 53.1562C85.0334 53.2361 91.8166 52.6479 91.8168 43.554V0.169923L91.817 0.170084Z" fill="currentColor"/>
+        <path d="M45.5845 50.3028L45.5889 73.0335H0V0.00427246H22.484V50.3028H45.5845Z" fill="currentColor"/>
+      </svg>
+    </a>
+    <button class="header__menu-toggle" aria-label="Menu" aria-expanded="false">
+      <span class="header__menu-line"></span>
+      <span class="header__menu-line"></span>
+    </button>
+  </header>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay">
+    <div class="menu-overlay__bg">
+      <img src="../Assets/img/image 1.png" alt="">
+    </div>
+    <div class="menu-overlay__panel">
+      <button class="menu-overlay__close" aria-label="Close menu">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2L26 26M26 2L2 26" stroke="currentColor" stroke-width="4"/>
+        </svg>
+      </button>
+      <nav class="menu-overlay__nav">
+        <a href="/workshops.html" class="menu-overlay__link">
+          <span>Workshops</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/veranstaltungen.html" class="menu-overlay__link">
+          <span>Veranstaltungen</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/studio.html" class="menu-overlay__link">
+          <span>Studio</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/mieten.html" class="menu-overlay__link">
+          <span>Mieten</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+      </nav>
+      <div class="menu-overlay__contact">
+        <p>
+          Studio Luxenburger<br>
+          Florian & Martin Luxenburger GbR<br>
+          Rudolf-Diesel-Str. 6<br>
+          66773 Schwalbach
+        </p>
+        <p>
+          T +49 6834 460 74 30<br>
+          F +49 176 211 55 132<br>
+          M +49 176 211 55 065
+        </p>
+        <p>
+          E <a href="mailto:servus@luxenburger.de">servus@luxenburger.de</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="page-header__container grid">
+        <h1 class="page-header__title" data-animate="fade-up">Workshops</h1>
+        <div class="page-header__content">
+          <p class="page-header__text" data-animate="text-reveal">
+            Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci.
+            Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris,
+            eu faucibus nisl blandit ac. Proin eget euismod mauris.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workshop List -->
+    <section class="workshops-list" data-parallax="0.1">
+      <div class="grid">
+        <div class="workshops-list__content" style="grid-column: 1 / -1;">
+          <div class="list-row__group" data-animate="fade-up">
+            <a href="#" class="list-row">
+              <span class="list-row__label">Workshop #1</span>
+              <span class="list-row__title">Dunkelkammer Basics</span>
+              <svg class="list-row__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" class="list-row">
+              <span class="list-row__label">Workshop #2</span>
+              <span class="list-row__title">Schwarzweißfotografie</span>
+              <svg class="list-row__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" class="list-row">
+              <span class="list-row__label">Workshop #3</span>
+              <span class="list-row__title">Belichtungsmethoden 1</span>
+              <svg class="list-row__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section class="profile" data-parallax="0.1">
+      <div class="grid">
+        <div class="profile__content">
+          <div class="profile__text" data-animate="fade-up">
+            <div class="profile__intro">
+              <h2 class="profile__title">Untitled (Profile)</h2>
+              <a href="mailto:hello@example.com" class="profile__email">hello@example.com</a>
+              <a href="#" class="profile__social">Instagram</a>
+            </div>
+
+            <p class="profile__bio">
+              Cras ut dictum mi. Sed quis lorem semper, ele mentum mauris vitae, consectetur orci.
+              Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus
+              nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus
+              ultrices euismod. Quisque eu purus convallis, gravida.
+            </p>
+
+            <div class="profile__section">
+              <h3 class="profile__section-title">Anmeldung</h3>
+              <div class="profile__education-item">
+                <span class="profile__education-title">Vestibulum Euismod (Ultrices)</span>
+                <span class="profile__education-detail">Suspendisse Aenean Lec</span>
+                <span class="profile__education-year">2023</span>
+              </div>
+              <div class="profile__education-item">
+                <span class="profile__education-title">Aliquam Faucibus Tellus</span>
+                <span class="profile__education-detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile__gallery" data-animate="fade-up">
+            <div class="profile__gallery-row profile__gallery-row--top">
+              <div class="profile__image profile__image--portrait-lg">
+                <img src="../Assets/img/image 2.png" alt="" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Slider -->
+    <section class="slider">
+      <div class="slider__cursor">
+        <svg class="slider__cursor-svg" viewBox="0 0 80 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line class="slider__cursor-line" x1="16" y1="12" x2="64" y2="12" stroke="black" stroke-width="1.5"/>
+          <path class="slider__cursor-head slider__cursor-head--left" d="M16 12L24 5M16 12L24 19" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+          <path class="slider__cursor-head slider__cursor-head--right" d="M64 12L56 5M64 12L56 19" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="slider__container grid">
+        <div class="slider__drag-hint">
+          <svg class="slider__drag-arrow" viewBox="0 0 40 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 5H38M38 5L33 1M38 5L33 9" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          <span class="slider__drag-text">Workshops</span>
+        </div>
+      </div>
+      <div class="slider__track-wrapper">
+        <div class="slider__track" data-slider-track>
+          <div class="slider__slide">
+            <img src="../Assets/img/image 1.png" alt="" draggable="false">
+          </div>
+          <div class="slider__slide">
+            <img src="../Assets/img/image 2.png" alt="" draggable="false">
+          </div>
+          <div class="slider__slide">
+            <img src="../Assets/img/image 3.png" alt="" draggable="false">
+          </div>
+          <div class="slider__slide">
+            <img src="../Assets/img/image 4.png" alt="" draggable="false">
+          </div>
+          <div class="slider__slide">
+            <img src="../Assets/img/image 5.png" alt="" draggable="false">
+          </div>
+          <div class="slider__slide">
+            <img src="../Assets/img/image 6.png" alt="" draggable="false">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" data-parallax="0.15">
+      <div class="cta__container grid">
+        <h2 class="cta__title" data-animate="fade-up">Anfragen</h2>
+        <div class="cta__content">
+          <p class="cta__text" data-animate="text-reveal">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
+          <a href="/kontakt" class="cta__link" data-animate="fade-up">
+            <svg class="cta__arrow" viewBox="0 0 55 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 8H53M53 8L46 1M53 8L46 15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span class="cta__link-text">Kontakt</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" data-footer-reveal>
+    <div class="footer__container grid">
+      <div class="footer__logo-wrapper" data-animate="fade-up">
+        <svg class="footer__logo" viewBox="0 0 198 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M198 73.0345H170.62L158.278 55.157L146.032 73.0358H118.548L144.576 35.2565L120.121 0H147.499L158.276 15.3533L169.057 0H196.532L172.081 35.2558L198 73.0345Z" fill="currentColor"/>
+          <path d="M91.817 0.170084L114.389 0.160767V44.5525C114.377 63.7199 102.747 76.1629 83.183 75.9984C65.7784 75.852 52.4605 64.148 51.9767 44.0672V0.162052H74.5687V43.7191C74.8793 52.8918 81.8778 53.1233 82.7974 53.1562C85.0334 53.2361 91.8166 52.6479 91.8168 43.554V0.169923L91.817 0.170084Z" fill="currentColor"/>
+          <path d="M45.5845 50.3028L45.5889 73.0335H0V0.00427246H22.484V50.3028H45.5845Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <address class="footer__address" data-animate="fade-up">
+        Studio Luxenburger<br>
+        Florian & Martin Luxenburger GbR<br>
+        Rudolf-Diesel-Str. 6<br>
+        66773 Schwalbach
+      </address>
+      <div class="footer__contact" data-animate="fade-up">
+        <p><span class="footer__contact-label">T</span> +49 6834 460 74 30</p>
+        <p><span class="footer__contact-label">F</span> +49 176 211 55 132</p>
+        <p><span class="footer__contact-label">M</span> +49 176 211 55 065</p>
+        <p><span class="footer__contact-label">E</span> <a href="mailto:servus@luxenburger.de">servus@luxenburger.de</a></p>
+      </div>
+      <nav class="footer__nav" data-animate="fade-up">
+        <a href="/workshops.html" class="footer__nav-link">
+          <span>Workshops</span>
+          <svg class="footer__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/veranstaltungen.html" class="footer__nav-link">
+          <span>Veranstaltungen</span>
+          <svg class="footer__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/studio.html" class="footer__nav-link">
+          <span>Studio</span>
+          <svg class="footer__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/mieten.html" class="footer__nav-link">
+          <span>Mieten</span>
+          <svg class="footer__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+      </nav>
+      <div class="footer__bottom">
+        <div class="footer__partners" data-animate="fade-up">
+          <span class="footer__partners-label">Studiopartners:</span>
+          <div class="footer__partners-logos">
+            <span style="font-weight: 700; letter-spacing: 0.05em; opacity: 0.8;">HASSELBLAD</span>
+            <span style="font-weight: 700; letter-spacing: 0.05em; opacity: 0.8;">ARRI</span>
+            <span style="font-weight: 700; letter-spacing: 0.05em; opacity: 0.8;">RED</span>
+          </div>
+        </div>
+        <div class="footer__meta" data-animate="fade-up">
+          <div class="footer__legal">
+            <a href="/impressum">Impressum</a>
+            <a href="/datenschutz">Datenschutz</a>
+            <a href="/agb">AGB</a>
+          </div>
+          <div class="footer__lang">
+            <a href="?lang=de" class="footer__lang-link footer__lang-link--active">DE</a>
+            <a href="?lang=en" class="footer__lang-link">EN</a>
+            <a href="?lang=fr" class="footer__lang-link">FR</a>
+            <a href="?lang=lu" class="footer__lang-link">LU</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="js/slider.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/animations.js"></script>
+</body>
+</html>

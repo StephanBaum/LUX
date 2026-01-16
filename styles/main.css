@@ -1115,3 +1115,197 @@ body.menu-open .header {
     transform: none;
   }
 }
+
+/* ============================================
+   Partners Component
+   Horizontal logo strip for studio partners
+   ============================================ */
+
+.partners {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.partners__label {
+  font-size: 0.75rem;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+}
+
+.partners__logos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.partners__logo {
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+  opacity: 0.7;
+}
+
+/* Inline variant for page headers */
+.partners--inline {
+  gap: var(--space-lg);
+}
+
+.partners--inline .partners__logo {
+  color: var(--color-black);
+}
+
+/* ============================================
+   Form Tokens
+   ============================================ */
+
+:root {
+  --color-input-border: var(--color-gray-300);
+  --color-input-focus: #1E8784;
+  --color-calendar-selected: #1E8784;
+  --color-calendar-range: rgba(30, 135, 132, 0.2);
+  --color-error: #dc3545;
+}
+
+/* ============================================
+   Studio Header Component
+   Title with image collage layout
+   ============================================ */
+
+.studio-header {
+  padding-top: calc(var(--space-section) + 60px);
+  padding-bottom: var(--space-xl);
+}
+
+.studio-header__container {
+  align-items: start;
+}
+
+.studio-header__title {
+  grid-column: 1 / span 3;
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--color-black);
+  margin: 0;
+  align-self: end;
+}
+
+.studio-header__collage {
+  grid-column: 5 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: var(--space-md);
+}
+
+.studio-header__image {
+  overflow: hidden;
+}
+
+.studio-header__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.studio-header__image--1 {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  aspect-ratio: 3 / 4;
+}
+
+.studio-header__image--2 {
+  grid-column: 2;
+  grid-row: 1;
+  aspect-ratio: 4 / 3;
+}
+
+.studio-header__image--3 {
+  grid-column: 3;
+  grid-row: 1;
+  aspect-ratio: 3 / 4;
+}
+
+@media (max-width: 1024px) {
+  .studio-header__title {
+    grid-column: 1 / span 4;
+  }
+
+  .studio-header__collage {
+    grid-column: 5 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .studio-header {
+    padding-top: calc(var(--space-xl) + 80px);
+  }
+
+  .studio-header__title {
+    grid-column: 1 / -1;
+    margin-bottom: var(--space-lg);
+  }
+
+  .studio-header__collage {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .studio-header__image--1 {
+    grid-row: 1;
+  }
+
+  .studio-header__image--2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .studio-header__image--3 {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* ============================================
+   Mieten Section Component
+   Section layout for rental page
+   ============================================ */
+
+.mieten-section {
+  padding: var(--space-xl) 0;
+}
+
+.mieten-section__title {
+  grid-column: 1 / span 3;
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-black);
+  margin: 0;
+}
+
+.mieten-section__content {
+  grid-column: 5 / -1;
+}
+
+.mieten-section--form {
+  padding: var(--space-lg) 0;
+}
+
+@media (max-width: 768px) {
+  .mieten-section__title {
+    grid-column: 1 / -1;
+    margin-bottom: var(--space-md);
+  }
+
+  .mieten-section__content {
+    grid-column: 1 / -1;
+  }
+}
