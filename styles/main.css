@@ -1329,13 +1329,19 @@ body.menu-open .header {
   grid-column: 1 / span 8;
 }
 
-/* Image container - sits beside accordion */
+/* Image container - sits beside accordion (right side for workshops) */
 .subpage-section__image {
   grid-column: 9 / -1;
   grid-row: 1;
   position: sticky;
   top: 120px;
   align-self: start;
+}
+
+/* Image on left side (for veranstaltungen/studio where accordion is on right) */
+.subpage-section__image--left {
+  grid-column: 1 / span 3;
+  grid-row: 1;
 }
 
 .subpage-section__image img {
@@ -1358,7 +1364,7 @@ body.menu-open .header {
 
 @media (max-width: 1024px) {
   .subpage-section__content {
-    grid-column: 3 / -1;
+    grid-column: 4 / -1;
   }
 
   .subpage-section__content--wide {
@@ -1367,6 +1373,10 @@ body.menu-open .header {
 
   .subpage-section__image {
     grid-column: 9 / -1;
+  }
+
+  .subpage-section__image--left {
+    grid-column: 1 / span 3;
   }
 }
 
@@ -1380,7 +1390,8 @@ body.menu-open .header {
     grid-column: 1 / -1;
   }
 
-  .subpage-section__image {
+  .subpage-section__image,
+  .subpage-section__image--left {
     display: none;
   }
 }

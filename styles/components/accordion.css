@@ -15,7 +15,7 @@
 
 .accordion__header {
   display: grid;
-  grid-template-columns: minmax(100px, 1fr) 2fr auto;
+  grid-template-columns: minmax(140px, 1fr) 2fr auto;
   align-items: center;
   gap: var(--space-lg);
   width: 100%;
@@ -76,7 +76,8 @@
 .accordion__inner {
   overflow: hidden;
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  /* Match header grid: label column + title column (minus arrow) */
+  grid-template-columns: minmax(140px, 1fr) 2fr;
   gap: var(--space-lg);
   padding-bottom: 0;
   opacity: 0;
