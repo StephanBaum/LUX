@@ -1299,10 +1299,39 @@ body.menu-open .header {
   padding: var(--space-lg) 0;
 }
 
+/* Rooms variant with image on left, accordion on right */
+.mieten-section--rooms {
+  padding: var(--space-section) 0;
+}
+
+.mieten-section--rooms .mieten-section__title {
+  grid-column: 1 / -1;
+  margin-bottom: var(--space-lg);
+}
+
+.mieten-section__accordion {
+  grid-column: 5 / -1;
+  grid-row: 2;
+}
+
+.mieten-section--rooms .subpage-section__image--left {
+  grid-column: 1 / span 4;
+  grid-row: 2;
+}
+
 @media (max-width: 768px) {
   .mieten-section__title {
     grid-column: 1 / -1;
     margin-bottom: var(--space-md);
+  }
+
+  .mieten-section__accordion {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .mieten-section--rooms .subpage-section__image--left {
+    display: none;
   }
 
   .mieten-section__content {
@@ -1327,6 +1356,7 @@ body.menu-open .header {
 /* Workshops variant - starts at column 1, spans 8 */
 .subpage-section__content--wide {
   grid-column: 1 / span 8;
+  grid-row: 1;
 }
 
 /* Image container - sits beside accordion (right side for workshops) */

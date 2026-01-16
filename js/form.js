@@ -11,7 +11,12 @@
       this.form = container;
       this.submitButton = container.querySelector('[data-form-submit]');
       this.dateDisplay = container.querySelector('[data-form-date]');
+      this.selectionDisplay = container.querySelector('[data-form-selection]');
       this.fields = container.querySelectorAll('[data-validate]');
+
+      // Find all checkboxes on the page for rooms and equipment
+      this.roomCheckboxes = document.querySelectorAll('input[name="room"]');
+      this.equipmentCheckboxes = document.querySelectorAll('input[name="equipment"]');
 
       this.init();
     }
@@ -19,6 +24,7 @@
     init() {
       this.bindEvents();
       this.updateSubmitState();
+      this.updateSelectionDisplay();
     }
 
     bindEvents() {
@@ -40,6 +46,14 @@
       // Listen for calendar changes
       document.addEventListener('calendar:change', (e) => {
         this.updateDateDisplay(e.detail);
+      });
+
+      // Listen for checkbox changes
+      this.roomCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => this.updateSelectionDisplay());
+      });
+      this.equipmentCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => this.updateSelectionDisplay());
       });
     }
 
@@ -117,6 +131,47 @@
         const startStr = this.formatDisplayDate(detail.startDate);
         const endStr = this.formatDisplayDate(detail.endDate);
         this.dateDisplay.textContent = `${startStr} → ${endStr}`;
+      }
+    }
+
+    updateSelectionDisplay() {
+      if (!this.selectionDisplay) return;
+
+      const selections = [];
+
+      // Get selected rooms
+      this.roomCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          // Get the title from the accordion item
+          const item = checkbox.closest('.accordion__item');
+          if (item) {
+            const title = item.querySelector('.accordion__title');
+            if (title) {
+              selections.push(title.textContent);
+            }
+          }
+        }
+      });
+
+      // Get selected equipment
+      this.equipmentCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          // Get the text from the checkbox label
+          const label = checkbox.closest('.checkbox-group__label');
+          if (label) {
+            const text = label.querySelector('.checkbox-group__text');
+            if (text) {
+              selections.push(text.textContent);
+            }
+          }
+        }
+      });
+
+      // Update display
+      if (selections.length > 0) {
+        this.selectionDisplay.textContent = selections.join(', ');
+      } else {
+        this.selectionDisplay.textContent = 'Keine Auswahl';
       }
     }
 

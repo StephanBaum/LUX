@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lekton:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/components/profile.css">
   <link rel="stylesheet" href="styles/components/page-header.css">
+  <link rel="stylesheet" href="styles/components/accordion.css">
   <link rel="stylesheet" href="styles/components/checkbox-group.css">
   <link rel="stylesheet" href="styles/components/calendar.css">
   <link rel="stylesheet" href="styles/components/form.css">
@@ -88,13 +88,11 @@
 
   <main>
     <!-- Page Header -->
-    <section class="page-header">
+    <section class="page-header page-header--subpage">
       <div class="page-header__container grid">
         <h1 class="page-header__title" data-animate="fade-up">Mieten</h1>
-        <div class="page-header__content">
-          <p class="page-header__text" data-animate="text-reveal">
-            Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci.
-          </p>
+        <div class="page-header__content page-header__content--wide">
+          <p class="page-header__text" data-animate="text-reveal">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac.</p>
           <div class="partners partners--inline" style="margin-top: var(--space-lg);" data-animate="fade-up">
             <span class="partners__logo">HASSELBLAD</span>
             <span class="partners__logo">ARRI</span>
@@ -105,84 +103,124 @@
     </section>
 
     <!-- Räume Section -->
-    <section class="mieten-section" data-parallax="0.05">
+    <section class="mieten-section mieten-section--rooms">
       <div class="grid">
         <h2 class="mieten-section__title" data-animate="fade-up">Räume</h2>
-        <div class="mieten-section__content">
-          <div class="checkbox-group" data-animate="fade-up">
-            <div class="checkbox-group__item">
-              <label class="checkbox-group__label">
-                <input type="checkbox" class="checkbox-group__checkbox" name="room" value="gross">
-                <span class="checkbox-group__check"></span>
-                <span class="checkbox-group__text">Item #1</span>
-              </label>
-              <span class="checkbox-group__desc">Großes Studio</span>
-              <svg class="checkbox-group__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-              </svg>
-            </div>
-            <div class="checkbox-group__item">
-              <label class="checkbox-group__label">
-                <input type="checkbox" class="checkbox-group__checkbox" name="room" value="klein">
-                <span class="checkbox-group__check"></span>
-                <span class="checkbox-group__text">Item #1</span>
-              </label>
-              <span class="checkbox-group__desc">Kleines Studio</span>
-              <svg class="checkbox-group__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-              </svg>
-            </div>
-            <div class="checkbox-group__item">
-              <label class="checkbox-group__label">
-                <input type="checkbox" class="checkbox-group__checkbox" name="room" value="analog">
-                <span class="checkbox-group__check"></span>
-                <span class="checkbox-group__text">Item #1</span>
-              </label>
-              <span class="checkbox-group__desc">Analog Studio</span>
-              <svg class="checkbox-group__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-              </svg>
-            </div>
-          </div>
+        <!-- Image container - LEFT side -->
+        <div class="subpage-section__image subpage-section__image--left is-visible" data-accordion-image-target>
+          <img src="../Assets/img/studio/360_F_244426.jpg" alt="" loading="lazy">
         </div>
-      </div>
-    </section>
-
-    <!-- Profile Section -->
-    <section class="profile" data-parallax="0.1">
-      <div class="grid">
-        <div class="profile__content">
-          <div class="profile__text" data-animate="fade-up">
-            <div class="profile__intro">
-              <h2 class="profile__title">Untitled (Profile)</h2>
-              <a href="mailto:hello@example.com" class="profile__email">hello@example.com</a>
-              <a href="#" class="profile__social">Instagram</a>
+        <div class="mieten-section__accordion" data-animate="fade-up">
+          <div class="accordion" data-accordion data-accordion-images>
+            <!-- Großes Studio -->
+            <div class="accordion__item is-open" data-accordion-item data-image="../Assets/img/studio/360_F_244426.jpg">
+              <button class="accordion__header" data-accordion-trigger>
+                <label class="accordion__checkbox">
+                  <input type="checkbox" name="room" value="gross">
+                  <span class="accordion__check"></span>
+                </label>
+                <span class="accordion__title">Großes Studio</span>
+                <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <div class="accordion__content" data-accordion-content>
+                <div class="accordion__inner">
+                  <div class="accordion__text">
+                    <div class="accordion__profile-intro">
+                      <h3 class="accordion__profile-title">250 m²</h3>
+                    </div>
+                    <div class="accordion__profile-section">
+                      <h4 class="accordion__profile-section-title">Ausstattung</h4>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Deckenhöhe 6m</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Hohlkehle 8x6m</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Tageslicht</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion__description">
+                    <p>Unser großes Studio bietet vielseitige Möglichkeiten für Foto- und Filmproduktionen. Die großzügige Fläche und hohe Decke ermöglichen aufwendige Set-Aufbauten.</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <p class="profile__bio">
-              Cras ut dictum mi. Sed quis lorem semper, ele mentum mauris vitae, consectetur orci.
-              Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus
-              nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus
-              ultrices euismod. Quisque eu purus convallis, gravida.
-            </p>
-
-            <div class="profile__section">
-              <h3 class="profile__section-title">Anmeldung</h3>
-              <div class="profile__education-item">
-                <span class="profile__education-title">Vestibulum Euismod (Ultrices)</span>
-                <span class="profile__education-detail">Suspendisse Aenean Lec</span>
-                <span class="profile__education-year">2023</span>
-              </div>
-              <div class="profile__education-item">
-                <span class="profile__education-title">Aliquam Faucibus Tellus</span>
-                <span class="profile__education-detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+            <!-- Kleines Studio -->
+            <div class="accordion__item" data-accordion-item data-image="../Assets/img/studio/gettyimages-168253056-612x612.jpg">
+              <button class="accordion__header" data-accordion-trigger>
+                <label class="accordion__checkbox">
+                  <input type="checkbox" name="room" value="klein">
+                  <span class="accordion__check"></span>
+                </label>
+                <span class="accordion__title">Kleines Studio</span>
+                <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <div class="accordion__content" data-accordion-content>
+                <div class="accordion__inner">
+                  <div class="accordion__text">
+                    <div class="accordion__profile-intro">
+                      <h3 class="accordion__profile-title">80 m²</h3>
+                    </div>
+                    <div class="accordion__profile-section">
+                      <h4 class="accordion__profile-section-title">Ausstattung</h4>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Deckenhöhe 4m</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Hohlkehle 4x4m</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion__description">
+                    <p>Ideal für kleinere Produktionen, Portraits und Produktfotografie. Kompakt und effizient ausgestattet.</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="profile__gallery profile__gallery--single" data-animate="fade-up">
-            <div class="profile__image profile__image--portrait-lg">
-              <img src="../Assets/img/image 2.png" alt="" loading="lazy">
+            <!-- Analog Studio -->
+            <div class="accordion__item" data-accordion-item data-image="../Assets/img/studio/analog.webp">
+              <button class="accordion__header" data-accordion-trigger>
+                <label class="accordion__checkbox">
+                  <input type="checkbox" name="room" value="analog">
+                  <span class="accordion__check"></span>
+                </label>
+                <span class="accordion__title">Analog Studio</span>
+                <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+                </svg>
+              </button>
+              <div class="accordion__content" data-accordion-content>
+                <div class="accordion__inner">
+                  <div class="accordion__text">
+                    <div class="accordion__profile-intro">
+                      <h3 class="accordion__profile-title">45 m²</h3>
+                    </div>
+                    <div class="accordion__profile-section">
+                      <h4 class="accordion__profile-section-title">Ausstattung</h4>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Dunkelkammer</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Vergrößerer</span>
+                      </div>
+                      <div class="accordion__profile-item">
+                        <span class="accordion__profile-item-title">Entwicklungsbecken</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion__description">
+                    <p>Vollständig ausgestattete Dunkelkammer für analoge Fotografie. Entwicklung von Schwarz-Weiß und Farbe möglich.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -359,8 +397,8 @@
             </div>
 
             <div class="form__row">
-              <div class="form__field form__field--date">
-                <span class="form__date-display" data-form-date>Zeitraum wählen</span>
+              <div class="form__field form__field--summary">
+                <span class="form__summary-value"><strong>Auswahl:</strong> <span data-form-date>Zeitraum wählen</span>, <span data-form-selection>Keine Auswahl</span></span>
               </div>
             </div>
 
@@ -465,6 +503,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/animations.js"></script>
+  <script src="js/accordion.js"></script>
   <script src="js/calendar.js"></script>
   <script src="js/form.js"></script>
 </body>

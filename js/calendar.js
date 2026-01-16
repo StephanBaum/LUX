@@ -153,7 +153,8 @@
       }
 
       // Dispatch change event for form validation
-      this.container.dispatchEvent(new CustomEvent('calendar:change', {
+      document.dispatchEvent(new CustomEvent('calendar:change', {
+        bubbles: true,
         detail: {
           startDate: this.startDate,
           endDate: this.endDate

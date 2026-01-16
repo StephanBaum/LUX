@@ -27,7 +27,12 @@
         const trigger = item.querySelector('[data-accordion-trigger]');
 
         if (trigger) {
-          trigger.addEventListener('click', () => {
+          trigger.addEventListener('click', (e) => {
+            // Don't toggle if clicking on checkbox
+            if (e.target.closest('.accordion__checkbox')) {
+              e.stopPropagation();
+              return;
+            }
             toggleItem(item, items, imageTarget);
           });
         }

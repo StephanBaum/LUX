@@ -57,6 +57,56 @@
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Checkbox in accordion header */
+.accordion__checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.accordion__checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.accordion__check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-black);
+  border-radius: 2px;
+  flex-shrink: 0;
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.accordion__check::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--color-white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.2s ease;
+}
+
+.accordion__checkbox input:checked + .accordion__check {
+  background-color: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.accordion__checkbox input:checked + .accordion__check::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.accordion__checkbox:hover .accordion__check {
+  border-color: var(--color-gray-500);
+}
+
 /* Open state */
 .accordion__item.is-open .accordion__arrow {
   transform: rotate(90deg);

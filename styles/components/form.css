@@ -83,6 +83,20 @@
   color: var(--color-black);
 }
 
+/* Summary fields for selections */
+.form__field--summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.form__summary-value {
+  font-family: var(--font-family-detail);
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--color-black);
+}
+
 .form__button {
   display: inline-flex;
   align-items: center;
