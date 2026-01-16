@@ -22,33 +22,14 @@
   align-items: center;
   gap: var(--space-sm);
   color: var(--color-gray-500);
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   user-select: none;
-  transition: opacity 0.3s ease;
 }
 
 .slider__drag-arrow {
   width: 48px;
   height: 24px;
-  animation: dragArrowPulse 2s ease-in-out infinite;
 }
 
-@keyframes dragArrowPulse {
-  0%, 100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  50% {
-    transform: translateX(8px);
-    opacity: 0.6;
-  }
-}
-
-.slider__drag-text {
-  font-weight: var(--font-weight-medium);
-}
 
 /* Hide drag hint when actively dragging */
 .slider.is-dragging .slider__drag-hint {
@@ -80,23 +61,8 @@
 .slider__slide {
   flex-shrink: 0;
   width: clamp(280px, 25vw, 400px);
-  height: clamp(350px, 35vw, 500px);
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: var(--color-gray-100);
-  border: 4px solid var(--color-white);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.slider__slide:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-}
-
-/* Disable hover effects when dragging */
-.slider.is-dragging .slider__slide {
-  transition: none;
-  transform: none;
 }
 
 .slider__slide img {

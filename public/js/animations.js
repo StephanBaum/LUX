@@ -229,21 +229,70 @@
     ScrollTrigger.refresh();
   }
 
-  // Initialize when DOM is ready and fonts loaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      // Wait for fonts to load (important for text-reveal line detection)
+  /**
+   * Wait for i18n to be ready before initializing
+   * i18n.js sets data-i18n-ready attribute when translations are applied
+   */
+  function waitForI18nAndInit() {
+    // Wait for fonts to load (important for text-reveal line detection)
+    const initAfterFonts = () => {
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(init);
       } else {
         setTimeout(init, 100);
       }
-    });
-  } else {
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(init);
+    };
+
+    // Check if i18n is already ready
+    if (document.documentElement.hasAttribute('data-i18n-ready')) {
+      initAfterFonts();
     } else {
-      setTimeout(init, 100);
+      // Wait for i18n to be ready
+      const observer = new MutationObserver((mutations, obs) => {
+        if (document.documentElement.hasAttribute('data-i18n-ready')) {
+          obs.disconnect();
+          initAfterFonts();
+        }
+      });
+      observer.observe(document.documentElement, { attributes: true });
+
+      // Fallback timeout in case i18n fails to load
+      setTimeout(() => {
+        observer.disconnect();
+        if (!document.documentElement.hasAttribute('data-i18n-ready')) {
+          initAfterFonts();
+        }
+      }, 2000);
     }
+  }
+
+  /**
+   * Re-initialize text-reveal after language change
+   */
+  function reinitTextReveal() {
+    // Kill existing text-reveal ScrollTriggers
+    ScrollTrigger.getAll().forEach(trigger => {
+      const el = trigger.trigger;
+      if (el && el.hasAttribute && el.hasAttribute('data-animate') &&
+          el.getAttribute('data-animate') === 'text-reveal') {
+        trigger.kill();
+      }
+    });
+
+    // Wait a frame for DOM to update, then reinitialize
+    requestAnimationFrame(() => {
+      initTextReveal();
+      ScrollTrigger.refresh();
+    });
+  }
+
+  // Listen for language changes from i18n.js
+  window.addEventListener('languageChanged', reinitTextReveal);
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', waitForI18nAndInit);
+  } else {
+    waitForI18nAndInit();
   }
 })();
