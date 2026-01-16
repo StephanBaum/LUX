@@ -112,6 +112,13 @@
         html += `<div class="${classes.join(' ')}" data-date="${date.toISOString()}">${day}</div>`;
       }
 
+      // Fill remaining cells to complete 6 rows (42 total cells)
+      const totalCells = startDayOfWeek + totalDays;
+      const remainingCells = 42 - totalCells;
+      for (let i = 0; i < remainingCells; i++) {
+        html += '<div class="calendar__day calendar__day--empty"></div>';
+      }
+
       grid.innerHTML = html;
     }
 
