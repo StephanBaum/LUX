@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/components/page-header.css';
+import '../styles/components/legal.css';
+---
+
+<Base title="Datenschutz - LUX Studio">
+  <!-- Page Header -->
+  <section class="page-header page-header--legal">
+    <div class="page-header__container grid">
+      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">Datenschutz</h1>
+    </div>
+  </section>
+
+  <!-- Legal Content -->
+  <section class="legal">
+    <div class="legal__container grid">
+      <div class="legal__updated" data-animate="fade-up">
+        <span data-i18n="labels.updated">Stand:</span> Januar 2026
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.overview">1. Datenschutz auf einen Blick</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p data-i18n="content.overview_intro">Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.responsible">2. Verantwortliche Stelle</h2>
+        <div class="legal__section-content">
+          <div class="legal__contact">
+            <strong>Studio Luxenburger</strong><br>
+            Florian & Martin Luxenburger GbR<br>
+            Rudolf-Diesel-Str. 6<br>
+            66773 Schwalbach<br><br>
+            <strong data-i18n="labels.phone">Telefon:</strong> +49 6834 460 74 30<br>
+            <strong data-i18n="labels.email">E-Mail:</strong> <a href="mailto:servus@luxenburger.de">servus@luxenburger.de</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.data_collection">3. Datenerfassung auf dieser Website</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p><strong data-i18n="content.server_logs_title">Server-Log-Dateien</strong></p>
+            <p data-i18n="content.server_logs_text">Der Provider der Seiten erhebt und speichert automatisch Informationen in so genannten Server-Log-Dateien, die Ihr Browser automatisch an uns übermittelt. Dies sind:</p>
+            <ul>
+              <li data-i18n="content.log_item1">Browsertyp und Browserversion</li>
+              <li data-i18n="content.log_item2">Verwendetes Betriebssystem</li>
+              <li data-i18n="content.log_item3">Referrer URL</li>
+              <li data-i18n="content.log_item4">Hostname des zugreifenden Rechners</li>
+              <li data-i18n="content.log_item5">Uhrzeit der Serveranfrage</li>
+              <li data-i18n="content.log_item6">IP-Adresse</li>
+            </ul>
+            <p data-i18n="content.server_logs_note">Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.contact_form">4. Kontaktformular</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p data-i18n="content.contact_form_text">Wenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben aus dem Anfrageformular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.cookies">5. Cookies</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p data-i18n="content.cookies_text">Diese Website verwendet nur technisch notwendige Cookies, die für den Betrieb der Website erforderlich sind. Es werden keine Tracking-Cookies oder Cookies zu Werbezwecken eingesetzt.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.rights">6. Ihre Rechte</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p data-i18n="content.rights_intro">Sie haben jederzeit das Recht:</p>
+            <ul>
+              <li data-i18n="content.right_item1">Auskunft über Ihre bei uns gespeicherten Daten zu erhalten</li>
+              <li data-i18n="content.right_item2">Diese Daten berichtigen oder löschen zu lassen</li>
+              <li data-i18n="content.right_item3">Die Verarbeitung einzuschränken</li>
+              <li data-i18n="content.right_item4">Der Verarbeitung zu widersprechen</li>
+              <li data-i18n="content.right_item5">Datenübertragbarkeit zu verlangen</li>
+            </ul>
+            <p data-i18n="content.rights_contact">Hierzu sowie zu weiteren Fragen zum Thema Datenschutz können Sie sich jederzeit an uns wenden.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.external">7. Externe Dienste</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p><strong>Google Fonts</strong></p>
+            <p data-i18n="content.google_fonts_text">Diese Seite nutzt zur einheitlichen Darstellung von Schriftarten so genannte Google Fonts. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Fonts in ihren Browsercache, um Texte und Schriftarten korrekt anzuzeigen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

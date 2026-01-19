@@ -84,6 +84,11 @@
   padding-bottom: var(--space-section);
 }
 
+/* Legal page variant - reduced spacing */
+.page-header--legal {
+  padding-bottom: var(--space-lg);
+}
+
 .page-header--subpage .page-header__content--wide {
   grid-column: 5 / -1;
 }

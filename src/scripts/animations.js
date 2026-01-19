@@ -26,6 +26,9 @@
   var TRIGGER_START = 'top 92%';
   var TRIGGER_END = 'bottom 8%';
 
+  // Track ScrollTriggers created by this module
+  var ownScrollTriggers = [];
+
   /**
    * Section Parallax
    */
@@ -36,7 +39,7 @@
       var speed = parseFloat(section.dataset.parallax) || 0.1;
       var distance = 50 * speed;
 
-      gsap.fromTo(section,
+      var tween = gsap.fromTo(section,
         { y: distance },
         {
           y: -distance,
@@ -49,6 +52,7 @@
           }
         }
       );
+      if (tween.scrollTrigger) ownScrollTriggers.push(tween.scrollTrigger);
     });
   }
 
@@ -61,7 +65,7 @@
     elements.forEach(function(el) {
       if (el.closest('[data-footer-reveal]')) return;
 
-      gsap.fromTo(el,
+      var tween = gsap.fromTo(el,
         { opacity: 0, y: 40 },
         {
           opacity: 1,
@@ -75,6 +79,7 @@
           }
         }
       );
+      if (tween.scrollTrigger) ownScrollTriggers.push(tween.scrollTrigger);
     });
   }
 
@@ -120,7 +125,7 @@
       var lineInners = el.querySelectorAll('.line-inner');
 
       // Use gsap.fromTo like fade-up does
-      gsap.fromTo(lineInners,
+      var tween = gsap.fromTo(lineInners,
         { y: '100%' },
         {
           y: '0%',
@@ -134,6 +139,7 @@
           }
         }
       );
+      if (tween.scrollTrigger) ownScrollTriggers.push(tween.scrollTrigger);
     });
   }
 
@@ -149,7 +155,7 @@
     gsap.set(footer, { clipPath: 'inset(100% 0 0 0)' });
     gsap.set(footerElements, { opacity: 0, y: 30 });
 
-    ScrollTrigger.create({
+    var st = ScrollTrigger.create({
       trigger: footer,
       start: 'top 90%',
       onEnter: function() {
@@ -158,6 +164,7 @@
         tl.to(footerElements, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08 }, '-=0.3');
       }
     });
+    ownScrollTriggers.push(st);
   }
 
   /**
@@ -166,8 +173,9 @@
   function initAnimations() {
     if (!shouldAnimate()) return;
 
-    // Kill all existing ScrollTriggers first
-    ScrollTrigger.getAll().forEach(function(st) { st.kill(); });
+    // Kill only ScrollTriggers created by this module (preserve hero parallax etc.)
+    ownScrollTriggers.forEach(function(st) { st.kill(); });
+    ownScrollTriggers = [];
 
     initParallax();
     initFadeUp();
@@ -213,13 +221,15 @@
    * Re-initialize text-reveal after language change
    */
   function reinitTextReveal() {
-    // Kill text-reveal ScrollTriggers and reset elements
-    ScrollTrigger.getAll().forEach(function(trigger) {
+    // Kill text-reveal ScrollTriggers from our owned list and reset elements
+    ownScrollTriggers = ownScrollTriggers.filter(function(trigger) {
       var el = trigger.trigger;
       if (el && el.hasAttribute && el.hasAttribute('data-animate') &&
           el.getAttribute('data-animate') === 'text-reveal') {
         trigger.kill();
+        return false;
       }
+      return true;
     });
 
     // Reset text-reveal elements so they can be re-processed

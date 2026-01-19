@@ -1,0 +1,176 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/components/page-header.css';
+import '../styles/components/accordion.css';
+import '../styles/components/legal.css';
+---
+
+<Base title="AGB - LUX Studio">
+  <!-- Page Header -->
+  <section class="page-header page-header--legal">
+    <div class="page-header__container grid">
+      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">AGB</h1>
+      <div class="page-header__content page-header__content--wide">
+        <p class="page-header__text" data-animate="text-reveal" data-i18n="header.text">Allgemeine Geschäftsbedingungen für die Vermietung von Studio- und Produktionsräumen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGB Accordion -->
+  <section class="legal legal--agb">
+    <div class="legal__container grid">
+      <div class="legal__updated" data-animate="fade-up">
+        <span data-i18n="labels.updated">Stand:</span> Januar 2026
+      </div>
+
+      <div class="accordion accordion--agb" data-accordion data-animate="fade-up">
+        <!-- Geltungsbereich -->
+        <div class="accordion__item is-open" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section1_title">Geltungsbereich</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section1_text1">Diese Allgemeinen Geschäftsbedingungen gelten für alle Verträge über die Vermietung von Studio- und Produktionsräumen sowie Equipment zwischen Studio Luxenburger (nachfolgend "Vermieter") und dem Kunden (nachfolgend "Mieter").</p>
+                <p data-i18n="agb.section1_text2">Abweichende Bedingungen des Mieters werden nicht anerkannt, es sei denn, der Vermieter stimmt ihrer Geltung ausdrücklich schriftlich zu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vertragsschluss -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section2_title">Vertragsschluss & Buchung</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section2_text1">Buchungsanfragen können über das Kontaktformular, per E-Mail oder telefonisch erfolgen. Ein Vertrag kommt erst durch schriftliche Bestätigung des Vermieters zustande.</p>
+                <p data-i18n="agb.section2_text2">Mit der Buchungsbestätigung wird eine Anzahlung in Höhe von 50% des Mietpreises fällig. Die Restzahlung ist spätestens am Tag der Nutzung zu leisten.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mietpreise -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section3_title">Mietpreise & Zahlung</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section3_text1">Die Mietpreise verstehen sich in Euro zuzüglich der gesetzlichen Mehrwertsteuer. Zusätzliches Equipment wird separat berechnet.</p>
+                <p data-i18n="agb.section3_text2">Die Zahlung erfolgt per Überweisung oder EC-Karte. Bei Überschreitung der gebuchten Zeit wird jede angefangene Stunde anteilig berechnet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stornierung -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section4_title">Stornierung & Rücktritt</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section4_text1">Bei Stornierung bis 14 Tage vor dem Miettermin wird die Anzahlung vollständig erstattet. Bei Stornierung bis 7 Tage vorher werden 50% der Anzahlung einbehalten.</p>
+                <p data-i18n="agb.section4_text2">Bei kurzfristigerer Stornierung oder Nichterscheinen ist der volle Mietpreis zu entrichten.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutzung -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section5_title">Nutzung & Pflichten</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section5_text1">Der Mieter verpflichtet sich, die Räumlichkeiten und das Equipment pfleglich zu behandeln und nur für den vereinbarten Zweck zu nutzen.</p>
+                <p data-i18n="agb.section5_text2">Eine Untervermietung oder Überlassung an Dritte ist ohne ausdrückliche Zustimmung des Vermieters nicht gestattet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Haftung -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section6_title">Haftung & Schäden</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section6_text1">Der Mieter haftet für alle Schäden an Räumlichkeiten und Equipment, die während der Mietzeit durch ihn oder seine Mitarbeiter verursacht werden.</p>
+                <p data-i18n="agb.section6_text2">Der Vermieter haftet nicht für Schäden an eingebrachten Gegenständen des Mieters, es sei denn, diese wurden vorsätzlich oder grob fahrlässig verursacht.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hausordnung -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section7_title">Hausordnung</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section7_text1">Das Rauchen ist in allen Räumlichkeiten untersagt. Speisen und Getränke sind nur in den dafür vorgesehenen Bereichen gestattet.</p>
+                <p data-i18n="agb.section7_text2">Der Mieter ist verpflichtet, die Räumlichkeiten nach Nutzung in ordnungsgemäßem Zustand zu hinterlassen.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schlussbestimmungen -->
+        <div class="accordion__item" data-accordion-item>
+          <button class="accordion__header" data-accordion-trigger>
+            <span class="accordion__title" data-i18n="agb.section8_title">Schlussbestimmungen</span>
+            <svg class="accordion__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="accordion__content" data-accordion-content>
+            <div class="accordion__inner">
+              <div class="legal__text">
+                <p data-i18n="agb.section8_text1">Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand ist Saarbrücken.</p>
+                <p data-i18n="agb.section8_text2">Sollten einzelne Bestimmungen dieser AGB unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen davon unberührt.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page-specific scripts -->
+  <script src="../scripts/accordion.js"></script>
+</Base>

@@ -1,0 +1,173 @@
+/* ============================================
+   Legal Pages Styles
+   Impressum, Datenschutz, AGB
+   ============================================ */
+
+.legal {
+  padding: var(--space-section) 0;
+}
+
+.legal__container {
+  /* Uses the global grid */
+}
+
+/* Each section is a full-width row with internal grid layout */
+.legal__section {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 2fr 5fr;
+  gap: var(--space-xl);
+  padding: var(--space-xl) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.legal__section:first-of-type {
+  padding-top: 0;
+}
+
+.legal__section:last-of-type {
+  border-bottom: none;
+}
+
+.legal__section-title {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  color: var(--color-black);
+  margin: 0;
+}
+
+.legal__section-content {
+  /* Content area */
+}
+
+.legal__text {
+  font-family: var(--font-family-detail);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-gray-500);
+}
+
+.legal__text p {
+  margin-bottom: var(--space-md);
+}
+
+.legal__text p:last-child {
+  margin-bottom: 0;
+}
+
+.legal__text a {
+  color: var(--color-black);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal__text a:hover {
+  color: var(--color-primary);
+}
+
+.legal__text ul,
+.legal__text ol {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-lg);
+}
+
+.legal__text li {
+  margin-bottom: var(--space-sm);
+}
+
+.legal__contact {
+  font-family: var(--font-family-detail);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-gray-500);
+}
+
+.legal__contact strong {
+  color: var(--color-black);
+  font-weight: var(--font-weight-medium);
+}
+
+.legal__contact a {
+  color: var(--color-black);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal__contact a:hover {
+  color: var(--color-primary);
+}
+
+/* Last updated - at the top, right aligned */
+.legal__updated {
+  grid-column: 1 / -1;
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-xl);
+  text-align: right;
+}
+
+/* AGB page - full width accordion */
+.legal--agb .accordion {
+  grid-column: 1 / -1;
+}
+
+/* AGB accordion variant - title left, text in middle column, arrow far right */
+.accordion--agb .accordion__header {
+  grid-template-columns: 2fr 5fr 20px;
+}
+
+.accordion--agb .accordion__title {
+  grid-column: 1;
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-black);
+}
+
+.accordion--agb .accordion__arrow {
+  grid-column: 3;
+}
+
+/* Content: text aligned with middle column, shifted up to header height */
+.accordion--agb .accordion__inner {
+  grid-template-columns: 2fr 5fr 20px;
+}
+
+.accordion--agb .accordion__item.is-open .accordion__inner {
+  transform: translateY(-42px);
+}
+
+.accordion--agb .accordion__inner .legal__text {
+  grid-column: 2;
+}
+
+/* Last item has no border */
+.accordion--agb .accordion__item:last-child {
+  border-bottom: none;
+}
+
+/* Mobile: Stack title above content */
+@media (max-width: 768px) {
+  .legal__section {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .legal__section-title {
+    font-size: 1rem;
+  }
+
+  /* AGB accordion mobile */
+  .accordion--agb .accordion__header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .accordion--agb .accordion__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .accordion--agb .accordion__inner .legal__text {
+    grid-column: 1;
+  }
+}

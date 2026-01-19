@@ -61,7 +61,7 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #1E8784;
+  background: var(--color-black);
 }
 
 body {

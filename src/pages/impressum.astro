@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/components/page-header.css';
+import '../styles/components/legal.css';
+---
+
+<Base title="Impressum - LUX Studio">
+  <!-- Page Header -->
+  <section class="page-header page-header--legal">
+    <div class="page-header__container grid">
+      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">Impressum</h1>
+    </div>
+  </section>
+
+  <!-- Legal Content -->
+  <section class="legal">
+    <div class="legal__container grid">
+      <div class="legal__updated" data-animate="fade-up">
+        <span data-i18n="labels.updated">Stand:</span> Januar 2026
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.provider">Angaben gemäß § 5 TMG</h2>
+        <div class="legal__section-content">
+          <div class="legal__contact">
+            <strong>Studio Luxenburger</strong><br>
+            Florian & Martin Luxenburger GbR<br>
+            Rudolf-Diesel-Str. 6<br>
+            66773 Schwalbach<br>
+            Deutschland
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.contact">Kontakt</h2>
+        <div class="legal__section-content">
+          <div class="legal__contact">
+            <strong data-i18n="labels.phone">Telefon:</strong> +49 6834 460 74 30<br>
+            <strong data-i18n="labels.fax">Fax:</strong> +49 176 211 55 132<br>
+            <strong data-i18n="labels.email">E-Mail:</strong> <a href="mailto:servus@luxenburger.de">servus@luxenburger.de</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.representatives">Vertreten durch</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p>Florian Luxenburger<br>Martin Luxenburger</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.vat">Umsatzsteuer-ID</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p data-i18n="content.vat_info">Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:</p>
+            <p>DE XXX XXX XXX</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.responsibility">Verantwortlich für den Inhalt</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p data-i18n="content.responsibility_info">Verantwortlich nach § 55 Abs. 2 RStV:</p>
+            <p>Florian Luxenburger<br>Rudolf-Diesel-Str. 6<br>66773 Schwalbach</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal__section" data-animate="fade-up">
+        <h2 class="legal__section-title" data-i18n="sections.dispute">Streitschlichtung</h2>
+        <div class="legal__section-content">
+          <div class="legal__text">
+            <p><span data-i18n="content.dispute_info">Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:</span> <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a></p>
+            <p data-i18n="content.dispute_note">Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
