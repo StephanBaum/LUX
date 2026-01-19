@@ -1,9 +1,41 @@
 ---
 import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
 import '../styles/components/profile.css';
+
+const organizationSchema = {
+  '@type': 'Organization',
+  name: 'Studio Luxenburger',
+  url: 'https://luxenburger.de',
+  logo: 'https://luxenburger.de/Assets/img/logo.png',
+  image: 'https://luxenburger.de/Assets/img/og-image.jpg',
+  description: 'Professionelles Foto- und Videostudio in Schwalbach. Studioräume, Equipment-Verleih und Workshops für Fotografie und Film.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Rudolf-Diesel-Str. 6',
+    addressLocality: 'Schwalbach',
+    postalCode: '66773',
+    addressCountry: 'DE'
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+49-6834-460-74-30',
+    contactType: 'customer service',
+    email: 'servus@luxenburger.de',
+    availableLanguage: ['German', 'English']
+  },
+  sameAs: [
+    'https://www.instagram.com/studioluxenburger'
+  ]
+};
 ---
 
-<Base title="LUX Studio">
+<Base
+  title="LUX Studio - Professionelles Foto- und Videostudio in Schwalbach"
+  description="Studio Luxenburger: Professionelles Foto- und Videostudio in Schwalbach. Studioräume mieten, Equipment-Verleih, Workshops für Fotografie und Film."
+>
+  <SEO schema={organizationSchema} slot="head" />
+
   <section class="hero">
     <!-- Floating images with parallax - positions via data attributes -->
     <div class="hero__images">
@@ -13,7 +45,7 @@ import '../styles/components/profile.css';
            data-left="-5%"
            data-width="38vw"
            data-height="50vh">
-        <img src="/Assets/img/image 0.png" alt="">
+        <img src="/Assets/img/image 0.png" alt="Studio Luxenburger - Professionelles Fotostudio Ambiente">
       </div>
       <div class="hero__image"
            data-speed="0.6"
@@ -21,7 +53,7 @@ import '../styles/components/profile.css';
            data-right="10%"
            data-width="35vw"
            data-height="40vh">
-        <img src="/Assets/img/image 4.png" alt="">
+        <img src="/Assets/img/image 4.png" alt="Studioaufnahme mit professioneller Beleuchtung">
       </div>
       <div class="hero__image"
            data-speed="1.5"
@@ -29,7 +61,7 @@ import '../styles/components/profile.css';
            data-left="5%"
            data-width="42vw"
            data-height="35vh">
-        <img src="/Assets/img/image 6.png" alt="">
+        <img src="/Assets/img/image 6.png" alt="Kreative Fotografie im Studio Luxenburger">
       </div>
       <div class="hero__image"
            data-speed="0.8"
@@ -37,7 +69,7 @@ import '../styles/components/profile.css';
            data-right="-5%"
            data-width="36vw"
            data-height="55vh">
-        <img src="/Assets/img/image 7.png" alt="">
+        <img src="/Assets/img/image 7.png" alt="Professionelle Studiofotografie Ergebnis">
       </div>
     </div>
 
@@ -102,19 +134,19 @@ import '../styles/components/profile.css';
     <div class="slider__track-wrapper">
       <div class="slider__track" data-slider-track>
         <div class="slider__slide">
-          <img src="/Assets/img/image 1.png" alt="" draggable="false" decoding="async">
+          <img src="/Assets/img/image 1.png" alt="Fotoproduktion im Studioraum" draggable="false" decoding="async">
         </div>
         <div class="slider__slide">
-          <img src="/Assets/img/image 2.png" alt="" draggable="false" decoding="async">
+          <img src="/Assets/img/image 2.png" alt="Studiofotografie Beispiel" draggable="false" decoding="async">
         </div>
         <div class="slider__slide">
-          <img src="/Assets/img/image 3.png" alt="" draggable="false" decoding="async">
+          <img src="/Assets/img/image 3.png" alt="Professionelles Fotoshooting" draggable="false" decoding="async">
         </div>
         <div class="slider__slide">
           <img src="/Assets/img/image 4.png" alt="" draggable="false" decoding="async">
         </div>
         <div class="slider__slide">
-          <img src="/Assets/img/image 5.png" alt="" draggable="false" decoding="async">
+          <img src="/Assets/img/image 5.png" alt="Studio Ambiente und Ausstattung" draggable="false" decoding="async">
         </div>
         <div class="slider__slide">
           <img src="/Assets/img/image 6.png" alt="" draggable="false" decoding="async">
@@ -127,7 +159,7 @@ import '../styles/components/profile.css';
   <section class="full-width-copy" data-parallax="0.2">
     <div class="full-width-copy__container grid">
       <h2 class="full-width-copy__label" data-animate="fade-up" data-i18n="section_studio.label">Das Studio</h2>
-      <p class="full-width-copy__text" data-animate="text-reveal" data-i18n="section_studio.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
+      <p class="full-width-copy__text" data-animate="fade-up" data-i18n="section_studio.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
     </div>
   </section>
 
@@ -171,18 +203,18 @@ import '../styles/components/profile.css';
         <div class="profile__gallery" data-animate="fade-up">
           <div class="profile__gallery-row profile__gallery-row--top">
             <div class="profile__image profile__image--landscape">
-              <img src="/Assets/img/image 1.png" alt="" loading="lazy">
+              <img src="/Assets/img/image 1.png" alt="Team Studio Luxenburger bei der Arbeit" loading="lazy">
             </div>
             <div class="profile__image profile__image--portrait-sm">
-              <img src="/Assets/img/image 2.png" alt="" loading="lazy">
+              <img src="/Assets/img/image 2.png" alt="Portrait Fotografie im Studio" loading="lazy">
             </div>
           </div>
           <div class="profile__gallery-row profile__gallery-row--bottom">
             <div class="profile__image profile__image--portrait-md">
-              <img src="/Assets/img/image 3.png" alt="" loading="lazy">
+              <img src="/Assets/img/image 3.png" alt="Kreative Studiofotografie" loading="lazy">
             </div>
             <div class="profile__image profile__image--portrait-lg">
-              <img src="/Assets/img/image 4.png" alt="" loading="lazy">
+              <img src="/Assets/img/image 4.png" alt="Professionelle Studiobeleuchtung" loading="lazy">
             </div>
           </div>
         </div>
@@ -195,7 +227,7 @@ import '../styles/components/profile.css';
     <div class="cta__container grid">
       <h2 class="cta__title" data-animate="fade-up" data-i18n="cta.title">Anfragen</h2>
       <div class="cta__content">
-        <p class="cta__text" data-animate="text-reveal" data-i18n="cta.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
+        <p class="cta__text" data-animate="fade-up" data-i18n="cta.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
         <a href="mailto:servus@luxenburger.de" class="cta__link" data-animate="fade-up">
           <svg class="cta__arrow" viewBox="0 0 55 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 8H53M53 8L46 1M53 8L46 15" stroke="currentColor" stroke-width="2"/>

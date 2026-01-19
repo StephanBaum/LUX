@@ -65,8 +65,14 @@
     elements.forEach(function(el) {
       if (el.closest('[data-footer-reveal]')) return;
 
-      var tween = gsap.fromTo(el,
-        { opacity: 0, y: 40 },
+      // Set initial state
+      gsap.set(el, { opacity: 0, y: 40 });
+
+      // Check if element is already in viewport
+      var rect = el.getBoundingClientRect();
+      var isInViewport = rect.top < window.innerHeight * 0.92;
+
+      var tween = gsap.to(el,
         {
           opacity: 1,
           y: 0,
@@ -79,6 +85,12 @@
           }
         }
       );
+
+      // If already in viewport, play immediately
+      if (isInViewport && tween.scrollTrigger) {
+        tween.scrollTrigger.animation.progress(1);
+      }
+
       if (tween.scrollTrigger) ownScrollTriggers.push(tween.scrollTrigger);
     });
   }
@@ -124,9 +136,14 @@
 
       var lineInners = el.querySelectorAll('.line-inner');
 
-      // Use gsap.fromTo like fade-up does
-      var tween = gsap.fromTo(lineInners,
-        { y: '100%' },
+      // Set initial state
+      gsap.set(lineInners, { y: '100%' });
+
+      // Check if element is already in viewport
+      var rect = el.getBoundingClientRect();
+      var isInViewport = rect.top < window.innerHeight * 0.92;
+
+      var tween = gsap.to(lineInners,
         {
           y: '0%',
           duration: 0.7,
@@ -139,6 +156,12 @@
           }
         }
       );
+
+      // If already in viewport, play immediately
+      if (isInViewport && tween.scrollTrigger) {
+        tween.scrollTrigger.animation.progress(1);
+      }
+
       if (tween.scrollTrigger) ownScrollTriggers.push(tween.scrollTrigger);
     });
   }
@@ -182,10 +205,7 @@
     initTextReveal();
     initFooterReveal();
 
-    // Initial refresh
-    ScrollTrigger.refresh();
-
-    // Delayed refresh to catch elements already in viewport after preloader
+    // Refresh after a small delay to ensure layout is stable
     setTimeout(function() {
       ScrollTrigger.refresh(true);
     }, 100);

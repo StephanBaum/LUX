@@ -1,0 +1,19 @@
+---
+/**
+ * SEO Component for JSON-LD Structured Data
+ * Usage: <SEO schema={yourSchemaObject} />
+ */
+
+interface Props {
+  schema: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { schema } = Astro.props;
+
+// Ensure @context is set
+const schemaWithContext = Array.isArray(schema)
+  ? schema.map(s => ({ '@context': 'https://schema.org', ...s }))
+  : { '@context': 'https://schema.org', ...schema };
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schemaWithContext)} />

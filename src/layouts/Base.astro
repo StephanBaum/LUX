@@ -11,12 +11,22 @@ import '../styles/main.css';
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
 }
 
 const {
   title = 'LUX Studio',
-  description = 'Professional photography and video studio'
+  description = 'Professionelles Foto- und Videostudio in Schwalbach - Studio Luxenburger bietet Studioräume, Equipment-Verleih und Workshops für Fotografie und Film.',
+  image = '/Assets/img/og-image.jpg',
+  type = 'website',
+  noindex = false
 } = Astro.props;
+
+const siteUrl = 'https://luxenburger.de';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImageUrl = new URL(image, siteUrl).href;
 ---
 
 <!DOCTYPE html>
@@ -26,6 +36,31 @@ const {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
   <title>{title}</title>
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalUrl}>
+
+  <!-- Robots -->
+  {noindex && <meta name="robots" content="noindex, nofollow">}
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content={type}>
+  <meta property="og:url" content={canonicalUrl}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImageUrl}>
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="Studio Luxenburger">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content={canonicalUrl}>
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImageUrl}>
+
+  <!-- JSON-LD slot for page-specific structured data -->
+  <slot name="head" />
 
   <!-- Preload critical fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

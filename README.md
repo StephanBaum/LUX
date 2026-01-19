@@ -66,9 +66,56 @@ site_v3/
 | Technology | Purpose |
 |------------|---------|
 | [Astro](https://astro.build) | Static site generator |
+| [@astrojs/sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/) | Sitemap generation |
 | Vanilla JS | Client-side interactions |
 | [GSAP](https://greensock.com/gsap/) | Animations & scroll effects |
 | CSS Custom Properties | Design tokens |
+
+## SEO & Structured Data
+
+The site includes comprehensive SEO optimization for Google Rich Snippets.
+
+### Features
+- **Sitemap**: Auto-generated at `/sitemap-index.xml`
+- **Open Graph tags**: For social media sharing (Facebook, LinkedIn)
+- **Twitter Cards**: Large image cards for Twitter
+- **Canonical URLs**: Prevent duplicate content issues
+- **JSON-LD Structured Data**: Schema.org markup for rich snippets
+
+### Structured Data by Page
+
+| Page | Schema Type | Data |
+|------|-------------|------|
+| `index.astro` | Organization | Company info, contact, address |
+| `studio.astro` | PhotographyBusiness | Location, hours, services |
+| `workshops.astro` | Course (x3) | Workshop details, provider |
+| `mieten.astro` | Product (x3) | Rental options with pricing |
+
+### SEO Component
+
+Reusable component for JSON-LD structured data:
+
+```astro
+---
+import SEO from '../components/SEO.astro';
+
+const schema = {
+  '@type': 'Organization',
+  name: 'Studio Luxenburger',
+  // ... schema data
+};
+---
+
+<Base title="Page Title">
+  <SEO schema={schema} slot="head" />
+  <!-- Page content -->
+</Base>
+```
+
+### Verification Tools
+- **Rich Results Test**: https://search.google.com/test/rich-results
+- **Schema Validator**: https://validator.schema.org/
+- **OG Debugger**: https://developers.facebook.com/tools/debug/
 
 ## Components
 
@@ -76,17 +123,34 @@ site_v3/
 The main layout wrapper. All pages use this layout.
 
 **Props:**
-- `title` (string) - Page title
-- `extraStyles` (string[]) - Additional CSS files to load
+- `title` (string) - Page title (used in `<title>` and OG tags)
+- `description` (string) - Meta description (defaults to site description)
+- `image` (string) - OG image URL (defaults to `/Assets/img/og-image.jpg`)
+- `type` (string) - OG type: `website` or `article` (defaults to `website`)
+- `noindex` (boolean) - Set `true` to exclude from search engines
+
+**Slots:**
+- `default` - Main page content
+- `head` - Additional elements for `<head>` (JSON-LD, etc.)
+- `scripts` - Page-specific scripts
 
 **Usage:**
 ```astro
 ---
 import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
 ---
 
-<Base title="Page Title" extraStyles={['/styles/components/accordion.css']}>
+<Base
+  title="Page Title - LUX Studio"
+  description="Custom page description for SEO"
+  image="/Assets/img/custom-og.jpg"
+>
+  <SEO schema={schemaObject} slot="head" />
+
   <!-- Page content -->
+
+  <script src="../scripts/page-script.js" slot="scripts"></script>
 </Base>
 ```
 

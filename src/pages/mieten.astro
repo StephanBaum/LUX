@@ -1,19 +1,86 @@
 ---
 import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
 import '../styles/components/page-header.css';
 import '../styles/components/accordion.css';
 import '../styles/components/checkbox-group.css';
 import '../styles/components/calendar.css';
 import '../styles/components/form.css';
+
+const rentalSchema = [
+  {
+    '@type': 'Product',
+    name: 'Großes Studio - Tagesmiete',
+    description: '250m² Studioraum mit 6m Deckenhöhe, 8x6m Hohlkehle und Tageslicht. Ideal für große Foto- und Filmproduktionen.',
+    image: 'https://luxenburger.de/Assets/img/studio/360_F_244426.jpg',
+    url: 'https://luxenburger.de/mieten',
+    brand: {
+      '@type': 'Organization',
+      name: 'Studio Luxenburger'
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: '450',
+      priceValidUntil: '2026-12-31',
+      availability: 'https://schema.org/InStock',
+      url: 'https://luxenburger.de/mieten'
+    }
+  },
+  {
+    '@type': 'Product',
+    name: 'Kleines Studio - Tagesmiete',
+    description: '80m² Studioraum mit 4m Deckenhöhe und 4x4m Hohlkehle. Ideal für Portraits und Produktfotografie.',
+    image: 'https://luxenburger.de/Assets/img/studio/gettyimages-168253056-612x612.jpg',
+    url: 'https://luxenburger.de/mieten',
+    brand: {
+      '@type': 'Organization',
+      name: 'Studio Luxenburger'
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: '200',
+      priceValidUntil: '2026-12-31',
+      availability: 'https://schema.org/InStock',
+      url: 'https://luxenburger.de/mieten'
+    }
+  },
+  {
+    '@type': 'Product',
+    name: 'Analog Studio - Tagesmiete',
+    description: '45m² Dunkelkammer mit Vergrößerer und Entwicklungsbecken. Für analoge Schwarz-Weiß- und Farbfotografie.',
+    image: 'https://luxenburger.de/Assets/img/studio/analog.webp',
+    url: 'https://luxenburger.de/mieten',
+    brand: {
+      '@type': 'Organization',
+      name: 'Studio Luxenburger'
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: '150',
+      priceValidUntil: '2026-12-31',
+      availability: 'https://schema.org/InStock',
+      url: 'https://luxenburger.de/mieten'
+    }
+  }
+];
 ---
 
-<Base title="Mieten - LUX Studio">
+<Base
+  title="Studio Mieten - LUX Studio | Studioräume in Schwalbach"
+  description="Professionelle Studioräume mieten bei Studio Luxenburger: Großes Studio, kleines Studio und Dunkelkammer. Equipment-Verleih inklusive."
+  image="/Assets/img/studio/360_F_244426.jpg"
+>
+  <SEO schema={rentalSchema} slot="head" />
+
   <!-- Page Header -->
   <section class="page-header page-header--subpage">
     <div class="page-header__container grid">
       <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">Mieten</h1>
       <div class="page-header__content page-header__content--wide">
-        <p class="page-header__text" data-animate="text-reveal" data-i18n="header.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac.</p>
+        <p class="page-header__text" data-animate="fade-up" data-i18n="header.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac.</p>
         <div class="partners partners--inline" style="margin-top: var(--space-lg);" data-animate="fade-up">
           <span class="partners__logo">HASSELBLAD</span>
           <span class="partners__logo">ARRI</span>
@@ -29,7 +96,7 @@ import '../styles/components/form.css';
       <h2 class="mieten-section__title" data-animate="fade-up" data-i18n="sections.rooms">Räume</h2>
       <!-- Image container - LEFT side -->
       <div class="subpage-section__image subpage-section__image--left is-visible" data-accordion-image-target>
-        <img src="/Assets/img/studio/360_F_244426.jpg" alt="" loading="lazy">
+        <img src="/Assets/img/studio/360_F_244426.jpg" alt="Großes Fotostudio mit Hohlkehle" loading="lazy">
       </div>
       <div class="mieten-section__accordion" data-animate="fade-up">
         <div class="accordion" data-accordion data-accordion-images>
