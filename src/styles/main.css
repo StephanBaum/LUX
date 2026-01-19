@@ -605,6 +605,7 @@ body.menu-open .header {
   width: 0.8em;
   height: 0.8em;
   flex-shrink: 0;
+  opacity: 0; /* Hidden by default, shown on hover via JS */
 }
 
 /* ============================================
@@ -698,6 +699,11 @@ body.menu-open .header {
     --grid-gutter: 16px;
   }
 
+  /* Clip hero overflow on mobile to prevent layout issues */
+  .hero {
+    overflow: hidden;
+  }
+
   /* Nav full width on mobile */
   .hero__nav {
     grid-column: 1 / -1;
@@ -723,9 +729,9 @@ body.menu-open .header {
     right: auto !important;
   }
 
-  /* Top-right image - move to top right */
+  /* Top-right image - move below header */
   .hero__image:nth-child(2) {
-    top: 0 !important;
+    top: 90px !important;
     right: -5% !important;
     bottom: auto !important;
     left: auto !important;
@@ -898,7 +904,7 @@ body.menu-open .header {
   }
 
   .slider__drag-hint {
-    grid-column: 1 / span 4;
+    grid-column: 1 / -1;
   }
 
   .slider__slide {
