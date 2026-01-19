@@ -310,6 +310,16 @@ import '../styles/components/form.css';
             </div>
           </div>
 
+          <div class="form__row form__row--two-col">
+            <div class="form__field">
+              <input type="email" class="form__input" name="email" placeholder="E-Mail*" required data-validate data-i18n-placeholder="form.email_placeholder">
+              <span class="form__error" data-i18n="form.error_email">Bitte geben Sie eine gültige E-Mail-Adresse ein</span>
+            </div>
+            <div class="form__field">
+              <input type="tel" class="form__input" name="telefon" placeholder="Telefon (optional)" data-i18n-placeholder="form.phone_placeholder">
+            </div>
+          </div>
+
           <div class="form__row">
             <div class="form__field form__field--summary">
               <span class="form__summary-value"><strong data-i18n="form.selection_label">Auswahl:</strong> <span data-form-date data-i18n="calendar.hint">Zeitraum wählen</span>, <span data-form-selection data-i18n="form.no_selection">Keine Auswahl</span></span>
@@ -330,7 +340,7 @@ import '../styles/components/form.css';
           </div>
 
           <div class="form__success" data-form-success data-i18n="form.success">
-            Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze.
+            Vielen Dank für Ihre Anfrage! Wir melden uns.
           </div>
         </form>
       </div>
@@ -339,6 +349,7 @@ import '../styles/components/form.css';
 
   <!-- Page-specific scripts -->
   <script src="../scripts/accordion.js"></script>
+  <script src="../scripts/ical-client.js"></script>
   <script src="../scripts/calendar.js"></script>
   <script src="../scripts/form.js"></script>
 </Base>

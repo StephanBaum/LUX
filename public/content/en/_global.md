@@ -25,17 +25,24 @@ contact:
 
 form:
   name_placeholder: "Name"
-  email_placeholder: "Email"
-  phone_placeholder: "Phone"
+  company_placeholder: "Company"
+  email_placeholder: "Email*"
+  phone_placeholder: "Phone (optional)"
+  inquiry_placeholder: "Inquiry"
   message_placeholder: "Your message"
   submit: "Submit"
-  success: "Thank you for your inquiry! We'll get back to you within 24 hours."
+  success: "Thank you for your inquiry! We'll be in touch."
   error_name: "Please enter your name"
-  error_email: "Please enter a valid email"
+  error_email: "Please enter a valid email address"
   error_message: "Please enter a message"
+  error_inquiry: "Please enter your inquiry"
+  selection_label: "Selection:"
+  no_selection: "No selection"
 
 calendar:
   hint: "Select dates"
+  blocked_hint: "Booked"
+  blocked_warning: "The selected period includes dates that are already booked."
   months: "January,February,March,April,May,June,July,August,September,October,November,December"
   months_short: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"
 

@@ -131,9 +131,10 @@
 .form__success {
   display: none;
   padding: var(--space-lg);
-  background: var(--color-gray-100);
-  color: var(--color-black);
-  font-size: 1rem;
+  background: transparent;
+  color: var(--color-primary, var(--color-calendar-selected));
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-medium);
   text-align: center;
   border-radius: 4px;
 }

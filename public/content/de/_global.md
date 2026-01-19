@@ -25,17 +25,24 @@ contact:
 
 form:
   name_placeholder: "Name"
-  email_placeholder: "E-Mail"
-  phone_placeholder: "Telefon"
+  company_placeholder: "Firma"
+  email_placeholder: "E-Mail*"
+  phone_placeholder: "Telefon (optional)"
+  inquiry_placeholder: "Anfrage"
   message_placeholder: "Ihre Nachricht"
   submit: "Abschicken"
-  success: "Vielen Dank für Ihre Anfrage! Wir melden uns innerhalb von 24 Stunden."
+  success: "Vielen Dank für Ihre Anfrage! Wir melden uns."
   error_name: "Bitte geben Sie Ihren Namen ein"
-  error_email: "Bitte geben Sie eine gültige E-Mail ein"
+  error_email: "Bitte geben Sie eine gültige E-Mail-Adresse ein"
   error_message: "Bitte geben Sie eine Nachricht ein"
+  error_inquiry: "Bitte geben Sie Ihre Anfrage ein"
+  selection_label: "Auswahl:"
+  no_selection: "Keine Auswahl"
 
 calendar:
   hint: "Zeitraum wählen"
+  blocked_hint: "Belegt"
+  blocked_warning: "Der gewählte Zeitraum enthält bereits belegte Tage."
   months: "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember"
   months_short: "Jan.,Feb.,März,Apr.,Mai,Juni,Juli,Aug.,Sep.,Okt.,Nov.,Dez."
 

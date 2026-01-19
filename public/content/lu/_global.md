@@ -25,17 +25,24 @@ contact:
 
 form:
   name_placeholder: "Numm"
-  email_placeholder: "E-Mail"
-  phone_placeholder: "Telefon"
+  company_placeholder: "Firma"
+  email_placeholder: "E-Mail*"
+  phone_placeholder: "Telefon (optional)"
+  inquiry_placeholder: "Ufro"
   message_placeholder: "Är Noriicht"
   submit: "Ofschécken"
-  success: "Merci fir Är Ufro! Mir mellen eis bannent 24 Stonnen."
+  success: "Merci fir Är Ufro! Mir mellen eis."
   error_name: "Gitt w.e.g. Ären Numm un"
-  error_email: "Gitt w.e.g. eng gëlteg E-Mail un"
+  error_email: "Gitt w.e.g. eng gëlteg E-Mail Adress un"
   error_message: "Gitt w.e.g. eng Noriicht an"
+  error_inquiry: "Gitt w.e.g. Är Ufro an"
+  selection_label: "Auswiel:"
+  no_selection: "Keng Auswiel"
 
 calendar:
   hint: "Period wielen"
+  blocked_hint: "Reservéiert"
+  blocked_warning: "Déi gewielte Period enthält schonn reservéiert Deeg."
   months: "Januar,Februar,Mäerz,Abrëll,Mee,Juni,Juli,August,September,Oktober,November,Dezember"
   months_short: "Jan.,Feb.,Mäe.,Abr.,Mee,Jun.,Jul.,Aug.,Sep.,Okt.,Nov.,Dez."
 

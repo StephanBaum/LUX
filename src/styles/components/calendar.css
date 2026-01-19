@@ -84,6 +84,17 @@
   display: none;
 }
 
+/* Warning for blocked date overlap */
+.calendar__warning {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.875rem;
+  color: var(--color-primary, #e53e3e);
+  background-color: rgba(229, 62, 62, 0.1);
+  border-radius: 4px;
+  display: none;
+}
+
 .calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -115,6 +126,29 @@
 .calendar__day--disabled {
   color: var(--color-gray-300);
   cursor: not-allowed;
+}
+
+/* Blocked dates (from iCal reservations) */
+.calendar__day--blocked {
+  background-color: var(--color-gray-200, #e5e5e5);
+  color: var(--color-gray-400, #a3a3a3);
+  cursor: not-allowed;
+  position: relative;
+}
+
+.calendar__day--blocked::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 1px;
+  background-color: var(--color-gray-400, #a3a3a3);
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.calendar__day--blocked:hover {
+  background-color: var(--color-gray-200, #e5e5e5);
 }
 
 .calendar__day--today {

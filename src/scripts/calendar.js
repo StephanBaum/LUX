@@ -56,6 +56,9 @@
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);
 
+    // Blocked dates from iCal
+    this.blockedRanges = [];
+
     // Store instance on container for language change re-rendering
     this.container._calendarInstance = this;
 
@@ -73,6 +76,67 @@
     this.render();
     this.updateDisplay();
     this.bindEvents();
+    this.loadBlockedDates();
+  };
+
+  Calendar.prototype.loadBlockedDates = function() {
+    var self = this;
+
+    function fetchBlocked() {
+      if (window.icalClient) {
+        window.icalClient.getBlockedDates().then(function(blockedRanges) {
+          self.blockedRanges = blockedRanges;
+          self.render();
+        });
+        return true;
+      }
+      return false;
+    }
+
+    // Try immediately
+    if (fetchBlocked()) return;
+
+    // Listen for ical:ready event
+    document.addEventListener('ical:ready', function() {
+      fetchBlocked();
+    }, { once: true });
+
+    // Also poll as fallback (in case event was already fired)
+    var attempts = 0;
+    var maxAttempts = 20;
+    var pollInterval = setInterval(function() {
+      attempts++;
+      if (fetchBlocked() || attempts >= maxAttempts) {
+        clearInterval(pollInterval);
+      }
+    }, 250);
+  };
+
+  Calendar.prototype.isDateBlocked = function(date) {
+    if (!this.blockedRanges || this.blockedRanges.length === 0) {
+      return false;
+    }
+
+    var checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+
+    return this.blockedRanges.some(function(range) {
+      var rangeStart = new Date(range.start);
+      rangeStart.setHours(0, 0, 0, 0);
+
+      var rangeEnd = new Date(range.end);
+      rangeEnd.setHours(0, 0, 0, 0);
+
+      // For same-day timed events, start and end normalize to the same date
+      // In that case, block that single day
+      if (rangeStart.getTime() === rangeEnd.getTime()) {
+        return checkDate.getTime() === rangeStart.getTime();
+      }
+
+      // For multi-day events: end date is EXCLUSIVE (iCal standard)
+      // So we check: start <= date < end
+      return checkDate >= rangeStart && checkDate < rangeEnd;
+    });
   };
 
   Calendar.prototype.cleanup = function() {
@@ -125,6 +189,11 @@
         classes.push('calendar__day--disabled');
       }
 
+      // Check if date is blocked by iCal reservation
+      if (this.isDateBlocked(date)) {
+        classes.push('calendar__day--blocked');
+      }
+
       if (date.getTime() === this.today.getTime()) {
         classes.push('calendar__day--today');
       }
@@ -165,7 +234,7 @@
       if (grid) {
         var handler = function(e) {
           var dayEl = e.target.closest('.calendar__day');
-          if (!dayEl || dayEl.classList.contains('calendar__day--disabled') || dayEl.classList.contains('calendar__day--empty')) {
+          if (!dayEl || dayEl.classList.contains('calendar__day--disabled') || dayEl.classList.contains('calendar__day--empty') || dayEl.classList.contains('calendar__day--blocked')) {
             return;
           }
 
@@ -198,6 +267,7 @@
     if (!this.startDate || (this.startDate && this.endDate)) {
       this.startDate = date;
       this.endDate = null;
+      this.hideBlockedWarning();
     } else if (this.startDate && !this.endDate) {
       if (date < this.startDate) {
         this.endDate = this.startDate;
@@ -207,11 +277,75 @@
       } else {
         this.endDate = date;
       }
+      // Check for overlap with blocked dates
+      this.checkBlockedOverlap();
     }
 
     this.updateDisplay();
     this.updateInputs();
     this.render();
+  };
+
+  Calendar.prototype.checkBlockedOverlap = function() {
+    if (!this.startDate || !this.endDate || !this.blockedRanges || this.blockedRanges.length === 0) {
+      this.hideBlockedWarning();
+      return;
+    }
+
+    var start = new Date(this.startDate);
+    var end = new Date(this.endDate);
+    var hasOverlap = false;
+
+    // Check each day in the selected range
+    var current = new Date(start);
+    while (current <= end) {
+      if (this.isDateBlocked(current)) {
+        hasOverlap = true;
+        break;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    if (hasOverlap) {
+      this.showBlockedWarning();
+    } else {
+      this.hideBlockedWarning();
+    }
+  };
+
+  Calendar.prototype.showBlockedWarning = function() {
+    var hint = this.container.querySelector('.calendar__hint');
+    var warning = this.container.querySelector('.calendar__warning');
+
+    if (!warning) {
+      warning = document.createElement('div');
+      warning.className = 'calendar__warning';
+      warning.setAttribute('data-i18n', 'calendar.blocked_warning');
+
+      // Get translated text if i18n is available
+      var text = 'Der gewählte Zeitraum enthält bereits belegte Tage.';
+      if (window.i18n) {
+        var translated = window.i18n.getTranslation('calendar.blocked_warning');
+        if (translated && translated !== 'calendar.blocked_warning') {
+          text = translated;
+        }
+      }
+      warning.textContent = text;
+
+      if (hint) {
+        hint.parentNode.insertBefore(warning, hint.nextSibling);
+      } else {
+        this.container.appendChild(warning);
+      }
+    }
+    warning.style.display = 'block';
+  };
+
+  Calendar.prototype.hideBlockedWarning = function() {
+    var warning = this.container.querySelector('.calendar__warning');
+    if (warning) {
+      warning.style.display = 'none';
+    }
   };
 
   Calendar.prototype.updateDisplay = function() {
