@@ -669,14 +669,6 @@ body.menu-open .header {
 }
 
 /* ============================================
-   Spacer Section (for scroll testing)
-   ============================================ */
-.spacer {
-  height: 150vh;
-  background: var(--color-gray-100);
-}
-
-/* ============================================
    Responsive Styles
    ============================================ */
 
@@ -796,6 +788,7 @@ body.menu-open .header {
 .slider {
   position: relative;
   padding: var(--space-section) 0;
+  overflow: hidden;
 }
 
 /* Container for drag hint - uses grid for alignment */
@@ -809,15 +802,14 @@ body.menu-open .header {
   grid-column: 1 / span 4;
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  color: var(--color-gray-300);
-  font-size: 1rem;
+  gap: var(--space-sm);
+  color: var(--color-black);
   user-select: none;
 }
 
 .slider__drag-arrow {
-  width: 40px;
-  height: 10px;
+  width: 48px;
+  height: 24px;
 }
 
 .slider__drag-text {

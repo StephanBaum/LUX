@@ -182,7 +182,13 @@
     initTextReveal();
     initFooterReveal();
 
+    // Initial refresh
     ScrollTrigger.refresh();
+
+    // Delayed refresh to catch elements already in viewport after preloader
+    setTimeout(function() {
+      ScrollTrigger.refresh(true);
+    }, 100);
   }
 
   /**
@@ -191,9 +197,12 @@
   function waitForI18nAndInit() {
     var initAfterFonts = function() {
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(initAnimations);
+        document.fonts.ready.then(function() {
+          // Small delay to ensure DOM is fully settled after i18n
+          setTimeout(initAnimations, 50);
+        });
       } else {
-        setTimeout(initAnimations, 100);
+        setTimeout(initAnimations, 150);
       }
     };
 
