@@ -139,7 +139,8 @@
     grid-column: 1 / -1;
   }
 
-  .page-header__content--wide {
+  .page-header__content--wide,
+  .page-header--subpage .page-header__content--wide {
     grid-column: 1 / -1;
   }
 

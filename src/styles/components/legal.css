@@ -163,6 +163,10 @@
     grid-template-columns: 1fr auto;
   }
 
+  .accordion--agb .accordion__item.is-open .accordion__inner {
+    transform: none;
+  }
+
   .accordion--agb .accordion__inner {
     grid-template-columns: 1fr;
   }
