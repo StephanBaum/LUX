@@ -3,23 +3,31 @@ import Base from '../layouts/Base.astro';
 import SEO from '../components/SEO.astro';
 import '../styles/components/profile.css';
 import '../styles/components/page-header.css';
+import {getGermanBundles} from '../lib/content/bundle';
+import {createT} from '../lib/content/t';
+import {getSiteContent} from '../lib/sanity/queries';
+import Photo from '../components/Photo.astro';
+import {imageUrl} from '../lib/sanity/image';
+
+const t = createT(await getGermanBundles(), 'studio');
+const {siteSettings, studioPage, equipment} = await getSiteContent();
+const profile = studioPage?.sectionMenschen?.people?.[0] ?? {};
+const sliderImages = studioPage?.sliderImages ?? [];
+const gallery = studioPage?.sectionMenschen?.gallery ?? [];
+const GALLERY_SHAPES = ['landscape', 'portrait-sm', 'portrait-md', 'portrait-lg'];
 
 const photographyBusinessSchema = {
   '@type': 'PhotographyBusiness',
-  name: 'Studio Luxenburger',
-  image: [
-    'https://luxenburger.de/Assets/img/image 1.png',
-    'https://luxenburger.de/Assets/img/image 2.png',
-    'https://luxenburger.de/Assets/img/image 3.png'
-  ],
+  name: siteSettings?.studioName,
+  image: sliderImages.slice(0, 3).map((photo) => imageUrl(photo, 1200)).filter(Boolean),
   description: 'Professionelles Foto- und Videostudio mit modernster Ausstattung. Ideal für Fotoshootings, Filmproduktionen und kreative Projekte.',
   url: 'https://luxenburger.de/studio',
   priceRange: '$$',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Rudolf-Diesel-Str. 6',
-    addressLocality: 'Schwalbach',
-    postalCode: '66773',
+    streetAddress: siteSettings?.street,
+    addressLocality: siteSettings?.city,
+    postalCode: siteSettings?.postalCode,
     addressCountry: 'DE'
   },
   geo: {
@@ -27,8 +35,8 @@ const photographyBusinessSchema = {
     latitude: 49.2653,
     longitude: 6.8264
   },
-  telephone: '+49-6834-460-74-30',
-  email: 'servus@luxenburger.de',
+  telephone: siteSettings?.phone,
+  email: siteSettings?.email,
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
@@ -70,19 +78,19 @@ const photographyBusinessSchema = {
 <Base
   title="Studio - LUX Studio | Professionelles Fotostudio in Schwalbach"
   description="Unser professionelles Fotostudio bietet modernste Ausstattung, erfahrenes Team und vielseitige Möglichkeiten für Foto- und Filmproduktionen."
-  image="/Assets/img/image 1.png"
+  image={imageUrl(sliderImages[0], 1200, 630)}
 >
   <SEO schema={photographyBusinessSchema} slot="head" />
 
   <!-- Page Header with Image -->
   <section class="page-header page-header--with-image">
     <div class="page-header__container grid">
-      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">Studio</h1>
+      <h1 class="page-header__title" data-animate="fade-up" data-i18n="header.title">{t('header.title')}</h1>
       <div class="page-header__image" data-animate="fade-up">
-        <img src="/Assets/img/image 1.png" alt="Studio Luxenburger Innenansicht" loading="lazy">
+        <Photo photo={sliderImages[0]} width={1400} />
       </div>
       <div class="page-header__content">
-        <p class="page-header__text" data-animate="fade-up" data-i18n="header.text">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis.</p>
+        <p class="page-header__text" data-animate="fade-up" data-i18n="header.text">{t('header.text')}</p>
       </div>
     </div>
   </section>
@@ -91,55 +99,48 @@ const photographyBusinessSchema = {
   <section class="profile" data-parallax="0.1">
     <div class="grid" data-animate="fade-up">
       <div class="profile__header">
-        <p class="profile__breadcrumb" data-i18n="section_menschen.label">Die Menschen</p>
+        <p class="profile__breadcrumb" data-i18n="section_menschen.label">{t('section_menschen.label')}</p>
         <div class="profile__divider"></div>
       </div>
 
       <div class="profile__content">
         <div class="profile__text">
           <div class="profile__intro">
-            <h2 class="profile__title" data-i18n="section_menschen.title">Untitled (Profile)</h2>
-            <a href="mailto:hello@example.com" class="profile__email">hello@example.com</a>
-            <a href="#" class="profile__social">Instagram</a>
+            <h2 class="profile__title" data-i18n="section_menschen.title">{t('section_menschen.title')}</h2>
+            {profile.email && <a href={`mailto:${profile.email}`} class="profile__email">{profile.email}</a>}
+            {(profile.instagram ?? siteSettings?.instagram) && <a href={profile.instagram ?? siteSettings.instagram} class="profile__social" target="_blank" rel="noopener">Instagram</a>}
           </div>
 
-          <p class="profile__bio" data-i18n="section_menschen.bio">
-            Cras ut dictum mi. Sed quis lorem semper, elementum mauris vitae, consectetur orci.
-            Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus
-            nisl blandit ac. Proin eget euismod mauris. Quisque vulputate mauris quis tellus
-            ultrices euismod. Quisque eu purus convallis, gravida.
-          </p>
+          <p class="profile__bio" data-i18n="section_menschen.bio">{t('section_menschen.bio')}</p>
 
           <div class="profile__section">
-            <h3 class="profile__section-title" data-i18n="section_menschen.education_title">Expertise</h3>
+            <h3 class="profile__section-title" data-i18n="section_menschen.education_title">{t('section_menschen.education_title')}</h3>
             <div class="profile__education-item">
-              <span class="profile__education-title" data-i18n="section_menschen.expertise1_title">Vestibulum Euismod (Ultrices)</span>
-              <span class="profile__education-detail" data-i18n="section_menschen.expertise1_detail">Suspendisse Aenean Lec</span>
-              <span class="profile__education-year" data-i18n="section_menschen.expertise1_year">2023</span>
+              <span class="profile__education-title" data-i18n="section_menschen.expertise1_title">{t('section_menschen.expertise1_title')}</span>
+              <span class="profile__education-detail" data-i18n="section_menschen.expertise1_detail">{t('section_menschen.expertise1_detail')}</span>
+              <span class="profile__education-year" data-i18n="section_menschen.expertise1_year">{t('section_menschen.expertise1_year')}</span>
             </div>
             <div class="profile__education-item">
-              <span class="profile__education-title" data-i18n="section_menschen.expertise2_title">Aliquam Faucibus Tellus</span>
-              <span class="profile__education-detail" data-i18n="section_menschen.expertise2_detail">Vestibulum Ultricies Suspendisse Aenean Vestibulum</span>
+              <span class="profile__education-title" data-i18n="section_menschen.expertise2_title">{t('section_menschen.expertise2_title')}</span>
+              <span class="profile__education-detail" data-i18n="section_menschen.expertise2_detail">{t('section_menschen.expertise2_detail')}</span>
             </div>
           </div>
         </div>
 
         <div class="profile__gallery">
           <div class="profile__gallery-row profile__gallery-row--top">
-            <div class="profile__image profile__image--landscape">
-              <img src="/Assets/img/image 1.png" alt="Studio Luxenburger Innenansicht" loading="lazy">
-            </div>
-            <div class="profile__image profile__image--portrait-sm">
-              <img src="/Assets/img/image 2.png" alt="Professionelle Studio Ausstattung" loading="lazy">
-            </div>
+            {gallery.slice(0, 2).map((image, i) => (
+              <div class={`profile__image profile__image--${GALLERY_SHAPES[i]}`}>
+                <Photo photo={image} width={800} lightbox="studio-profile" />
+              </div>
+            ))}
           </div>
           <div class="profile__gallery-row profile__gallery-row--bottom">
-            <div class="profile__image profile__image--portrait-md">
-              <img src="/Assets/img/image 3.png" alt="Studioraum mit Beleuchtungssetup" loading="lazy">
-            </div>
-            <div class="profile__image profile__image--portrait-lg">
-              <img src="/Assets/img/image 4.png" alt="Hohlkehle und Studiofläche" loading="lazy">
-            </div>
+            {gallery.slice(2, 4).map((image, i) => (
+              <div class={`profile__image profile__image--${GALLERY_SHAPES[i + 2]}`}>
+                <Photo photo={image} width={800} lightbox="studio-profile" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -160,29 +161,16 @@ const photographyBusinessSchema = {
         <svg class="slider__drag-arrow" viewBox="0 0 40 10" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 5H38M38 5L33 1M38 5L33 9" stroke="currentColor" stroke-width="1"/>
         </svg>
-        <span class="slider__drag-text">Das Equipment</span>
+        <span class="slider__drag-text" data-i18n="slider.label">{t('slider.label')}</span>
       </div>
     </div>
     <div class="slider__track-wrapper">
       <div class="slider__track" data-slider-track>
-        <div class="slider__slide">
-          <img src="/Assets/img/image 1.png" alt="Studio Equipment Galerie" draggable="false" decoding="async">
-        </div>
-        <div class="slider__slide">
-          <img src="/Assets/img/image 2.png" alt="Lichttechnik im Studio" draggable="false" decoding="async">
-        </div>
-        <div class="slider__slide">
-          <img src="/Assets/img/image 3.png" alt="Kamera Equipment" draggable="false" decoding="async">
-        </div>
-        <div class="slider__slide">
-          <img src="/Assets/img/image 4.png" alt="Studioaufbau Beispiel" draggable="false" decoding="async">
-        </div>
-        <div class="slider__slide">
-          <img src="/Assets/img/image 5.png" alt="Grip Equipment und Stative" draggable="false" decoding="async">
-        </div>
-        <div class="slider__slide">
-          <img src="/Assets/img/image 6.png" alt="Studio Arbeitsfläche" draggable="false" decoding="async">
-        </div>
+        {sliderImages.map((image) => (
+          <div class="slider__slide">
+            <Photo photo={image} width={1200} draggable={false} lightbox="studio-slider" />
+          </div>
+        ))}
       </div>
     </div>
   </section>
@@ -190,14 +178,14 @@ const photographyBusinessSchema = {
   <!-- CTA Section -->
   <section class="cta" data-parallax="0.15">
     <div class="cta__container grid">
-      <h2 class="cta__title" data-i18n="cta.title" data-animate="fade-up">Anfragen</h2>
+      <h2 class="cta__title" data-i18n="cta.title" data-animate="fade-up">{t('cta.title')}</h2>
       <div class="cta__content">
-        <p class="cta__text" data-i18n="cta.text" data-animate="fade-up">Quisque eu purus convallis, gravida. Mentum mauris vitae, consectetur orci. Cras volutpat eget elit porta facilisis. Aenean fermentum arcu mauris, eu faucibus nisl blandit ac. Proin eget euismod mauris.</p>
-        <a href="mailto:servus@luxenburger.de" class="cta__link" data-animate="fade-up">
+        <p class="cta__text" data-i18n="cta.text" data-animate="fade-up">{t('cta.text')}</p>
+        <a href={studioPage?.cta?.linkHref ?? `mailto:${siteSettings?.email}`} class="cta__link" data-animate="fade-up">
           <svg class="cta__arrow" viewBox="0 0 55 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 8H53M53 8L46 1M53 8L46 15" stroke="currentColor" stroke-width="2"/>
           </svg>
-          <span class="cta__link-text" data-i18n="cta.link">Kontakt</span>
+          <span class="cta__link-text" data-i18n="cta.link">{t('cta.link')}</span>
         </a>
       </div>
     </div>

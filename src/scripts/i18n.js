@@ -1,6 +1,8 @@
 /**
- * i18n - Markdown-based translation system
- * No build step required - loads and parses markdown files client-side
+ * i18n - loads the language bundles the build emits from Sanity.
+ *
+ * Same key lookup as before ("section.key", global first, then the page);
+ * only the file format changed from markdown frontmatter to JSON.
  */
 (function() {
   'use strict';
@@ -69,90 +71,52 @@
 
     async loadContent(name) {
       try {
-        const url = '/content/' + this.currentLang + '/' + name + '.md';
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          if (this.currentLang !== DEFAULT_LANG) {
-            const fallback = await fetch('/content/' + DEFAULT_LANG + '/' + name + '.md');
-            if (fallback.ok) {
-              const text = await fallback.text();
-              this.parseMarkdown(name, text);
-            }
-          }
+        const bundle = await this.fetchBundle(this.currentLang, name);
+        if (bundle) {
+          this.store(name, bundle);
           return;
         }
-
-        const text = await response.text();
-        this.parseMarkdown(name, text);
+        if (this.currentLang !== DEFAULT_LANG) {
+          const fallback = await this.fetchBundle(DEFAULT_LANG, name);
+          if (fallback) this.store(name, fallback);
+        }
       } catch (err) {
-        console.warn('i18n: Could not load ' + name + '.md', err);
+        console.warn('i18n: Could not load ' + name, err);
       }
     }
 
-    parseMarkdown(name, text) {
-      const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
-
-      if (match) {
-        const frontmatter = this.parseYaml(match[1]);
-        const body = match[2].trim();
-
-        if (name === '_global') {
-          this.globalStrings = frontmatter;
-        } else {
-          this.translations[name] = Object.assign({}, frontmatter, { _body: body });
-        }
-      }
+    async fetchBundle(lang, name) {
+      const response = await fetch('/content/' + lang + '/' + name + '.json');
+      if (!response.ok) return null;
+      return await response.json();
     }
 
-    parseYaml(yaml) {
-      const result = {};
-      let currentSection = null;
-
-      yaml.split(/\r?\n/).forEach(function(line) {
-        if (!line.trim() || line.trim().startsWith('#')) return;
-
-        const sectionMatch = line.match(/^(\w+):$/);
-        if (sectionMatch) {
-          currentSection = sectionMatch[1];
-          result[currentSection] = {};
-          return;
-        }
-
-        const kvMatch = line.match(/^\s*(\w+):\s*["']?(.+?)["']?$/);
-        if (kvMatch) {
-          const key = kvMatch[1];
-          const value = kvMatch[2];
-          if (currentSection) {
-            result[currentSection][key] = value;
-          } else {
-            result[key] = value;
-          }
-        }
-      });
-
-      return result;
+    store(name, bundle) {
+      if (name === '_global') {
+        this.globalStrings = bundle;
+      } else {
+        this.translations[name] = bundle;
+      }
     }
 
     t(key) {
       const parts = key.split('.');
-      const self = this;
 
-      let value = this.globalStrings;
-      for (let i = 0; i < parts.length; i++) {
-        value = value ? value[parts[i]] : undefined;
-        if (value === undefined) break;
-      }
-      if (value !== undefined) return value;
+      // The page bundle wins; _global is the fallback for shared strings.
+      const walk = function(root) {
+        let value = root;
+        for (let i = 0; i < parts.length; i++) {
+          value = value ? value[parts[i]] : undefined;
+          if (value === undefined) return undefined;
+        }
+        return value;
+      };
 
-      const page = this.getCurrentPage();
-      value = this.translations[page];
-      for (let i = 0; i < parts.length; i++) {
-        value = value ? value[parts[i]] : undefined;
-        if (value === undefined) break;
-      }
+      const local = walk(this.translations[this.getCurrentPage()]);
+      if (local !== undefined) return local;
 
-      return value || key;
+      const global = walk(this.globalStrings);
+      return global === undefined ? key : global;
     }
 
     translate(animate) {
