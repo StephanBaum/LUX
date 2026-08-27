@@ -15,6 +15,14 @@ const env = loadEnv(process.env.NODE_ENV ?? '', process.cwd(), '');
  * page is left asking for files that no longer exist and Sanity paints a white
  * pane. Reload once when that happens; the flag stops it looping.
  */
+/**
+ * Last resort in dev, if a chunk address moves anyway.
+ *
+ * `optimizeDeps.include` below is the actual fix; this is what catches the
+ * case it did not foresee — a package that only some page reaches for. It
+ * reloads rather than leaving a dead pane, and refuses to do so twice within
+ * ten seconds, so a genuinely missing file cannot become a reload loop.
+ */
 function staleChunkGuard() {
   return {
     name: 'lux:stale-chunk-guard',
@@ -24,17 +32,23 @@ function staleChunkGuard() {
         injectScript(
           'head-inline',
           `(() => {
-            const FLAG = 'lux-stale-chunk-reload';
+            const AT = 'lux-stale-chunk-reload-at';
             const stale = (m) =>
-              typeof m === 'string' && m.includes('Failed to fetch dynamically imported module');
+              typeof m === 'string' &&
+              (m.includes('Failed to fetch dynamically imported module') ||
+                m.includes('error loading dynamically imported module') ||
+                m.includes('Importing a module script failed'));
             const recover = (m) => {
-              if (!stale(m) || sessionStorage.getItem(FLAG)) return;
-              sessionStorage.setItem(FLAG, '1');
+              if (!stale(m)) return;
+              const last = Number(sessionStorage.getItem(AT) || 0);
+              if (Date.now() - last < 10000) return;
+              sessionStorage.setItem(AT, String(Date.now()));
               location.reload();
             };
             addEventListener('error', (e) => recover(e.message || e.error?.message));
             addEventListener('unhandledrejection', (e) => recover(e.reason?.message));
-            addEventListener('load', () => setTimeout(() => sessionStorage.removeItem(FLAG), 4000));
+            // Vite's own signal for a chunk it could not load.
+            addEventListener('vite:preloadError', (e) => recover(e.payload?.message));
           })();`,
         );
       },
@@ -67,9 +81,23 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       /*
-       * Pre-bundle React so the Studio does not send Vite off to re-bundle in
-       * the middle of a session; see `staleChunkGuard` above for the rest.
+       * Let the scanner start at the Studio's own configuration.
+       *
+       * Vite normally learns what to pre-bundle by reading the pages it can
+       * see. It cannot see the Studio: that route is built inside
+       * @sanity/astro, so the first it hears of `sanity` is when the browser
+       * asks for it — mid-session. It then re-bundles, every chunk gets a new
+       * address, and the page you are looking at is still holding the old
+       * ones: "Failed to fetch dynamically imported module", on whichever page
+       * you happened to open first.
+       *
+       * Pointing the scanner at sanity.config.ts makes it find all of that
+       * before the server accepts a request, so the addresses never move
+       * underneath an open Studio. Naming the packages in `include` instead
+       * does not work — forcing `sanity/structure` through the optimiser
+       * loses its named exports.
        */
+      entries: ['sanity.config.ts', 'src/pages/**/*.astro'],
       include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'styled-components'],
     },
   },
