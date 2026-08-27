@@ -1,24 +1,23 @@
 /**
- * Calendar API Endpoint
- * Fetches and parses iCal feeds, returns JSON
+ * The days the studio is already booked, for the calendar on the Mieten page.
+ *
+ * One feed, deliberately. The workshops and the events used to be read here
+ * too, but those pages come from Sanity now and their calendars are kept in
+ * step by the two-way sync — reading them again here would have been two
+ * network calls per page load for something nobody looks at.
+ *
+ * The reservations calendar stays a read-only iCal feed. Nothing writes to it,
+ * the studio fills it from Google as it always has, and the website only needs
+ * to know which days are taken.
  */
 
 export const prerender = false;
 
-// Calendar configuration with env vars read at runtime
 const calendarConfig = {
   feeds: {
     reservations: {
       url: import.meta.env.ICAL_RESERVATIONS_URL || '',
       type: 'blocked'
-    },
-    events: {
-      url: import.meta.env.ICAL_EVENTS_URL || '',
-      type: 'event'
-    },
-    workshops: {
-      url: import.meta.env.ICAL_WORKSHOPS_URL || '',
-      type: 'workshop'
     }
   },
   futureWindow: 365,
@@ -179,17 +178,8 @@ export async function GET() {
     };
   }
 
-  // Also provide a combined view by type
   results.blocked = feedResults
     .filter(r => r.type === 'blocked')
-    .flatMap(r => r.events);
-
-  results.events = feedResults
-    .filter(r => r.type === 'event')
-    .flatMap(r => r.events);
-
-  results.workshops = feedResults
-    .filter(r => r.type === 'workshop')
     .flatMap(r => r.events);
 
   return new Response(JSON.stringify(results, null, 2), {

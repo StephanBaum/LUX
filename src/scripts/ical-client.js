@@ -1,6 +1,8 @@
 /**
- * iCal Client
- * Fetches calendar data from the API and provides it to other components
+ * Which days the studio is already booked.
+ *
+ * Only the Mieten calendar uses this. The readers for events and workshops
+ * were removed with the feeds behind them: those pages come from Sanity now.
  */
 
 (function() {
@@ -65,44 +67,6 @@
   }
 
   /**
-   * Get events for Veranstaltungen page
-   * @returns {Promise<Array>} Array of events
-   */
-  function getEvents() {
-    return fetchCalendarData().then(function(data) {
-      return (data.events || []).map(function(event) {
-        return {
-          uid: event.uid,
-          title: event.summary,
-          description: event.description,
-          location: event.location,
-          start: new Date(event.start),
-          end: event.end ? new Date(event.end) : null
-        };
-      });
-    });
-  }
-
-  /**
-   * Get workshops for Workshops page
-   * @returns {Promise<Array>} Array of workshops
-   */
-  function getWorkshops() {
-    return fetchCalendarData().then(function(data) {
-      return (data.workshops || []).map(function(event) {
-        return {
-          uid: event.uid,
-          title: event.summary,
-          description: event.description,
-          location: event.location,
-          start: new Date(event.start),
-          end: event.end ? new Date(event.end) : null
-        };
-      });
-    });
-  }
-
-  /**
    * Check if a specific date falls within any blocked range
    * @param {Date} date - The date to check
    * @param {Array} blockedRanges - Array of blocked date ranges
@@ -135,8 +99,6 @@
   window.icalClient = {
     fetchCalendarData: fetchCalendarData,
     getBlockedDates: getBlockedDates,
-    getEvents: getEvents,
-    getWorkshops: getWorkshops,
     isDateBlocked: isDateBlocked,
     clearCache: clearCache
   };
