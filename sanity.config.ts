@@ -1,7 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {media, mediaAssetSource} from 'sanity-plugin-media'
+import {media} from 'sanity-plugin-media'
 import {schemaTypes, singletonTypeNames} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
 
@@ -22,19 +22,9 @@ export default defineConfig({
   dataset,
 
   // `media` adds a browser for everything already uploaded, so the client can
-  // reuse a photo instead of uploading it a second time.
+  // reuse a photo instead of uploading it a second time. It registers itself
+  // as an asset source; adding it again by hand duplicates it.
   plugins: [structureTool({structure}), media(), visionTool()],
-
-  form: {
-    // Make that browser the way images are picked, everywhere.
-    image: {
-      assetSources: (previous) => [
-        mediaAssetSource,
-        ...previous.filter((source) => source.name !== 'media-library'),
-      ],
-    },
-  },
-
 
   schema: {
     types: schemaTypes,
