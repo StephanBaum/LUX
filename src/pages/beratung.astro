@@ -1,0 +1,179 @@
+---
+import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
+import Photo from '../components/Photo.astro';
+import '../styles/components/beratung.css';
+import {getGermanBundles} from '../lib/content/bundle';
+import {createT} from '../lib/content/t';
+import {getSiteContent} from '../lib/sanity/queries';
+import {imageUrl} from '../lib/sanity/image';
+
+const t = createT(await getGermanBundles(), 'beratung');
+const {siteSettings, beratungPage} = await getSiteContent();
+
+const heroImages = beratungPage?.heroImages ?? [];
+const clients = beratungPage?.clients ?? [];
+const services = beratungPage?.services ?? [];
+const audience = beratungPage?.fuerWen ?? [];
+
+// The four photos drift apart around the statement and float away on scroll,
+// the same behaviour as the home page hero.
+const HERO_PLACEMENT = [
+  {speed: '1.2', top: '12%', left: '-2%', width: '22vw', height: '38vh'},
+  {speed: '0.6', top: '-6%', right: '4%', width: '26vw', height: '28vh'},
+  {speed: '1.5', bottom: '-2%', left: '10%', width: '20vw', height: '32vh'},
+  {speed: '0.8', bottom: '-8%', right: '-2%', width: '28vw', height: '30vh'},
+];
+
+const serviceSchema = {
+  '@type': 'ProfessionalService',
+  name: `${siteSettings?.studioName} — ${t('header.title')}`,
+  url: 'https://luxenburger.de/beratung',
+  description: t('header.text'),
+  ...(siteSettings?.email ? {email: siteSettings.email} : {}),
+  ...(siteSettings?.phone ? {telephone: siteSettings.phone} : {}),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: siteSettings?.street,
+    addressLocality: siteSettings?.city,
+    postalCode: siteSettings?.postalCode,
+    addressCountry: 'DE',
+  },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: t('leistungen.label'),
+    itemListElement: services.map((service) => ({
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Service',
+        name: service.title,
+        description: service.description,
+      },
+    })),
+  },
+};
+
+const key = (doc) => doc.slug?.current ?? String(doc._id).replace(/^[a-z]+-/, '');
+---
+
+<Base
+  title={`${t('header.title')} - LUX Studio`}
+  description={t('header.text')}
+  image={imageUrl(heroImages[0], 1200, 630)}
+>
+  <SEO schema={serviceSchema} slot="head" />
+
+  <!-- Statement hero -->
+  <section class="hero hero--statement">
+    <div class="hero__images">
+      {heroImages.map((image, i) => {
+        const place = HERO_PLACEMENT[i % HERO_PLACEMENT.length];
+        return (
+          <div class="hero__image"
+               data-speed={place.speed}
+               data-top={place.top}
+               data-left={place.left}
+               data-right={place.right}
+               data-bottom={place.bottom}
+               data-width={place.width}
+               data-height={place.height}>
+            <Photo photo={image} width={900} loading="eager" />
+          </div>
+        );
+      })}
+    </div>
+
+    <div class="hero__content grid">
+      <div class="hero__statement">
+        <p class="hero__statement-label" data-i18n="label">{t('label')}</p>
+        <h1 class="hero__statement-title" data-i18n="header.title">{t('header.title')}</h1>
+        <p class="hero__statement-text" data-i18n="header.text">{t('header.text')}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ausgewählte Kunden -->
+  {clients.length > 0 && (
+    <section class="clients">
+      <div class="grid">
+        <p class="clients__label" data-animate="fade-up" data-i18n="clients.label">{t('clients.label')}</p>
+        <ul class="clients__list" data-animate="fade-up">
+          {clients.map((client) => (
+            <li class="clients__item">
+              {client.logo?.asset
+                ? <Photo photo={client.logo} width={320} class="clients__logo" />
+                : client.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- Haltung -->
+  <section class="haltung" data-parallax="0.1">
+    <div class="grid">
+      <p class="haltung__label" data-animate="fade-up" data-i18n="haltung.label">{t('haltung.label')}</p>
+      <div class="haltung__content" data-animate="fade-up">
+        <p class="haltung__statement" data-i18n="haltung.statement">{t('haltung.statement')}</p>
+        <p class="haltung__text" data-i18n="haltung.text">{t('haltung.text')}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Leistungen -->
+  <section class="services">
+    <div class="grid">
+      <p class="services__label" data-animate="fade-up" data-i18n="leistungen.label">{t('leistungen.label')}</p>
+      <div class="services__rule" data-animate="fade-up"></div>
+      <h2 class="services__title" data-animate="fade-up" data-i18n="leistungen.title">{t('leistungen.title')}</h2>
+
+      <div class="services__list">
+        {services.map((service, i) => (
+          <article class="service" data-animate="fade-up">
+            <Photo photo={service.photo} width={800} class="service__image" lightbox="beratung-services" />
+            <p class="service__number">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="service__title" data-i18n={`leistungen.${key(service)}.title`}>{service.title}</h3>
+            <p class="service__text" data-i18n={`leistungen.${key(service)}.desc`}>{service.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Für wen -->
+  {audience.length > 0 && (
+    <section class="audience" data-parallax="0.1">
+      <div class="grid">
+        <p class="audience__label" data-animate="fade-up" data-i18n="fuer_wen.label">{t('fuer_wen.label')}</p>
+        <ul class="audience__list" data-animate="fade-up">
+          {audience.map((item, i) => (
+            <li class="audience__item">
+              <span class="audience__item-title" data-i18n={`fuer_wen.items.${i}.title`}>{item.title}</span>
+              <span class="audience__item-text" data-i18n={`fuer_wen.items.${i}.text`}>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- Anfragen -->
+  <section class="cta" data-parallax="0.15">
+    <div class="cta__container grid">
+      <h2 class="cta__title" data-animate="fade-up" data-i18n="cta.title">{t('cta.title')}</h2>
+      <div class="cta__content">
+        <p class="cta__text" data-animate="fade-up" data-i18n="cta.text">{t('cta.text')}</p>
+        <a href={beratungPage?.cta?.linkHref ?? `mailto:${siteSettings?.email}`} class="cta__link" data-animate="fade-up">
+          <svg class="cta__arrow" viewBox="0 0 55 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 8H53M53 8L46 1M53 8L46 15" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span class="cta__link-text" data-i18n="cta.link">{t('cta.link')}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page-specific scripts -->
+  <script src="../scripts/hero.js"></script>
+</Base>

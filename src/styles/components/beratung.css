@@ -1,0 +1,296 @@
+/* ============================================
+   Beratung Page
+   Sections that only this page uses. The hero,
+   grid and CTA come from main.css.
+   ============================================ */
+
+/* --- Statement hero ------------------------------------------------------ */
+
+/*
+ * Same floating, parallaxing images as the home page; the statement sits in
+ * the middle of them instead of the navigation.
+ */
+.hero--statement .hero__content {
+  justify-items: center;
+  text-align: center;
+}
+
+.hero__statement {
+  grid-column: 2 / -2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.hero__statement-label {
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-grey, #737373);
+  margin: 0;
+}
+
+.hero__statement-title {
+  font-size: clamp(2.5rem, 1.5rem + 3.5vw, 4rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.hero__statement-text {
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  max-width: 34rem;
+  margin: 0;
+}
+
+@media (max-width: 48rem) {
+  .hero__statement {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --- Client row ---------------------------------------------------------- */
+
+.clients {
+  margin-bottom: var(--space-section);
+}
+
+.clients__label {
+  grid-column: 1 / -1;
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-grey, #737373);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.clients__list {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-lg) var(--space-xl);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clients__item {
+  font-family: var(--font-family-detail);
+  font-size: 0.9375rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.clients__logo {
+  display: block;
+  width: auto;
+  height: 2rem;
+  object-fit: contain;
+}
+
+/* --- Haltung ------------------------------------------------------------- */
+
+.haltung {
+  margin-bottom: var(--space-section);
+}
+
+.haltung__label {
+  grid-column: 1 / span 3;
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-grey, #737373);
+  margin: 0;
+}
+
+.haltung__content {
+  grid-column: 5 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.haltung__statement {
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.haltung__text {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  max-width: 40rem;
+  margin: 0;
+}
+
+@media (max-width: 48rem) {
+  .haltung__label,
+  .haltung__content {
+    grid-column: 1 / -1;
+  }
+
+  .haltung__label {
+    margin-bottom: var(--space-md);
+  }
+}
+
+/* --- Leistungen ---------------------------------------------------------- */
+
+.services {
+  margin-bottom: var(--space-section);
+}
+
+.services__label {
+  grid-column: 1 / span 3;
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-grey, #737373);
+  margin: 0;
+}
+
+.services__rule {
+  grid-column: 1 / span 3;
+  height: 2px;
+  background: var(--color-black);
+  margin-top: var(--space-sm);
+}
+
+.services__title {
+  grid-column: 5 / -1;
+  font-size: clamp(1.75rem, 1.25rem + 2vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.services__list {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.service {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.service__image {
+  width: 100%;
+  height: clamp(180px, 18vw, 260px);
+  object-fit: cover;
+}
+
+.service__number {
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  color: var(--color-grey, #737373);
+  margin: 0;
+}
+
+.service__title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.service__text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 48rem) {
+  .services__label,
+  .services__rule,
+  .services__title,
+  .services__list {
+    grid-column: 1 / -1;
+  }
+
+  .services__list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Für wen ------------------------------------------------------------- */
+
+.audience {
+  margin-bottom: var(--space-section);
+}
+
+.audience__label {
+  grid-column: 1 / span 3;
+  font-family: var(--font-family-detail);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-grey, #737373);
+  margin: 0;
+}
+
+.audience__list {
+  grid-column: 5 / -1;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-black);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.audience__item {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 2fr;
+  gap: var(--space-lg);
+  align-items: baseline;
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-black);
+}
+
+.audience__item-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.audience__item-text {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 48rem) {
+  .audience__label,
+  .audience__list {
+    grid-column: 1 / -1;
+  }
+
+  .audience__label {
+    margin-bottom: var(--space-md);
+  }
+
+  .audience__item {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+}
