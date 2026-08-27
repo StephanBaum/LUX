@@ -37,7 +37,18 @@ export function PhotoInput(props: ObjectInputProps) {
   const [failed, setFailed] = useState<string | null>(null)
 
   const ref = (value as any)?.asset?._ref as string | undefined
-  const entries = ((value as any)?.alt ?? []) as Entry[]
+
+  /*
+   * Alt text used to be one plain string. A document written before the
+   * languages moved onto the fields still holds one, and a plain string has no
+   * .find — so read it as the German entry rather than falling over.
+   */
+  const stored = (value as any)?.alt
+  const entries: Entry[] = Array.isArray(stored)
+    ? stored
+    : typeof stored === 'string' && stored.trim()
+      ? [{_key: 'de', _type: VALUE_TYPE, language: 'de', value: stored}]
+      : []
   const german = entries.find((entry) => entry.language === 'de')?.value
   const described = Boolean(german && german.trim())
 

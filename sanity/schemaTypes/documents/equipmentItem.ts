@@ -7,7 +7,7 @@ export default defineType({
   title: 'Equipment',
   type: 'document',
   fields: [
-    defineField({name: 'name', title: 'Bezeichnung', type: 'internationalizedArrayString', validation: (r) => r.required()}),
+    defineField({name: 'name', title: 'Bezeichnung', type: 'string', validation: (r) => r.required()}),
     defineField({
       name: 'category',
       title: 'Kategorie',

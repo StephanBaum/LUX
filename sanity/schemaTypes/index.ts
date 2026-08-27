@@ -14,6 +14,7 @@ import workshopsPage from './singletons/workshopsPage'
 import veranstaltungenPage from './singletons/veranstaltungenPage'
 import beratungPage from './singletons/beratungPage'
 import legalPage from './singletons/legalPage'
+import translationState from './singletons/translationState'
 
 import person from './documents/person'
 import room from './documents/room'
@@ -33,6 +34,8 @@ export const singletonTypes = [
   veranstaltungenPage,
   beratungPage,
   legalPage,
+  // Bookkeeping for the automatic translation. Never shown in the menu.
+  translationState,
 ]
 
 /** Types the client must never create or delete from the "+" menu. */

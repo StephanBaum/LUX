@@ -57,7 +57,10 @@ export function SeoInput(props: ObjectInputProps) {
 
   const write = useCallback(
     (name: 'metaTitle' | 'metaDescription', text: string) => {
-      const existing = (((value as any)?.[name] ?? []) as Entry[]).filter(
+      // A document written before the languages moved onto the fields may
+      // still hold one plain string here; it is replaced, not merged.
+      const stored = (value as any)?.[name]
+      const existing = (Array.isArray(stored) ? (stored as Entry[]) : []).filter(
         (entry) => entry.language !== 'de',
       )
       return set([{_key: 'de', _type: VALUE_TYPE[name], language: 'de', value: text}, ...existing], [

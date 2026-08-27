@@ -91,7 +91,8 @@ export default defineType({
         {
           type: 'object',
           fields: [
-            defineField({name: 'name', title: 'Name', type: 'internationalizedArrayString'}),
+            // A brand name is the same in every language.
+            defineField({name: 'name', title: 'Name', type: 'string'}),
             defineField({name: 'logo', title: 'Logo', type: 'photo'}),
             defineField({name: 'url', title: 'Webseite', type: 'url'}),
           ],

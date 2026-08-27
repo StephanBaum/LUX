@@ -3,6 +3,7 @@ import {useClient, type DocumentActionComponent} from 'sanity'
 import {useToast} from '@sanity/ui/toast'
 import {
   collectFields,
+  fingerprint,
   LANGUAGES,
   SOURCE_LANGUAGE,
   staleFields,
@@ -11,8 +12,40 @@ import {
   type Field,
 } from '../../src/lib/content/translatable'
 
+/** Where the fingerprints live. One document for the whole site. */
+const STATE_ID = 'translation-state'
+
+type State = Record<string, Record<string, string>>
+
+async function readState(client: any): Promise<State> {
+  const raw = await client.fetch('*[_id == $id][0].fingerprints', {id: STATE_ID})
+  try {
+    const parsed = JSON.parse(raw ?? '{}')
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+/**
+ * Remember what the German said, so the next publish can tell a corrected
+ * sentence from an untouched one. Bookkeeping must never break a publish, so a
+ * failure here is swallowed — the worst case is one page translated twice.
+ */
+async function writeState(client: any, state: State) {
+  try {
+    await client
+      .createIfNotExists({_id: STATE_ID, _type: 'translationState'})
+      .then(() =>
+        client.patch(STATE_ID).set({fingerprints: JSON.stringify(state)}).commit({visibility: 'async'}),
+      )
+  } catch {
+    /* not worth a word to the client */
+  }
+}
+
 /** Types with no translatable text of their own. */
-export const UNTRANSLATED_TYPES = new Set(['equipmentItem'])
+export const UNTRANSLATED_TYPES = new Set(['equipmentItem', 'translationState'])
 
 async function translateInto(target: string, texts: Record<string, string>) {
   const response = await fetch('/api/translate', {
@@ -49,12 +82,15 @@ export async function syncTranslations(
   const all = collectFields(doc)
   if (all.length === 0) return {fields: 0, languages: []}
 
+  const state = await readState(client)
+  const seen = state[id] ?? {}
+
   const patch: Record<string, unknown> = {}
   const done: string[] = []
   const touched = new Set<string>()
 
   for (const {code, label} of LANGUAGES) {
-    const stale: Field[] = staleFields(all, code)
+    const stale: Field[] = staleFields(all, code, seen)
     if (stale.length === 0) continue
 
     const translations = await translateInto(code, textFor(stale))
@@ -68,9 +104,28 @@ export async function syncTranslations(
     done.push(label)
   }
 
+  // Record every field, not only the translated ones: a field that was already
+  // translated before any of this existed gets its fingerprint now, and is
+  // then left alone until its German actually changes.
+  const now: Record<string, string> = {}
+  for (const field of all) now[field.patch] = fingerprint(field)
+  await writeState(client, {...state, [id]: now})
+
   if (touched.size === 0) return {fields: 0, languages: []}
 
-  await client.patch(isDraft ? `drafts.${id}` : id).set(patch).commit()
+  /*
+   * Normally the draft is what gets the translations, and the publish that
+   * follows carries them over. If translating took long enough that the draft
+   * is already gone, write to the published document instead — otherwise the
+   * work is thrown away with a "document not found".
+   */
+  try {
+    await client.patch(isDraft ? `drafts.${id}` : id).set(patch).commit()
+  } catch (error: any) {
+    if (!isDraft) throw error
+    await client.patch(id).set(patch).commit()
+  }
+
   return {fields: touched.size, languages: done}
 }
 

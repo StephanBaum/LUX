@@ -119,7 +119,12 @@
 
     var isValid = true;
 
-    if (isRequired && !value) {
+    // A tick box is filled in by being ticked, not by having text in it.
+    if (type === 'checkbox') {
+      if (isRequired && !field.checked) {
+        isValid = false;
+      }
+    } else if (isRequired && !value) {
       isValid = false;
     }
 
@@ -169,7 +174,9 @@
   Form.prototype.updateSubmitState = function() {
     var allFilled = true;
     this.fields.forEach(function(field) {
-      if (field.hasAttribute('required') && !field.value.trim()) {
+      if (!field.hasAttribute('required')) return;
+      var filled = field.getAttribute('type') === 'checkbox' ? field.checked : field.value.trim();
+      if (!filled) {
         allFilled = false;
       }
     });
@@ -247,14 +254,43 @@
       return;
     }
 
-    var formData = new FormData(this.form);
+    var self = this;
+    var failed = this.form.querySelector('[data-form-failed]');
+
     var data = {};
-    formData.forEach(function(value, key) {
+    new FormData(this.form).forEach(function(value, key) {
       data[key] = value;
     });
 
-    console.log('Form submitted:', data);
-    this.showSuccess();
+    // The dates and the ticked rooms live outside the form, on the calendar
+    // and in the accordion, so they are read off the summary line the visitor
+    // can see. What they were shown is what gets sent.
+    if (this.dateDisplay) data.datum = this.dateDisplay.textContent.trim();
+    if (this.selectionDisplay) data.auswahl = this.selectionDisplay.textContent.trim();
+    data.seite = window.location.href;
+
+    if (failed) failed.hidden = true;
+    this.form.classList.add('is-sending');
+    if (this.submitButton) this.submitButton.disabled = true;
+
+    fetch('/api/inquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+      .then(function(response) {
+        if (!response.ok) throw new Error(String(response.status));
+        self.showSuccess();
+      })
+      .catch(function() {
+        // The enquiry is not lost — it is still in the form, and the failure
+        // message carries the studio's address so it can be sent by hand.
+        if (failed) failed.hidden = false;
+        if (self.submitButton) self.submitButton.disabled = false;
+      })
+      .then(function() {
+        self.form.classList.remove('is-sending');
+      });
   };
 
   Form.prototype.showSuccess = function() {
