@@ -1,0 +1,47 @@
+/*
+ * Fonts are served from our own domain, never from Google.
+ *
+ * Google Fonts hands the visitor's IP address to Google, which German courts
+ * have ruled a GDPR violation, and it would also force a consent banner. The
+ * files come from the @fontsource packages and live in `public/fonts/`.
+ */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin-700-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lekton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/lekton-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lekton';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/lekton-latin-700-normal.woff2') format('woff2');
+}
