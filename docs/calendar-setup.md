@@ -62,7 +62,29 @@ Then, on each calendar's settings page, copy the **Calendar ID**:
 | Variable | Value |
 |---|---|
 | `SYNC_SECRET` | A long random string you invent. It guards all three endpoints. |
-| `PUBLIC_SITE_URL` | The public address, e.g. `https://lux-studio.lu`. Google calls back to it. |
+| `PUBLIC_SITE_URL` | The public https address Google calls back to. See below. |
+
+`PUBLIC_SITE_URL` is used for one thing only: telling Google where to knock.
+Locally it is therefore unused — Google cannot reach a laptop — so
+`http://localhost:4321` in `.env` is fine and the registration endpoint refuses
+to run against it rather than pretending to succeed.
+
+In Vercel it must be a **stable** address. A preview URL carries the commit
+hash and changes with every deploy, which would leave Google knocking at a door
+that no longer exists. Use the branch alias, which does not move:
+
+```
+https://<project>-git-v4-<team>.vercel.app
+```
+
+Vercel lists it under the deployment's Domains. At launch it becomes the real
+domain, and `site` in `astro.config.mjs` has to match.
+
+**After changing it, re-register**, or Google keeps calling the old address:
+
+```
+curl -H "x-sync-secret: <SYNC_SECRET>"   https://<the new address>/api/sync/register-watch?force=1
+```
 
 Put all six in `.env` and in Vercel (Settings → Environment Variables), then
 redeploy.

@@ -30,6 +30,18 @@ async function register(force: boolean) {
   const site = import.meta.env.PUBLIC_SITE_URL
   if (!secret || !site) throw new Error('SYNC_SECRET oder PUBLIC_SITE_URL fehlt.')
 
+  /*
+   * Google calls us over the open internet, so the address has to be one it
+   * can reach. Say so here rather than letting the registration appear to
+   * succeed and the calendar quietly never call back.
+   */
+  if (!/^https:\/\//.test(site) || /localhost|127\.0\.0\.1|\.local(:|$)/.test(site)) {
+    throw new Error(
+      `PUBLIC_SITE_URL ist ${site} — Google kann diese Adresse nicht erreichen. ` +
+        'Es muss die öffentliche https-Adresse der Seite sein.',
+    )
+  }
+
   const address = `${site.replace(/\/$/, '')}/api/sync/from-google`
   const calendars = [
     import.meta.env.GOOGLE_CALENDAR_WORKSHOPS,
