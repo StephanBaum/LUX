@@ -16,3 +16,17 @@ export const sanityClient = createClient({
   useCdn: false,
   perspective: 'published',
 })
+
+/**
+ * Write client for the calendar sync. Drafts are visible here on purpose: an
+ * appointment made from the phone lands as a draft, and the sync has to be
+ * able to find it again.
+ */
+export const sanityWriteClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  perspective: 'raw',
+  token: import.meta.env.SANITY_API_WRITE_TOKEN,
+})

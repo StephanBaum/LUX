@@ -8,6 +8,7 @@ import {schemaTypes, singletonTypeNames} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
 import {translateAction, withAutoTranslate, UNTRANSLATED_TYPES} from './sanity/actions/translate'
 import {translationBadge} from './sanity/badges/translation'
+import {syncBadge} from './sanity/badges/sync'
 import {CompactTranslation} from './sanity/components/CompactTranslation'
 import {PhotoInput} from './sanity/components/PhotoInput'
 import {SeoInput} from './sanity/components/SeoInput'
@@ -139,7 +140,9 @@ export default defineConfig({
       ]
     },
 
-    badges: (badges, {schemaType}) =>
-      UNTRANSLATED_TYPES.has(schemaType) ? badges : [...badges, translationBadge],
+    badges: (badges, {schemaType}) => {
+      const all = [...badges, syncBadge]
+      return UNTRANSLATED_TYPES.has(schemaType) ? all : [...all, translationBadge]
+    },
   },
 })

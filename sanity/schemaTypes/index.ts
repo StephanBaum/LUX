@@ -15,6 +15,7 @@ import veranstaltungenPage from './singletons/veranstaltungenPage'
 import beratungPage from './singletons/beratungPage'
 import legalPage from './singletons/legalPage'
 import translationState from './singletons/translationState'
+import syncState from './singletons/syncState'
 
 import person from './documents/person'
 import room from './documents/room'
@@ -36,6 +37,8 @@ export const singletonTypes = [
   legalPage,
   // Bookkeeping for the automatic translation. Never shown in the menu.
   translationState,
+  // Bookkeeping for the calendar link. Also never shown in the menu.
+  syncState,
 ]
 
 /** Types the client must never create or delete from the "+" menu. */
