@@ -5,6 +5,7 @@ export default defineType({
   name: 'room',
   title: 'Raum',
   type: 'document',
+  groups: [{name: 'i18n', title: 'Übersetzungen'}],
   fields: [
     defineField({name: 'title', title: 'Name', type: 'string', validation: (r) => r.required()}),
     defineField({name: 'size', title: 'Größe', type: 'string', description: 'z. B. 120 m²'}),

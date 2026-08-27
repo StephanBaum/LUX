@@ -5,6 +5,7 @@ export default defineType({
   name: 'service',
   title: 'Leistung',
   type: 'document',
+  groups: [{name: 'i18n', title: 'Übersetzungen'}],
   fields: [
     defineField({name: 'title', title: 'Titel', type: 'string', validation: (r) => r.required()}),
     defineField({name: 'description', title: 'Beschreibung', type: 'text', rows: 6}),

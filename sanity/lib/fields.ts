@@ -1,4 +1,5 @@
 import {defineField} from 'sanity'
+import {TranslationsInput} from '../components/TranslationsInput'
 
 /**
  * Hidden mirror of the German fields for en / fr / lu.
@@ -9,17 +10,18 @@ export const i18nField = defineField({
   name: 'i18n',
   title: 'Übersetzungen',
   type: 'object',
-  hidden: true,
+  group: 'i18n',
+  description:
+    'Wird von der Schaltfläche „Übersetzen“ gefüllt. Jede Formulierung lässt sich hier ' +
+    'von Hand ändern — sie bleibt erhalten, solange der deutsche Text daneben ' +
+    'unverändert bleibt.',
+  components: {input: TranslationsInput},
   fields: [
-    defineField({name: 'en', type: 'text', title: 'English (JSON)'}),
-    defineField({name: 'fr', type: 'text', title: 'Français (JSON)'}),
-    defineField({name: 'lu', type: 'text', title: 'Lëtzebuergesch (JSON)'}),
-    defineField({
-      name: 'translatedFrom',
-      type: 'text',
-      title: 'Deutscher Stand bei der letzten Übersetzung (JSON)',
-    }),
-    defineField({name: 'translatedAt', type: 'datetime', title: 'Zuletzt übersetzt'}),
+    defineField({name: 'en', type: 'text', title: 'English'}),
+    defineField({name: 'fr', type: 'text', title: 'Français'}),
+    defineField({name: 'lu', type: 'text', title: 'Lëtzebuergesch'}),
+    defineField({name: 'translatedFrom', type: 'text', title: 'Deutscher Stand', readOnly: true}),
+    defineField({name: 'translatedAt', type: 'datetime', title: 'Zuletzt übersetzt', readOnly: true}),
   ],
 })
 

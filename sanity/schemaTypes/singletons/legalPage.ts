@@ -12,6 +12,7 @@ export default defineType({
   name: 'legalPage',
   title: 'Rechtstext',
   type: 'document',
+  groups: [{name: 'i18n', title: 'Übersetzungen'}],
   fields: [
     defineField({name: 'title', title: 'Überschrift', type: 'string', validation: (r) => r.required()}),
     defineField({name: 'intro', title: 'Einleitungstext', type: 'text', rows: 3}),

@@ -11,6 +11,7 @@ export default defineType({
   title: 'Person',
   type: 'document',
   groups: [
+    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'profile', title: 'Profil'},
     {name: 'portfolio', title: 'Portfolio'},
   ],

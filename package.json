@@ -11,7 +11,8 @@
     "postinstall": "node scripts/patch-sanity-astro.mjs",
     "migrate:content": "node scripts/migrate/content.mjs",
     "migrate:images": "node scripts/migrate/images.mjs",
-    "migrate": "npm run migrate:content && npm run migrate:images"
+    "migrate": "npm run migrate:content && npm run migrate:images",
+    "translate": "node scripts/migrate/translate.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.4",

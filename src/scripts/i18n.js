@@ -21,19 +21,21 @@
     }
 
     detectLanguage() {
+      // An explicit ?lang= in the address beats a remembered choice: it is the
+      // link someone was sent, and it should show that language.
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get('lang');
+      if (urlLang && SUPPORTED_LANGS.indexOf(urlLang) !== -1) {
+        this.setLanguageCookie(urlLang);
+        return urlLang;
+      }
+
       const cookie = document.cookie
         .split('; ')
         .find(function(row) { return row.startsWith(COOKIE_NAME + '='); });
       if (cookie) {
         const lang = cookie.split('=')[1];
         if (SUPPORTED_LANGS.indexOf(lang) !== -1) return lang;
-      }
-
-      const params = new URLSearchParams(window.location.search);
-      const urlLang = params.get('lang');
-      if (urlLang && SUPPORTED_LANGS.indexOf(urlLang) !== -1) {
-        this.setLanguageCookie(urlLang);
-        return urlLang;
       }
 
       const browserLang = navigator.language.split('-')[0];

@@ -6,6 +6,7 @@ export default defineType({
   title: 'Workshops',
   type: 'document',
   groups: [
+    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'seo', title: 'Menü & Google'},
     {name: 'header', title: 'Seitenkopf'},
     {name: 'sections', title: 'Beschriftungen'},

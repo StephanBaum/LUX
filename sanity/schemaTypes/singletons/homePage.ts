@@ -6,6 +6,7 @@ export default defineType({
   title: 'Startseite',
   type: 'document',
   groups: [
+    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'seo', title: 'Menü & Google'},
     {name: 'hero', title: 'Titelbild'},
     {name: 'studio', title: 'Abschnitt Studio'},

@@ -6,6 +6,7 @@ export default defineType({
   title: 'Einstellungen',
   type: 'document',
   groups: [
+    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'contact', title: 'Kontakt'},
     {name: 'nav', title: 'Menü & Fußzeile'},
     {name: 'social', title: 'Social Media'},
