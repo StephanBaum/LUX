@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 export default defineType({
   name: 'siteSettings',
@@ -94,7 +95,7 @@ export default defineType({
             defineField({name: 'logo', title: 'Logo', type: 'photo'}),
             defineField({name: 'url', title: 'Webseite', type: 'url'}),
           ],
-          preview: {select: {title: 'name', media: 'logo'}},
+          preview: germanPreview({title: 'name', media: 'logo'}),
         },
       ],
     }),

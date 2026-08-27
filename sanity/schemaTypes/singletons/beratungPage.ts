@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 /**
  * Follows the approved canvas design "Option B — Haltung zuerst":
@@ -44,7 +45,7 @@ export default defineType({
             defineField({name: 'logo', title: 'Logo', type: 'photo'}),
             defineField({name: 'url', title: 'Webseite', type: 'url'}),
           ],
-          preview: {select: {title: 'name', media: 'logo'}},
+          preview: germanPreview({title: 'name', media: 'logo'}),
         },
       ],
     }),
@@ -82,7 +83,7 @@ export default defineType({
             defineField({name: 'title', title: 'Titel', type: 'internationalizedArrayString', validation: (r) => r.required()}),
             defineField({name: 'text', title: 'Text', type: 'internationalizedArrayString'}),
           ],
-          preview: {select: {title: 'title', subtitle: 'text'}},
+          preview: germanPreview({title: 'title', subtitle: 'text'}),
         },
       ],
     }),

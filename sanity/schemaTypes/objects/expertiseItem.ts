@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 export default defineType({
   name: 'expertiseItem',
@@ -9,7 +10,5 @@ export default defineType({
     defineField({name: 'detail', title: 'Detail', type: 'internationalizedArrayString'}),
     defineField({name: 'year', title: 'Jahr', type: 'internationalizedArrayString'}),
   ],
-  preview: {
-    select: {title: 'title', subtitle: 'year'},
-  },
+  preview: germanPreview({title: 'title', subtitle: 'year'}),
 })

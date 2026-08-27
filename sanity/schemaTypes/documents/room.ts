@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 export default defineType({
   name: 'room',
@@ -17,5 +18,5 @@ export default defineType({
     defineField({name: 'order', title: 'Reihenfolge', type: 'number'}),
   ],
   orderings: [{title: 'Reihenfolge', name: 'order', by: [{field: 'order', direction: 'asc'}]}],
-  preview: {select: {title: 'title', subtitle: 'size', media: 'photo'}},
+  preview: germanPreview({title: 'title', subtitle: 'size', media: 'photo'}),
 })

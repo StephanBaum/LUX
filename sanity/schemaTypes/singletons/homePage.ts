@@ -21,17 +21,6 @@ export default defineType({
       of: [{type: 'photo'}],
     }),
     defineField({
-      name: 'navImages',
-      title: 'Bilder hinter den Menü-Wörtern',
-      type: 'array',
-      group: 'hero',
-      of: [{type: 'photo'}],
-      description:
-        'Fünf Bilder. Sie folgen dem Mauszeiger, wenn man auf der Startseite über ' +
-        'Veranstaltungen, Workshops, Studio, Beratung oder Mieten fährt — in dieser Reihenfolge.',
-      validation: (rule) => rule.max(5),
-    }),
-    defineField({
       name: 'sectionStudio',
       title: 'Abschnitt Studio',
       type: 'object',

@@ -20,10 +20,15 @@ export default defineType({
   ],
   preview: {
     select: {alt: 'alt', caption: 'caption', media: 'asset'},
-    // Without this an image inside an array just reads "Untitled".
-    prepare: ({alt, caption, media}) => ({
-      title: alt || caption || 'Bild ohne Beschreibung',
-      media,
-    }),
+    // alt and caption are internationalized arrays now; show the German entry.
+    prepare: ({alt, caption, media}: any) => {
+      const german = (value: any) =>
+        Array.isArray(value) ? value.find((entry) => entry?.language === 'de')?.value : value
+
+      return {
+        title: german(alt) || german(caption) || 'Bild ohne Beschreibung',
+        media,
+      }
+    },
   },
 })

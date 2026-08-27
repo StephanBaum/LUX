@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 /**
  * Impressum, Datenschutz and AGB — three fixed documents with the ids
@@ -32,10 +33,10 @@ export default defineType({
               type: 'internationalizedArrayRichText',
             }),
           ],
-          preview: {select: {title: 'title'}},
+          preview: germanPreview({title: 'title'}),
         },
       ],
     }),
   ],
-  preview: {select: {title: 'title'}},
+  preview: germanPreview({title: 'title'}),
 })

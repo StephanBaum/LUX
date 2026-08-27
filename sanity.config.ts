@@ -8,6 +8,7 @@ import {schemaTypes, singletonTypeNames} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
 import {translateAction, withAutoTranslate, UNTRANSLATED_TYPES} from './sanity/actions/translate'
 import {translationBadge} from './sanity/badges/translation'
+import {CompactTranslation} from './sanity/components/CompactTranslation'
 
 // Read from Vite (browser bundle) or Node (sanity CLI), whichever is present.
 const env: Record<string, string | undefined> = {
@@ -82,6 +83,21 @@ export default defineConfig({
     media(),
     visionTool(),
   ],
+
+  form: {
+    components: {
+      /*
+       * Plain translatable text gets the compact one-input-plus-switcher view.
+       * The list and rich-text ones keep the plugin's own input, which handles
+       * those shapes properly.
+       */
+      input: (props: any) =>
+        props.schemaType?.name === 'internationalizedArrayString' ||
+        props.schemaType?.name === 'internationalizedArrayText'
+          ? CompactTranslation(props)
+          : props.renderDefault(props),
+    },
+  },
 
   schema: {
     types: schemaTypes,

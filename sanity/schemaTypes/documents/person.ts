@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 /**
  * One document per photographer. Holds everything that belongs to the person
@@ -51,5 +52,5 @@ export default defineType({
     defineField({name: 'order', title: 'Reihenfolge', type: 'number', group: 'profile'}),
   ],
   orderings: [{title: 'Reihenfolge', name: 'order', by: [{field: 'order', direction: 'asc'}]}],
-  preview: {select: {title: 'name', subtitle: 'role', media: 'photo'}},
+  preview: germanPreview({title: 'name', subtitle: 'role', media: 'photo'}),
 })

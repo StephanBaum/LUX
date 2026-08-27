@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {germanPreview} from '../../lib/fields'
 
 /** Product names are never translated, so this type carries no i18n field. */
 export default defineType({
@@ -26,5 +27,5 @@ export default defineType({
   orderings: [
     {title: 'Kategorie, Reihenfolge', name: 'catOrder', by: [{field: 'category', direction: 'asc'}, {field: 'order', direction: 'asc'}]},
   ],
-  preview: {select: {title: 'name', subtitle: 'category'}},
+  preview: germanPreview({title: 'name', subtitle: 'category'}),
 })

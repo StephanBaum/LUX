@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {syncFields} from '../../lib/fields'
+import {syncFields, germanPreview} from '../../lib/fields'
 
 export default defineType({
   name: 'workshop',
@@ -37,5 +37,5 @@ export default defineType({
     ...syncFields,
   ],
   orderings: [{title: 'Termin', name: 'startAt', by: [{field: 'startAt', direction: 'desc'}]}],
-  preview: {select: {title: 'title', subtitle: 'startAt', media: 'photo'}},
+  preview: germanPreview({title: 'title', subtitle: 'startAt', media: 'photo'}),
 })

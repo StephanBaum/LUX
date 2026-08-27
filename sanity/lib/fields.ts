@@ -27,3 +27,22 @@ export const syncFields = [
 /** Standard German hint telling the client that seeded text is a placeholder. */
 export const PLACEHOLDER = 'Platzhalter-Text — bitte durch eigenen Text ersetzen.'
 export const PLACEHOLDER_IMG = 'Platzhalter-Bild — bitte durch ein eigenes Foto ersetzen.'
+
+/** The German entry of an internationalized field; anything else passes through. */
+export const germanOf = (value: any) =>
+  Array.isArray(value) ? value.find((entry) => entry?.language === 'de')?.value : value
+
+/**
+ * A document preview that understands internationalized fields. Without it a
+ * list shows "Invalid preview config", because the title is an array now.
+ */
+export const germanPreview = (select: Record<string, string>) => ({
+  select,
+  prepare: (values: Record<string, any>) => {
+    const out: Record<string, any> = {}
+    for (const key of Object.keys(select)) {
+      out[key] = key === 'media' ? values[key] : germanOf(values[key])
+    }
+    return out
+  },
+})
