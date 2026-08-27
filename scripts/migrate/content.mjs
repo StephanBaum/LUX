@@ -580,13 +580,24 @@ const RETIRED = [
 ]
 
 /**
- * Seeding writes the published version of every document. Any draft left over
- * from a previous run would keep shadowing it in the Studio, so drafts of the
- * seeded documents are cleared as well.
+ * Seeding writes the published version of every document, and clears the
+ * drafts, which would otherwise keep shadowing them in the Studio.
  *
- * That means re-running this script DISCARDS unpublished edits. It is a build
- * tool, not something to run once the client is working in the Studio.
+ * Clearing drafts throws away unpublished edits, so the script stops when it
+ * finds any. Pass --force to seed anyway, once you know what you are losing.
  */
+const force = process.argv.includes('--force')
+const drafts = await client
+  .withConfig({perspective: 'raw'})
+  .fetch('*[_id in path("drafts.**")]._id')
+
+if (drafts.length && !force) {
+  console.error(`Refusing to seed: ${drafts.length} unpublished draft(s) would be thrown away.`)
+  drafts.forEach((id) => console.error('  ' + id.replace('drafts.', '')))
+  console.error('Publish them in the Studio first, or run again with --force.')
+  process.exit(1)
+}
+
 const tx = documents.reduce((t, doc) => t.createOrReplace(doc), client.transaction())
 documents.forEach((doc) => tx.delete(`drafts.${doc._id}`))
 RETIRED.forEach((id) => tx.delete(`drafts.${id}`).delete(id))

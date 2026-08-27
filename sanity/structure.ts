@@ -7,20 +7,28 @@ export const LEGAL_PAGES: {id: string; title: string}[] = [
   {id: 'legal-agb', title: 'AGB'},
 ]
 
+/**
+ * Every list item and every list needs its own id. Sanity throws on a missing
+ * one and the pane renders blank, which also breaks deep links into a
+ * document — opening an image inside an array, for instance.
+ */
 const singleton = (S: any, type: string, title: string, id = type) =>
   S.listItem()
-    .title(title)
     .id(id)
-    .child(S.document().schemaType(type).documentId(id).title(title))
+    .title(title)
+    .child(S.document().id(id).schemaType(type).documentId(id).title(title))
 
 export const structure: StructureResolver = (S) =>
   S.list()
+    .id('root')
     .title('Inhalt')
     .items([
       S.listItem()
+        .id('seiten')
         .title('Seiten')
         .child(
           S.list()
+            .id('seiten')
             .title('Seiten')
             .items([
               singleton(S, 'homePage', 'Startseite'),
@@ -37,32 +45,45 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
+        .id('workshops')
         .title('Workshops')
         .schemaType('workshop')
-        .child(S.documentTypeList('workshop').title('Workshops').defaultOrdering([{field: 'startAt', direction: 'desc'}])),
+        .child(
+          S.documentTypeList('workshop')
+            .title('Workshops')
+            .defaultOrdering([{field: 'startAt', direction: 'desc'}]),
+        ),
 
       S.listItem()
+        .id('veranstaltungen')
         .title('Veranstaltungen')
         .schemaType('event')
-        .child(S.documentTypeList('event').title('Veranstaltungen').defaultOrdering([{field: 'startAt', direction: 'desc'}])),
+        .child(
+          S.documentTypeList('event')
+            .title('Veranstaltungen')
+            .defaultOrdering([{field: 'startAt', direction: 'desc'}]),
+        ),
 
       S.divider(),
 
       S.listItem()
+        .id('studio')
         .title('Studio')
         .child(
           S.list()
+            .id('studio')
             .title('Studio')
             .items([
               S.documentTypeListItem('person').title('Personen'),
               S.documentTypeListItem('room').title('Räume'),
               S.documentTypeListItem('equipmentItem').title('Equipment'),
-              S.documentTypeListItem('galleryImage').title('Galerien'),
             ]),
         ),
 
       S.listItem()
+        .id('beratung')
         .title('Beratung')
+        .schemaType('service')
         .child(S.documentTypeList('service').title('Leistungen')),
 
       S.divider(),

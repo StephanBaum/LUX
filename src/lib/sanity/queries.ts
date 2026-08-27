@@ -27,8 +27,7 @@ const SITE_QUERY = /* groq */ `{
     teacher->
   },
   "events": *[_type == "event"] | order(startAt desc),
-  "services": *[_type == "service"] | order(order asc),
-  "gallery": *[_type == "galleryImage"] | order(order asc)
+  "services": *[_type == "service"] | order(order asc)
 }`
 
 export type SiteContent = Record<string, any>

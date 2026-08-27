@@ -30,4 +30,20 @@ export default defineConfig({
     }),
     react(),
   ],
+  vite: {
+    optimizeDeps: {
+      /*
+       * The Studio pulls its panes in lazily. If Vite meets a dependency for
+       * the first time at runtime it re-bundles, and the chunk URLs the open
+       * page is holding go stale — "Import error: failed to fetch dynamically
+       * imported module", and a blank pane. Naming React up front covers the
+       * common case.
+       *
+       * The `sanity` packages must NOT be listed here: pre-bundling them
+       * mangles their exports (`structureTool` goes missing) for the same
+       * reason the Windows alias patch exists.
+       */
+      include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'styled-components'],
+    },
+  },
 });

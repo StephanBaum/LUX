@@ -20,7 +20,6 @@ import equipmentItem from './documents/equipmentItem'
 import workshop from './documents/workshop'
 import event from './documents/event'
 import service from './documents/service'
-import galleryImage from './documents/galleryImage'
 
 export const objectTypes = [photo, expertiseItem, infoRow, cta, pageHeader, menschenSection]
 
@@ -38,6 +37,6 @@ export const singletonTypes = [
 /** Types the client must never create or delete from the "+" menu. */
 export const singletonTypeNames: Set<string> = new Set(singletonTypes.map((t) => t.name))
 
-export const documentTypes = [person, room, equipmentItem, workshop, event, service, galleryImage]
+export const documentTypes = [person, room, equipmentItem, workshop, event, service]
 
 export const schemaTypes = [...objectTypes, ...singletonTypes, ...documentTypes]
