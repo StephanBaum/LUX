@@ -120,6 +120,21 @@ export default defineType({
         defineField({name: 'messagePlaceholder', title: 'Platzhalter Nachricht', type: 'internationalizedArrayString'}),
         defineField({name: 'submit', title: 'Button-Text', type: 'internationalizedArrayString'}),
         defineField({name: 'success', title: 'Erfolgsmeldung', type: 'internationalizedArrayString'}),
+        defineField({
+          name: 'failed',
+          title: 'Fehlermeldung beim Senden',
+          type: 'internationalizedArrayText',
+          description:
+            'Wird gezeigt, wenn die Mail nicht rausgeht. Am besten mit der E-Mail-Adresse, ' +
+            'damit die Anfrage trotzdem ankommt.',
+        }),
+        defineField({
+          name: 'consent',
+          title: 'Einwilligung Datenschutz',
+          type: 'internationalizedArrayText',
+          description: 'Text neben dem Häkchen. HTML für den Link ist erlaubt.',
+        }),
+        defineField({name: 'errorConsent', title: 'Fehler: Einwilligung', type: 'internationalizedArrayString'}),
         defineField({name: 'errorName', title: 'Fehler: Name', type: 'internationalizedArrayString'}),
         defineField({name: 'errorEmail', title: 'Fehler: E-Mail', type: 'internationalizedArrayString'}),
         defineField({name: 'errorMessage', title: 'Fehler: Nachricht', type: 'internationalizedArrayString'}),

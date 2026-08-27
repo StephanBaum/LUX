@@ -1,5 +1,6 @@
-import {useState} from 'react'
+import {createElement, useState} from 'react'
 import {useClient, type DocumentActionComponent} from 'sanity'
+import {Spinner} from '@sanity/ui'
 import {useToast} from '@sanity/ui/toast'
 import {
   collectFields,
@@ -60,6 +61,9 @@ async function translateInto(target: string, texts: Record<string, string>) {
 }
 
 const ORDER = [SOURCE_LANGUAGE, ...LANGUAGES.map((language) => language.code)]
+
+/** The button's icon while the translation is running. */
+const Working = () => createElement(Spinner, {muted: true})
 
 /** Put a translated value into the field's array, keeping the other languages. */
 function merge(entries: any[], language: string, value: unknown) {
@@ -139,6 +143,7 @@ export const translateAction: DocumentActionComponent = (props) => {
 
   return {
     label: busy ? 'Übersetze…' : 'Übersetzen',
+    icon: busy ? Working : undefined,
     disabled: busy || !doc,
     onHandle: async () => {
       setBusy(true)
@@ -175,6 +180,10 @@ export const translateAction: DocumentActionComponent = (props) => {
  * Publishing is the moment the German becomes real, so that is when the other
  * languages are filled in — no button to remember.
  *
+ * Translating three languages takes seconds, and a button that looks idle for
+ * seconds reads as broken — so it says what it is doing and turns while it
+ * does it.
+ *
  * If the translation service is down the publish still goes through: a page
  * that is live in German beats a page that is not live at all.
  */
@@ -183,13 +192,19 @@ export function withAutoTranslate(action: DocumentActionComponent): DocumentActi
     const original = action(props)
     const client = useClient({apiVersion: '2026-08-01'})
     const toast = useToast()
+    const [busy, setBusy] = useState(false)
 
     if (!original) return original
 
     return {
       ...original,
+      disabled: busy || original.disabled,
+      label: busy ? 'Übersetzt…' : original.label,
+      title: busy ? 'Die anderen Sprachen werden geschrieben.' : original.title,
+      icon: busy ? Working : original.icon,
       onHandle: async () => {
         const doc: any = props.draft ?? props.published
+        setBusy(true)
         try {
           const result = await syncTranslations(client, doc, props.id, Boolean(props.draft))
           if (result.fields > 0) {
@@ -205,6 +220,8 @@ export function withAutoTranslate(action: DocumentActionComponent): DocumentActi
             title: 'Ohne neue Übersetzung veröffentlicht',
             description: error?.message ?? String(error),
           })
+        } finally {
+          setBusy(false)
         }
         original.onHandle?.()
       },

@@ -265,6 +265,14 @@ const siteSettings = {
     messagePlaceholder: global.form.message_placeholder,
     submit: global.form.submit,
     success: global.form.success,
+    failed:
+      'Die Anfrage konnte gerade nicht gesendet werden. Bitte schreiben Sie uns direkt an ' +
+      `${global.contact.email} — wir melden uns.`,
+    consent:
+      'Ich bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage ' +
+      'per E-Mail verschickt werden. Mehr dazu in der ' +
+      '<a href="/datenschutz">Datenschutzerklärung</a>.',
+    errorConsent: 'Bitte bestätigen Sie die Einwilligung.',
     errorName: global.form.error_name,
     errorEmail: global.form.error_email,
     errorMessage: global.form.error_message,
