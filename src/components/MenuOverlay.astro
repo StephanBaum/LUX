@@ -15,13 +15,15 @@ const {homePage} = await getSiteContent();
 const menuPhotos = siteSettings?.menuImages?.length
   ? siteSettings.menuImages
   : (homePage?.sliderImages ?? []);
-const menuImages = [...new Set(menuPhotos.map((photo) => imageUrl(photo, 1600)).filter(Boolean))];
+// 1200 rather than 1600: the panel covers a third of the screen, and every
+// one of these is fetched up front so the menu never opens onto an empty space.
+const menuImages = [...new Set(menuPhotos.map((photo) => imageUrl(photo, 1200)).filter(Boolean))];
 ---
 
 <div class="menu-overlay">
   <!-- Background image that fades in -->
   <div class="menu-overlay__bg" data-images={JSON.stringify(menuImages)}>
-    <Photo photo={menuPhotos[0]} width={1600} />
+    <Photo photo={menuPhotos[0]} width={1200} />
   </div>
 
   <!-- Panel that slides in from right -->

@@ -38,18 +38,58 @@
       return menuImages[randomIndex];
     }
 
+    /*
+     * The picture is chosen and fetched before anybody asks for the menu.
+     *
+     * These used to be files on disk; they come from the image service now, so
+     * setting src as the overlay opens means the panel slides in over an empty
+     * space and the photograph drops in afterwards. Instead the next one is
+     * already loaded and waiting, and the menu only ever shows a picture the
+     * browser has finished with. `decode()` is what makes that a promise: a
+     * loaded image is not necessarily a paintable one.
+     */
+    let nextImage = null;
+
+    function prepareNext() {
+      const src = getRandomImage();
+      if (!src) return;
+
+      const img = new Image();
+      img.src = src;
+      const ready = img.decode ? img.decode() : Promise.resolve();
+      ready.then(() => { nextImage = src; }).catch(() => { nextImage = src; });
+    }
+
+    // Warm the whole set once the page has nothing better to do, so even the
+    // very first opening has something ready.
+    function warmAll() {
+      menuImages.forEach((src) => { new Image().src = src; });
+      prepareNext();
+    }
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(warmAll, {timeout: 3000});
+    } else {
+      setTimeout(warmAll, 1200);
+    }
+
     function getScrollbarWidth() {
       return window.innerWidth - document.documentElement.clientWidth;
     }
 
     function openMenu() {
-      // Set random image before opening
       if (menuBgImg) {
         // The image is rendered with a srcset, and a srcset beats src: without
         // clearing it the browser keeps painting the same picture every time.
         menuBgImg.removeAttribute('srcset');
         menuBgImg.removeAttribute('sizes');
-        menuBgImg.src = getRandomImage();
+
+        // Whatever was made ready last time. On the very first opening, before
+        // the warm-up has finished, fall back to what is already rendered.
+        if (nextImage) menuBgImg.src = nextImage;
+
+        // Choose and fetch the one after this, while nobody is looking.
+        prepareNext();
       }
       // Compensate for scrollbar width to prevent layout shift
       const scrollbarWidth = getScrollbarWidth();
