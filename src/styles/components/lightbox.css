@@ -1,0 +1,227 @@
+/* Full-screen image view, opened from any [data-lightbox] image. */
+
+body.has-lightbox {
+  overflow: hidden;
+}
+
+[data-lightbox] {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+/*
+ * The page stays visible but blurs away to almost white, in step with the
+ * picture coming forward — so it reads as one movement, not a new screen.
+ * Same duration and easing as the image animation in lightbox.js.
+ */
+.lightbox__scrim {
+  position: absolute;
+  inset: 0;
+  animation: lightbox-scrim-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lightbox.is-closing .lightbox__scrim {
+  animation: lightbox-scrim-in 380ms cubic-bezier(0.22, 1, 0.36, 1) reverse both;
+}
+
+@keyframes lightbox-scrim-in {
+  from {
+    background: rgba(250, 250, 249, 0);
+    backdrop-filter: blur(0px) saturate(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1);
+  }
+  to {
+    background: rgba(250, 250, 249, 0.82);
+    backdrop-filter: blur(48px) saturate(0.55);
+    -webkit-backdrop-filter: blur(48px) saturate(0.55);
+  }
+}
+
+.lightbox__figure {
+  position: relative;
+  grid-column: 2;
+  margin: 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox__image {
+  /*
+   * Sized from the picture's own proportions (--ar, set by the script), so the
+   * element is exactly the picture: no empty letterbox around it, and the
+   * shadow hugs the edges. It scales up past the file's own pixel size.
+   */
+  --lightbox-max-width: 50vw;
+  --lightbox-max-height: 84vh;
+  width: min(var(--lightbox-max-width), calc(var(--lightbox-max-height) * var(--ar, 1.5)));
+  height: auto;
+  aspect-ratio: var(--ar, 1.5);
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 2rem 4.5rem rgba(0, 0, 0, 0.22);
+  transform-origin: center center;
+}
+
+.lightbox__close,
+.lightbox__nav {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #0a0a0a;
+  cursor: pointer;
+  opacity: 0;
+  animation: lightbox-chrome-in 340ms 140ms ease forwards;
+  transition: background-color 0.2s ease;
+}
+
+.lightbox.is-closing .lightbox__nav,
+.lightbox.is-closing .lightbox__counter {
+  animation: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+@keyframes lightbox-chrome-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.lightbox__close:hover,
+.lightbox__nav:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.lightbox__close:focus-visible,
+.lightbox__nav:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 2px;
+}
+
+.lightbox__close svg,
+.lightbox__nav svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/*
+ * There is no separate close button any more. The header's menu button turns
+ * into the X, in its own place and with the same movement as the menu — see
+ * the rules at the end of this file. The button below stays in the markup for
+ * screen readers and as a keyboard target.
+ */
+.lightbox__close {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  animation: none;
+  opacity: 1;
+}
+
+.lightbox__nav--prev {
+  grid-column: 1;
+}
+
+.lightbox__nav--next {
+  grid-column: 3;
+}
+
+.lightbox--single .lightbox__nav {
+  visibility: hidden;
+}
+
+.lightbox__counter {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1rem, 3vw, 2rem);
+  margin: 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: rgba(10, 10, 10, 0.55);
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: lightbox-chrome-in 340ms 140ms ease forwards;
+}
+
+@media (max-width: 40rem) {
+  .lightbox {
+    grid-template-columns: 1fr;
+  }
+
+  /* Too little room for side arrows on a phone; swipe moves between images. */
+  .lightbox__nav {
+    display: none;
+  }
+
+  .lightbox__figure {
+    grid-column: 1;
+  }
+
+  /* More of the screen on a phone, where there is nothing beside it. */
+  .lightbox__image {
+    --lightbox-max-width: 92vw;
+    --lightbox-max-height: 78vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox__scrim,
+  .lightbox__close,
+  .lightbox__nav,
+  .lightbox__counter {
+    animation-duration: 1ms;
+  }
+
+}
+
+/*
+ * The logo belongs to the site, not to the picture: lift the header above the
+ * blurred backdrop so it stays sharp. Its difference blend turns it black
+ * against the near-white scrim. The menu button steps aside so it cannot
+ * collide with the close button.
+ */
+body.has-lightbox .header {
+  z-index: 1001;
+}
+
+/* The two bars turn into an X exactly as they do when the menu opens. */
+body.has-lightbox .header__menu-line {
+  position: absolute;
+  width: 28px;
+  left: 2px;
+}
+
+body.has-lightbox .header__menu-line:first-child {
+  transform: rotate(45deg);
+}
+
+body.has-lightbox .header__menu-line:last-child {
+  transform: rotate(-45deg);
+}
