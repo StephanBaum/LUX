@@ -38,3 +38,7 @@ pnpm-debug.log*
 
 # Vercel
 .vercel/
+
+# Google service account key. Never committed — it opens the studio's calendars.
+google-key.json
+*.service-account.json

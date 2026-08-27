@@ -56,14 +56,13 @@ export const lastAgreed = (doc: SyncedDoc) => ({
   endAt: doc.syncedEndAt,
 })
 
-const FIELDS = `
-  _id, _type, _updatedAt, title, startAt, endAt,
-  googleEventId, googleCalendarId,
-  syncedTitle, syncedStartAt, syncedEndAt, syncedAt, syncStatus, syncMessage
-`
-
+/*
+ * Whole documents, never a projection. A projection here once cost a workshop
+ * its photograph and its description: the deletion rule copies the document to
+ * a draft, and a copy of a projection is a copy of four fields.
+ */
 export const findById = (id: string): Promise<SyncedDoc | null> =>
-  sanityWriteClient.fetch(`*[_id == $id][0]{${FIELDS}}`, {id})
+  sanityWriteClient.fetch('*[_id == $id][0]', {id})
 
 /**
  * The document behind a calendar entry.
@@ -72,10 +71,7 @@ export const findById = (id: string): Promise<SyncedDoc | null> =>
  * so the published one is preferred — that is the one the website shows.
  */
 export const findByEventId = (eventId: string): Promise<SyncedDoc | null> =>
-  sanityWriteClient.fetch(
-    `*[googleEventId == $eventId] | order(_id asc)[0]{${FIELDS}}`,
-    {eventId},
-  )
+  sanityWriteClient.fetch('*[googleEventId == $eventId] | order(_id asc)[0]', {eventId})
 
 /** Write the calendar's values in, and record that both sides now agree. */
 export async function writeHere(

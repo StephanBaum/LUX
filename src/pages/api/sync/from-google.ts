@@ -77,7 +77,10 @@ async function orphan(doc: any) {
   const draftId = doc._id.startsWith('drafts.') ? doc._id : `drafts.${doc._id}`
 
   if (!doc._id.startsWith('drafts.')) {
-    await sanityWriteClient.createIfNotExists({...doc, _id: draftId})
+    // Every field, not the handful the sync cares about — that is the whole
+    // point of keeping the document. `_rev` belongs to the old one.
+    const {_rev, ...content} = doc
+    await sanityWriteClient.createIfNotExists({...content, _id: draftId})
     await sanityWriteClient.delete(doc._id)
   }
 
