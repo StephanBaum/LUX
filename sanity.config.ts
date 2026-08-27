@@ -4,6 +4,8 @@ import {visionTool} from '@sanity/vision'
 import {media} from 'sanity-plugin-media'
 import {schemaTypes, singletonTypeNames} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
+import {translateAction, UNTRANSLATED_TYPES} from './sanity/actions/translate'
+import {translationBadge} from './sanity/badges/translation'
 
 // Read from Vite (browser bundle) or Node (sanity CLI), whichever is present.
 const env: Record<string, string | undefined> = {
@@ -33,10 +35,16 @@ export default defineConfig({
   },
 
   document: {
-    // The client may not delete or duplicate a singleton.
-    actions: (actions, {schemaType}) =>
-      singletonTypeNames.has(schemaType)
+    actions: (actions, {schemaType}) => {
+      // The client may not delete or duplicate a singleton.
+      const allowed = singletonTypeNames.has(schemaType)
         ? actions.filter(({action}) => action !== 'delete' && action !== 'duplicate' && action !== 'unpublish')
-        : actions,
+        : actions
+
+      return UNTRANSLATED_TYPES.has(schemaType) ? allowed : [...allowed, translateAction]
+    },
+
+    badges: (badges, {schemaType}) =>
+      UNTRANSLATED_TYPES.has(schemaType) ? badges : [...badges, translationBadge],
   },
 })
