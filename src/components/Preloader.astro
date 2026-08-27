@@ -3,12 +3,26 @@
 import {getSiteContent} from '../lib/sanity/queries';
 import {imageUrl} from '../lib/sanity/image';
 
-// The photos that flick past while the page loads: the home hero, from the CMS.
+/*
+ * The photos that flick past inside the letters while the page loads.
+ *
+ * The hero alone is four pictures, which reads as a stutter rather than a
+ * flicker, so the slider's are used too. They are asked for small: the letters
+ * are a couple of hundred pixels tall, and every one of these has to arrive
+ * before the page does.
+ */
 const {homePage} = await getSiteContent();
-const preloadImages = (homePage?.heroImages ?? [])
-  .map((photo) => imageUrl(photo, 1200))
-  .filter(Boolean);
+const preloadImages = [...(homePage?.heroImages ?? []), ...(homePage?.sliderImages ?? [])]
+  .map((photo) => imageUrl(photo, 600))
+  .filter(Boolean)
+  .slice(0, 10);
 ---
+
+{/* Start fetching while the HTML is still being read, rather than waiting for
+    the script below to run. It is the difference between the letters sitting
+    on one picture for the first third of a second and flickering from the
+    start. */}
+{preloadImages.map((src) => <link rel="preload" as="image" href={src} />)}
 
 <div class="preloader" id="preloader" data-images={JSON.stringify(preloadImages)}>
   <div class="preloader__bg"></div>
@@ -98,6 +112,20 @@ const preloadImages = (homePage?.heroImages ?? [])
   var loadStartTime = Date.now();
   var minDisplayTime = 800;
 
+  /*
+   * In V3 these were files on disk, so setting src showed a picture at once.
+   * They come from the image service now, and a src set every 42ms is asked
+   * for faster than it can arrive — the flicker turns into one picture sitting
+   * still. So they are fetched first, and only a picture that has actually
+   * arrived goes into the rotation.
+   */
+  var ready = [];
+  imageSources.forEach(function(src) {
+    var img = new Image();
+    img.onload = function() { ready.push(src); };
+    img.src = src;
+  });
+
   // Skip preloader on return visits or if page already loaded
   if (sessionStorage.getItem('lux-visited') || document.readyState === 'complete') {
     preloader.remove();
@@ -114,10 +142,11 @@ const preloadImages = (homePage?.heroImages ?? [])
   displayImg.alt = '';
   imagesContainer.appendChild(displayImg);
 
-  // Cycle by changing the src at 24fps
+  // Cycle at 24fps through whatever has arrived so far.
   function cycleImages() {
-    currentIndex = (currentIndex + 1) % imageSources.length;
-    displayImg.src = imageSources[currentIndex];
+    if (ready.length < 2) return;
+    currentIndex = (currentIndex + 1) % ready.length;
+    displayImg.src = ready[currentIndex];
   }
 
   // Start cycling immediately at 24fps (~42ms)
