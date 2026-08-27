@@ -14,7 +14,7 @@ import type {APIRoute} from 'astro'
 export const prerender = false
 
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models'
-const DEFAULT_MODEL = 'gemini-3.7-flash'
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite'
 
 const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID
 const dataset = import.meta.env.PUBLIC_SANITY_DATASET || 'production'

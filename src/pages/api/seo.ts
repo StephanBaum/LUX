@@ -13,7 +13,7 @@ import type {APIRoute} from 'astro'
 export const prerender = false
 
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models'
-const DEFAULT_MODEL = 'gemini-3.7-flash'
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite'
 
 const SYSTEM = `You write German search-result text for LUX Studio — a
 photography and film studio in Luxemburg, Saarland, Germany. 400 m² hall,

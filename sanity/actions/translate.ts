@@ -89,23 +89,35 @@ export async function syncTranslations(
   const state = await readState(client)
   const seen = state[id] ?? {}
 
+  /*
+   * The three languages are asked for at the same time. One after another it
+   * was three round trips deep, which is most of the wait the client sees at
+   * the publish button.
+   */
+  const rounds = await Promise.all(
+    LANGUAGES.map(async ({code, label}) => {
+      const stale: Field[] = staleFields(all, code, seen)
+      if (stale.length === 0) return null
+      const translations = await translateInto(code, textFor(stale))
+      if (Object.keys(translations).length === 0) return null
+      return {code, label, stale, translations}
+    }),
+  )
+
   const patch: Record<string, unknown> = {}
   const done: string[] = []
   const touched = new Set<string>()
 
-  for (const {code, label} of LANGUAGES) {
-    const stale: Field[] = staleFields(all, code, seen)
-    if (stale.length === 0) continue
-
-    const translations = await translateInto(code, textFor(stale))
-    if (Object.keys(translations).length === 0) continue
-
-    for (const field of stale) {
+  // Merged one language at a time, so two of them never write the same field
+  // from a stale copy.
+  for (const round of rounds) {
+    if (!round) continue
+    for (const field of round.stale) {
       const current = (patch[field.patch] as any[]) ?? field.entries
-      patch[field.patch] = merge(current, code, valueFor(field, code, translations))
+      patch[field.patch] = merge(current, round.code, valueFor(field, round.code, round.translations))
       touched.add(field.patch)
     }
-    done.push(label)
+    done.push(round.label)
   }
 
   // Record every field, not only the translated ones: a field that was already

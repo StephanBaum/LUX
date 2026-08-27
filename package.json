@@ -12,7 +12,8 @@
     "migrate:content": "node scripts/migrate/content.mjs",
     "migrate:images": "node scripts/migrate/images.mjs",
     "migrate": "npm run migrate:content && npm run migrate:images",
-    "migrate:i18n": "node scripts/migrate/to-internationalized.mjs"
+    "migrate:i18n": "node scripts/migrate/to-internationalized.mjs",
+    "translate:all": "node --experimental-strip-types scripts/migrate/translate-all.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.4",
