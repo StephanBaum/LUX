@@ -28,9 +28,13 @@ export default defineConfig({
   form: {
     // Make that browser the way images are picked, everywhere.
     image: {
-      assetSources: (previous) => [mediaAssetSource, ...previous.filter((s) => s.name !== 'media-library')],
+      assetSources: (previous) => [
+        mediaAssetSource,
+        ...previous.filter((source) => source.name !== 'media-library'),
+      ],
     },
   },
+
 
   schema: {
     types: schemaTypes,
