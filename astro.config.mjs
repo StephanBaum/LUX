@@ -10,6 +10,21 @@ import { loadEnv } from 'vite';
 const env = loadEnv(process.env.NODE_ENV ?? '', process.cwd(), '');
 
 /**
+ * Where this build believes it lives. One setting, two jobs: the canonical
+ * links and the sitemap, and the address Google calls back on when a calendar
+ * changes.
+ *
+ * A preview deployment must not claim to be the real site — a sitemap full of
+ * luxenburger.de served from a preview is an invitation to have the wrong
+ * pages indexed. So the value is taken from the environment, and only falls
+ * back to the address Vercel gives this particular deployment.
+ */
+const siteUrl =
+  env.PUBLIC_SITE_URL ||
+  (env.VERCEL_URL && `https://${env.VERCEL_URL}`) ||
+  'http://localhost:4321';
+
+/**
  * In development Vite re-bundles dependencies as soon as the Studio lazily
  * loads a pane it has not seen before. Chunk filenames carry a hash, so the
  * page is left asking for files that no longer exist and Sanity paints a white
@@ -58,8 +73,7 @@ function staleChunkGuard() {
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: Update with actual domain before deployment
-  site: 'https://luxenburger.de',
+  site: siteUrl,
   output: 'static',
   adapter: vercel(),
   integrations: [
