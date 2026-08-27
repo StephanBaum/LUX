@@ -1,8 +1,16 @@
 ---
 // Preloader component - shows LUX logo with image cycling until page is ready
+import {getSiteContent} from '../lib/sanity/queries';
+import {imageUrl} from '../lib/sanity/image';
+
+// The photos that flick past while the page loads: the home hero, from the CMS.
+const {homePage} = await getSiteContent();
+const preloadImages = (homePage?.heroImages ?? [])
+  .map((photo) => imageUrl(photo, 1200))
+  .filter(Boolean);
 ---
 
-<div class="preloader" id="preloader">
+<div class="preloader" id="preloader" data-images={JSON.stringify(preloadImages)}>
   <div class="preloader__bg"></div>
   <div class="preloader__logo-container">
     <div class="preloader__images" id="preloader-images"></div>
@@ -82,16 +90,8 @@
 
   if (!preloader || !imagesContainer) return;
 
-  var imageSources = [
-    '/Assets/img/image 0.png',
-    '/Assets/img/image 1.png',
-    '/Assets/img/image 2.png',
-    '/Assets/img/image 3.png',
-    '/Assets/img/image 4.png',
-    '/Assets/img/image 5.png',
-    '/Assets/img/image 6.png',
-    '/Assets/img/image 7.png'
-  ];
+  var imageSources = JSON.parse(preloader.dataset.images || '[]');
+  if (imageSources.length === 0) return;
 
   var currentIndex = 0;
   var cycleInterval = null;

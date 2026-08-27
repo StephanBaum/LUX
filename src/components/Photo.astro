@@ -1,0 +1,50 @@
+---
+/**
+ * One `<img>` fed from a Sanity `photo` field.
+ *
+ * Renders nothing when the field is empty, so a page never shows a broken
+ * image while the client is still filling the CMS.
+ */
+import {imageUrl, imageSrcSet, altOf, lqip, lightboxUrl, type Photo} from '../lib/sanity/image';
+
+interface Props {
+  photo: Photo;
+  width: number;
+  height?: number;
+  class?: string;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  draggable?: boolean;
+  lightbox?: string;
+}
+
+const {
+  photo,
+  width,
+  height,
+  class: className,
+  sizes,
+  loading = 'lazy',
+  draggable,
+  lightbox,
+} = Astro.props;
+
+const src = imageUrl(photo, width, height);
+const placeholder = lqip(photo);
+---
+
+{src && (
+  <img
+    src={src}
+    srcset={imageSrcSet(photo, width, height)}
+    sizes={sizes}
+    alt={altOf(photo)}
+    class={className}
+    loading={loading}
+    decoding="async"
+    draggable={draggable === false ? 'false' : undefined}
+    style={placeholder ? `background-image:url(${placeholder});background-size:cover;background-position:center` : undefined}
+    data-lightbox={lightbox}
+    data-lightbox-src={lightbox ? lightboxUrl(photo) : undefined}
+  />
+)}

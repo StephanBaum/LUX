@@ -22,22 +22,18 @@
     const menuBg = document.querySelector('.menu-overlay__bg');
     const body = document.body;
 
-    // Available images for random selection
-    const menuImages = [
-      '/Assets/img/image 0.png',
-      '/Assets/img/image 1.png',
-      '/Assets/img/image 2.png',
-      '/Assets/img/image 3.png',
-      '/Assets/img/image 4.png',
-      '/Assets/img/image 5.png',
-      '/Assets/img/image 6.png',
-      '/Assets/img/image 7.png',
-      '/Assets/img/image 8.png'
-    ];
+    // Images to pick from at random; the build puts them there from the CMS.
+    let menuImages = [];
+    try {
+      menuImages = JSON.parse((menuBg && menuBg.dataset.images) || '[]');
+    } catch (err) {
+      menuImages = [];
+    }
 
     if (!menuToggle || !menuOverlay) return;
 
     function getRandomImage() {
+      if (menuImages.length === 0) return null;
       const randomIndex = Math.floor(Math.random() * menuImages.length);
       return menuImages[randomIndex];
     }
