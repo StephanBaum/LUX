@@ -9,6 +9,8 @@ import {structure} from './sanity/structure'
 import {translateAction, withAutoTranslate, UNTRANSLATED_TYPES} from './sanity/actions/translate'
 import {translationBadge} from './sanity/badges/translation'
 import {CompactTranslation} from './sanity/components/CompactTranslation'
+import {PhotoInput} from './sanity/components/PhotoInput'
+import {SeoInput} from './sanity/components/SeoInput'
 
 // Read from Vite (browser bundle) or Node (sanity CLI), whichever is present.
 const env: Record<string, string | undefined> = {
@@ -89,13 +91,26 @@ export default defineConfig({
       /*
        * Plain translatable text gets the compact one-input-plus-switcher view.
        * The list and rich-text ones keep the plugin's own input, which handles
-       * those shapes properly.
+       * those shapes properly. A picture describes itself as soon as it is
+       * chosen, so the alt text is never the field that stays empty.
        */
-      input: (props: any) =>
-        props.schemaType?.name === 'internationalizedArrayString' ||
-        props.schemaType?.name === 'internationalizedArrayText'
-          ? CompactTranslation(props)
-          : props.renderDefault(props),
+      input: (props: any) => {
+        // A field named "heroImage" of type "photo" carries its own name, so
+        // walk up the chain to find out what it really is.
+        const isA = (name: string) => {
+          for (let type = props.schemaType; type; type = type.type) {
+            if (type.name === name) return true
+          }
+          return false
+        }
+
+        if (isA('internationalizedArrayString') || isA('internationalizedArrayText')) {
+          return CompactTranslation(props)
+        }
+        if (isA('photo')) return PhotoInput(props)
+        if (isA('pageSeo')) return SeoInput(props)
+        return props.renderDefault(props)
+      },
     },
   },
 

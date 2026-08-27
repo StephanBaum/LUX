@@ -77,6 +77,13 @@ function withLeaves(value: unknown, replacements: Record<string, string>, path: 
 export type Field = {
   /** Where the field sits, e.g. ['header', 'title'] or ['sections', '0', 'body']. */
   path: string[]
+  /**
+   * The same place, written the way a Sanity patch wants it. An item in a list
+   * is addressed by its key rather than its position — `gallery[_key=="ab12"]`,
+   * not `gallery.2` — because a plain number is not valid there, and because
+   * the position changes the moment somebody reorders the list.
+   */
+  patch: string
   /** The German value, in whatever shape the field uses. */
   german: unknown
   /** The whole array as stored, so entries can be replaced in place. */
@@ -87,27 +94,29 @@ export type Field = {
 export function collectFields(doc: any): Field[] {
   const found: Field[] = []
 
-  const walk = (value: any, path: string[]) => {
+  const walk = (value: any, path: string[], patch: string) => {
     if (isInternationalized(value)) {
       const german = value.find((entry) => entry.language === SOURCE_LANGUAGE)?.value
       if (german !== undefined && Object.keys(leaves(german)).length > 0) {
-        found.push({path, german, entries: value})
+        found.push({path, patch, german, entries: value})
       }
       return
     }
     if (Array.isArray(value)) {
-      value.forEach((item, i) => walk(item, [...path, String(i)]))
+      value.forEach((item, i) =>
+        walk(item, [...path, String(i)], item?._key ? `${patch}[_key=="${item._key}"]` : `${patch}[${i}]`),
+      )
       return
     }
     if (value && typeof value === 'object') {
       for (const [key, item] of Object.entries(value)) {
         if (key.startsWith('_')) continue
-        walk(item, [...path, key])
+        walk(item, [...path, key], patch ? `${patch}.${key}` : key)
       }
     }
   }
 
-  walk(doc, [])
+  walk(doc, [], '')
   return found
 }
 

@@ -188,13 +188,6 @@
   margin: 0;
 }
 
-.services__rule {
-  grid-column: 1 / span 3;
-  height: 2px;
-  background: var(--color-black);
-  margin-top: var(--space-sm);
-}
-
 .services__title {
   grid-column: 5 / -1;
   font-size: clamp(1.75rem, 1.25rem + 2vw, 3rem);
@@ -248,7 +241,6 @@
 
 @media (max-width: 48rem) {
   .services__label,
-  .services__rule,
   .services__title,
   .services__list {
     grid-column: 1 / -1;

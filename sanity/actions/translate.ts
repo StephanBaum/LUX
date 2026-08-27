@@ -61,10 +61,9 @@ export async function syncTranslations(
     if (Object.keys(translations).length === 0) continue
 
     for (const field of stale) {
-      const key = field.path.join('.')
-      const current = (patch[key] as any[]) ?? field.entries
-      patch[key] = merge(current, code, valueFor(field, code, translations))
-      touched.add(key)
+      const current = (patch[field.patch] as any[]) ?? field.entries
+      patch[field.patch] = merge(current, code, valueFor(field, code, translations))
+      touched.add(field.patch)
     }
     done.push(label)
   }
