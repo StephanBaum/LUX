@@ -12,9 +12,9 @@ export const i18nField = defineField({
   type: 'object',
   group: 'i18n',
   description:
-    'Wird von der Schaltfläche „Übersetzen“ gefüllt. Jede Formulierung lässt sich hier ' +
-    'von Hand ändern — sie bleibt erhalten, solange der deutsche Text daneben ' +
-    'unverändert bleibt.',
+    'Wird beim Veröffentlichen automatisch aus dem deutschen Text gefüllt. Jede ' +
+    'Formulierung lässt sich hier von Hand ändern — sie bleibt erhalten, solange der ' +
+    'deutsche Text daneben unverändert bleibt.',
   components: {input: TranslationsInput},
   fields: [
     defineField({name: 'en', type: 'text', title: 'English'}),

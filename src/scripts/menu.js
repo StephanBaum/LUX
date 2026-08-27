@@ -45,6 +45,10 @@
     function openMenu() {
       // Set random image before opening
       if (menuBgImg) {
+        // The image is rendered with a srcset, and a srcset beats src: without
+        // clearing it the browser keeps painting the same picture every time.
+        menuBgImg.removeAttribute('srcset');
+        menuBgImg.removeAttribute('sizes');
         menuBgImg.src = getRandomImage();
       }
       // Compensate for scrollbar width to prevent layout shift

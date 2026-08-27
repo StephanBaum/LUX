@@ -61,6 +61,48 @@ async function translateInto(target: string, texts: TextMap): Promise<TextMap> {
   return body.translations ?? {}
 }
 
+/**
+ * Bring a document's translations up to date. Returns how many fields were
+ * sent, so the caller can say something useful — or nothing, when there was
+ * nothing to do.
+ */
+export async function syncTranslations(
+  client: any,
+  doc: any,
+  id: string,
+  isDraft: boolean,
+): Promise<{fields: number; languages: string[]}> {
+  const german = collectText(doc)
+  if (Object.keys(german).length === 0) return {fields: 0, languages: []}
+
+  const previous = parse(doc?.i18n?.translatedFrom)
+  const changed = changedOnly(german, previous)
+  if (Object.keys(changed).length === 0) return {fields: 0, languages: []}
+
+  const patch: Record<string, unknown> = {}
+  const done: string[] = []
+
+  for (const {code, label} of LANGUAGES) {
+    const translations = await translateInto(code, changed)
+    if (Object.keys(translations).length === 0) continue
+    patch[`i18n.${code}`] = mergeStored(doc?.i18n?.[code], translations)
+    done.push(label)
+  }
+
+  if (done.length === 0) return {fields: 0, languages: []}
+
+  patch['i18n.translatedFrom'] = JSON.stringify(nest(german))
+  patch['i18n.translatedAt'] = new Date().toISOString()
+
+  await client
+    .patch(isDraft ? `drafts.${id}` : id)
+    .setIfMissing({i18n: {}})
+    .set(patch)
+    .commit()
+
+  return {fields: Object.keys(changed).length, languages: done}
+}
+
 export const translateAction: DocumentActionComponent = (props) => {
   const {draft, published, id, type} = props
   const client = useClient({apiVersion: '2026-08-01'})
@@ -78,44 +120,21 @@ export const translateAction: DocumentActionComponent = (props) => {
     onHandle: async () => {
       setBusy(true)
       try {
-        const previous = parse(doc?.i18n?.translatedFrom)
-        const changed = changedOnly(german, previous)
+        const result = await syncTranslations(client, doc, id, Boolean(draft))
 
-        if (Object.keys(changed).length === 0) {
-          toast.push({status: 'info', title: 'Alles schon übersetzt', description: 'Der deutsche Text hat sich seit der letzten Übersetzung nicht geändert.'})
+        if (result.fields === 0) {
+          toast.push({
+            status: 'info',
+            title: 'Alles schon übersetzt',
+            description: 'Der deutsche Text hat sich seit der letzten Übersetzung nicht geändert.',
+          })
           return
         }
 
-        const patch: Record<string, unknown> = {}
-        const done: string[] = []
-
-        for (const {code, label} of LANGUAGES) {
-          const translations = await translateInto(code, changed)
-          if (Object.keys(translations).length === 0) continue
-          patch[`i18n.${code}`] = mergeStored(doc?.i18n?.[code], translations)
-          done.push(label)
-        }
-
-        if (done.length === 0) {
-          toast.push({status: 'error', title: 'Keine Übersetzung erhalten'})
-          return
-        }
-
-        patch['i18n.translatedFrom'] = JSON.stringify(nest(german))
-        patch['i18n.translatedAt'] = new Date().toISOString()
-
-        // The draft is what the client is looking at, so write there.
-        await client
-          .patch(draft ? `drafts.${id}` : id)
-          .setIfMissing({i18n: {}})
-          .set(patch)
-          .commit()
-
-        const count = Object.keys(changed).length
         toast.push({
           status: 'success',
-          title: `${count} ${count === 1 ? 'Feld' : 'Felder'} übersetzt`,
-          description: done.join(', '),
+          title: `${result.fields} ${result.fields === 1 ? 'Feld' : 'Felder'} übersetzt`,
+          description: result.languages.join(', '),
         })
       } catch (error: any) {
         toast.push({
@@ -129,6 +148,51 @@ export const translateAction: DocumentActionComponent = (props) => {
       }
     },
   }
+}
+
+/**
+ * Publishing is the moment the German becomes real, so that is when the other
+ * languages are brought up to date — no button to remember. A translation
+ * corrected by hand survives, because only changed German is ever re-sent.
+ *
+ * If the translation service is down the publish still goes through: a page
+ * that is live in German beats a page that is not live at all.
+ */
+export function withAutoTranslate(action: DocumentActionComponent): DocumentActionComponent {
+  const wrapped: DocumentActionComponent = (props) => {
+    const original = action(props)
+    const client = useClient({apiVersion: '2026-08-01'})
+    const toast = useToast()
+
+    if (!original) return original
+
+    return {
+      ...original,
+      onHandle: async () => {
+        const doc: any = props.draft ?? props.published
+        try {
+          const result = await syncTranslations(client, doc, props.id, Boolean(props.draft))
+          if (result.fields > 0) {
+            toast.push({
+              status: 'success',
+              title: `${result.fields} ${result.fields === 1 ? 'Feld' : 'Felder'} übersetzt`,
+              description: result.languages.join(', '),
+            })
+          }
+        } catch (error: any) {
+          toast.push({
+            status: 'warning',
+            title: 'Ohne neue Übersetzung veröffentlicht',
+            description: error?.message ?? String(error),
+          })
+        }
+        original.onHandle?.()
+      },
+    }
+  }
+
+  wrapped.action = action.action
+  return wrapped
 }
 
 /** Types with no translatable text of their own. */

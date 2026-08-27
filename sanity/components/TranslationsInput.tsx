@@ -103,8 +103,8 @@ export function TranslationsInput(props: ObjectInputProps) {
     return (
       <Card padding={4} radius={2} tone="transparent" border>
         <Text size={1} muted>
-          Noch nichts übersetzt. Die Schaltfläche „Übersetzen“ unten rechts füllt Englisch,
-          Französisch und Lëtzebuergesch aus dem deutschen Text.
+          Noch nichts übersetzt. Beim nächsten Veröffentlichen werden Englisch, Französisch
+          und Lëtzebuergesch automatisch aus dem deutschen Text gefüllt.
         </Text>
       </Card>
     )

@@ -76,10 +76,12 @@ export default defineType({
     }),
     defineField({name: 'partnersLabel', title: 'Überschrift Partner-Logos', type: 'string', group: 'nav'}),
     defineField({
-      name: 'menuImage',
-      title: 'Bild im Menü-Overlay',
-      type: 'photo',
+      name: 'menuImages',
+      title: 'Bilder im Menü-Overlay',
+      type: 'array',
       group: 'nav',
+      of: [{type: 'photo'}],
+      description: 'Bei jedem Öffnen des Menüs wird eines davon zufällig gezeigt.',
     }),
     defineField({
       name: 'partnerLogos',

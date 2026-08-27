@@ -138,7 +138,7 @@ const patches = [
   [
     'siteSettings',
     async () => ({
-      menuImage: await photo(img('image 1.png')),
+      menuImages: await photos([1, 2, 5, 7, 0].map((n) => img(`image ${n}.png`))),
       defaultOgImage: await photo(img('image 0.png')),
     }),
   ],
