@@ -12,7 +12,7 @@
     "migrate:content": "node scripts/migrate/content.mjs",
     "migrate:images": "node scripts/migrate/images.mjs",
     "migrate": "npm run migrate:content && npm run migrate:images",
-    "translate": "node scripts/migrate/translate.mjs"
+    "migrate:i18n": "node scripts/migrate/to-internationalized.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.4",
@@ -29,6 +29,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "sanity": "^6.11.0",
+    "sanity-plugin-internationalized-array": "^5.2.3",
     "sanity-plugin-media": "^6.1.7",
     "styled-components": "^6.5.3"
   },

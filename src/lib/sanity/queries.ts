@@ -1,4 +1,5 @@
 import {sanityClient} from './client'
+import {localize, DEFAULT_LANG, type Lang} from '../content/localize'
 
 /** Everything the site needs, in one round trip. */
 const SITE_QUERY = /* groq */ `{
@@ -32,26 +33,29 @@ const SITE_QUERY = /* groq */ `{
 
 export type SiteContent = Record<string, any>
 
-let cached: SiteContent | null = null
+let raw: Promise<SiteContent> | null = null
+const byLanguage = new Map<Lang, SiteContent>()
 
 /**
- * Fetched once per build. Every page imports this, so without the cache a
- * nine-page build would hit the API nine times for the same data.
+ * Fetched once per build, then resolved into one language.
+ *
+ * Every page asks for German, which is what gets rendered into the HTML; the
+ * JSON bundles ask for the other three. Both are memoised — a nine-page build
+ * would otherwise hit the API on every page.
  *
  * The cache is skipped while developing: the dev server is a long-running
- * process, and caching there means it keeps serving whatever it read at start
- * — content edited in the Studio, or a re-run seed script, would never show up
- * until the server was restarted.
+ * process, and caching there means it keeps serving whatever it read at start.
  */
-export async function getSiteContent(): Promise<SiteContent> {
+export async function getSiteContent(lang: Lang = DEFAULT_LANG): Promise<SiteContent> {
   if (import.meta.env.DEV) {
-    return withImageMetadata(await sanityClient.fetch(SITE_QUERY))
+    return localize(await withImageMetadata(await sanityClient.fetch(SITE_QUERY)), lang)
   }
-  if (!cached) {
-    const content = await sanityClient.fetch(SITE_QUERY)
-    cached = await withImageMetadata(content)
+
+  if (!byLanguage.has(lang)) {
+    if (!raw) raw = sanityClient.fetch(SITE_QUERY).then(withImageMetadata)
+    byLanguage.set(lang, localize(await raw, lang))
   }
-  return cached!
+  return byLanguage.get(lang)!
 }
 
 /**

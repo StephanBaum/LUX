@@ -5,7 +5,7 @@ export default defineType({
   title: 'Seitenkopf',
   type: 'object',
   fields: [
-    defineField({name: 'title', title: 'Überschrift', type: 'string', validation: (r) => r.required()}),
-    defineField({name: 'text', title: 'Einleitungstext', type: 'text', rows: 4}),
+    defineField({name: 'title', title: 'Überschrift', type: 'internationalizedArrayString', validation: (r) => r.required()}),
+    defineField({name: 'text', title: 'Einleitungstext', type: 'internationalizedArrayText'}),
   ],
 })

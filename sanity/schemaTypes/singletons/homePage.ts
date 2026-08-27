@@ -1,12 +1,10 @@
 import {defineField, defineType} from 'sanity'
-import {i18nField} from '../../lib/fields'
 
 export default defineType({
   name: 'homePage',
   title: 'Startseite',
   type: 'document',
   groups: [
-    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'seo', title: 'Menü & Google'},
     {name: 'hero', title: 'Titelbild'},
     {name: 'studio', title: 'Abschnitt Studio'},
@@ -39,8 +37,8 @@ export default defineType({
       type: 'object',
       group: 'studio',
       fields: [
-        defineField({name: 'label', title: 'Kleine Beschriftung', type: 'string'}),
-        defineField({name: 'text', title: 'Text', type: 'text', rows: 6}),
+        defineField({name: 'label', title: 'Kleine Beschriftung', type: 'internationalizedArrayString'}),
+        defineField({name: 'text', title: 'Text', type: 'internationalizedArrayText'}),
       ],
     }),
     defineField({
@@ -49,7 +47,7 @@ export default defineType({
       type: 'menschenSection',
       group: 'menschen',
     }),
-    defineField({name: 'sliderHint', title: 'Hinweis am Slider', type: 'string', group: 'slider'}),
+    defineField({name: 'sliderHint', title: 'Hinweis am Slider', type: 'internationalizedArrayString', group: 'slider'}),
     defineField({
       name: 'sliderImages',
       title: 'Bilder im Slider',
@@ -61,12 +59,11 @@ export default defineType({
     defineField({
       name: 'navLabel',
       title: 'Name im Menü',
-      type: 'string',
+      type: 'internationalizedArrayString',
       group: 'seo',
       description: 'So heißt die Seite in Menü und Fußzeile.',
     }),
     defineField({name: 'seo', title: 'Suchmaschine & Vorschau', type: 'pageSeo', group: 'seo'}),
-    i18nField,
   ],
   preview: {prepare: () => ({title: 'Startseite'})},
 })

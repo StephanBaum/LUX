@@ -2,54 +2,19 @@ import {useState} from 'react'
 import {useClient, type DocumentActionComponent} from 'sanity'
 import {useToast} from '@sanity/ui/toast'
 import {
-  changedOnly,
-  collectText,
+  collectFields,
   LANGUAGES,
-  nest,
-  type TextMap,
+  SOURCE_LANGUAGE,
+  staleFields,
+  textFor,
+  valueFor,
+  type Field,
 } from '../../src/lib/content/translatable'
 
-/**
- * "Übersetzen" — fills English, French and Luxembourgish from the German.
- *
- * Only the fields whose German text changed since the last run are sent, so a
- * translation someone corrected by hand is never overwritten. What was sent
- * becomes the new reference snapshot.
- */
+/** Types with no translatable text of their own. */
+export const UNTRANSLATED_TYPES = new Set(['equipmentItem'])
 
-const parse = (value: unknown): TextMap | null => {
-  if (typeof value !== 'string' || !value.trim()) return null
-  try {
-    const parsed = JSON.parse(value)
-    return parsed && typeof parsed === 'object' ? parsed : null
-  } catch {
-    return null
-  }
-}
-
-/** Merge new translations over what is already stored for that language. */
-function mergeStored(stored: unknown, additions: TextMap): string {
-  const previous = parse(stored) ?? {}
-  return JSON.stringify(nest({...flatten(previous), ...additions}))
-}
-
-/** Nested stored JSON back to a flat path map, so merging is by path. */
-function flatten(value: any, path: string[] = [], out: TextMap = {}): TextMap {
-  if (typeof value === 'string') {
-    out[path.join('.')] = value
-    return out
-  }
-  if (Array.isArray(value)) {
-    value.forEach((item, i) => flatten(item, [...path, String(i)], out))
-    return out
-  }
-  if (value && typeof value === 'object') {
-    for (const [key, item] of Object.entries(value)) flatten(item, [...path, key], out)
-  }
-  return out
-}
-
-async function translateInto(target: string, texts: TextMap): Promise<TextMap> {
+async function translateInto(target: string, texts: Record<string, string>) {
   const response = await fetch('/api/translate', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -58,13 +23,22 @@ async function translateInto(target: string, texts: TextMap): Promise<TextMap> {
 
   const body = await response.json().catch(() => ({}))
   if (!response.ok) throw new Error(body.error ?? `Fehler ${response.status}`)
-  return body.translations ?? {}
+  return (body.translations ?? {}) as Record<string, string>
+}
+
+const ORDER = [SOURCE_LANGUAGE, ...LANGUAGES.map((language) => language.code)]
+
+/** Put a translated value into the field's array, keeping the other languages. */
+function merge(entries: any[], language: string, value: unknown) {
+  return [...entries.filter((entry) => entry.language !== language), {_key: language, language, value}].sort(
+    (a, b) => ORDER.indexOf(a.language) - ORDER.indexOf(b.language),
+  )
 }
 
 /**
- * Bring a document's translations up to date. Returns how many fields were
- * sent, so the caller can say something useful — or nothing, when there was
- * nothing to do.
+ * Bring a document's translations up to date, and report how much moved.
+ * Only fields that have no counterpart yet are sent, so a translation someone
+ * corrected by hand is never overwritten.
  */
 export async function syncTranslations(
   client: any,
@@ -72,70 +46,63 @@ export async function syncTranslations(
   id: string,
   isDraft: boolean,
 ): Promise<{fields: number; languages: string[]}> {
-  const german = collectText(doc)
-  if (Object.keys(german).length === 0) return {fields: 0, languages: []}
-
-  const previous = parse(doc?.i18n?.translatedFrom)
-  const changed = changedOnly(german, previous)
-  if (Object.keys(changed).length === 0) return {fields: 0, languages: []}
+  const all = collectFields(doc)
+  if (all.length === 0) return {fields: 0, languages: []}
 
   const patch: Record<string, unknown> = {}
   const done: string[] = []
+  const touched = new Set<string>()
 
   for (const {code, label} of LANGUAGES) {
-    const translations = await translateInto(code, changed)
+    const stale: Field[] = staleFields(all, code)
+    if (stale.length === 0) continue
+
+    const translations = await translateInto(code, textFor(stale))
     if (Object.keys(translations).length === 0) continue
-    patch[`i18n.${code}`] = mergeStored(doc?.i18n?.[code], translations)
+
+    for (const field of stale) {
+      const key = field.path.join('.')
+      const current = (patch[key] as any[]) ?? field.entries
+      patch[key] = merge(current, code, valueFor(field, code, translations))
+      touched.add(key)
+    }
     done.push(label)
   }
 
-  if (done.length === 0) return {fields: 0, languages: []}
+  if (touched.size === 0) return {fields: 0, languages: []}
 
-  patch['i18n.translatedFrom'] = JSON.stringify(nest(german))
-  patch['i18n.translatedAt'] = new Date().toISOString()
-
-  await client
-    .patch(isDraft ? `drafts.${id}` : id)
-    .setIfMissing({i18n: {}})
-    .set(patch)
-    .commit()
-
-  return {fields: Object.keys(changed).length, languages: done}
+  await client.patch(isDraft ? `drafts.${id}` : id).set(patch).commit()
+  return {fields: touched.size, languages: done}
 }
 
 export const translateAction: DocumentActionComponent = (props) => {
-  const {draft, published, id, type} = props
+  const {draft, published, id} = props
   const client = useClient({apiVersion: '2026-08-01'})
   const toast = useToast()
   const [busy, setBusy] = useState(false)
 
   const doc: any = draft ?? published
-  const german = doc ? collectText(doc) : {}
-  const nothingToDo = Object.keys(german).length === 0
 
   return {
     label: busy ? 'Übersetze…' : 'Übersetzen',
-    disabled: busy || nothingToDo,
-    title: nothingToDo ? 'Auf dieser Seite gibt es keinen Text zum Übersetzen.' : undefined,
+    disabled: busy || !doc,
     onHandle: async () => {
       setBusy(true)
       try {
         const result = await syncTranslations(client, doc, id, Boolean(draft))
-
-        if (result.fields === 0) {
-          toast.push({
-            status: 'info',
-            title: 'Alles schon übersetzt',
-            description: 'Der deutsche Text hat sich seit der letzten Übersetzung nicht geändert.',
-          })
-          return
-        }
-
-        toast.push({
-          status: 'success',
-          title: `${result.fields} ${result.fields === 1 ? 'Feld' : 'Felder'} übersetzt`,
-          description: result.languages.join(', '),
-        })
+        toast.push(
+          result.fields === 0
+            ? {
+                status: 'info',
+                title: 'Alles schon übersetzt',
+                description: 'Der deutsche Text hat sich seit der letzten Übersetzung nicht geändert.',
+              }
+            : {
+                status: 'success',
+                title: `${result.fields} ${result.fields === 1 ? 'Feld' : 'Felder'} übersetzt`,
+                description: result.languages.join(', '),
+              },
+        )
       } catch (error: any) {
         toast.push({
           status: 'error',
@@ -152,8 +119,7 @@ export const translateAction: DocumentActionComponent = (props) => {
 
 /**
  * Publishing is the moment the German becomes real, so that is when the other
- * languages are brought up to date — no button to remember. A translation
- * corrected by hand survives, because only changed German is ever re-sent.
+ * languages are filled in — no button to remember.
  *
  * If the translation service is down the publish still goes through: a page
  * that is live in German beats a page that is not live at all.
@@ -194,6 +160,3 @@ export function withAutoTranslate(action: DocumentActionComponent): DocumentActi
   wrapped.action = action.action
   return wrapped
 }
-
-/** Types with no translatable text of their own. */
-export const UNTRANSLATED_TYPES = new Set(['equipmentItem'])

@@ -5,9 +5,9 @@ export default defineType({
   title: 'Aufruf am Seitenende',
   type: 'object',
   fields: [
-    defineField({name: 'title', title: 'Überschrift', type: 'string'}),
-    defineField({name: 'text', title: 'Text', type: 'text', rows: 3}),
-    defineField({name: 'linkLabel', title: 'Button-Text', type: 'string'}),
+    defineField({name: 'title', title: 'Überschrift', type: 'internationalizedArrayString'}),
+    defineField({name: 'text', title: 'Text', type: 'internationalizedArrayText'}),
+    defineField({name: 'linkLabel', title: 'Button-Text', type: 'internationalizedArrayString'}),
     defineField({name: 'linkHref', title: 'Button-Ziel', type: 'string', description: 'z. B. /mieten oder mailto:info@…'}),
   ],
 })

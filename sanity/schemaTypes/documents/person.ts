@@ -1,5 +1,4 @@
 import {defineField, defineType} from 'sanity'
-import {i18nField} from '../../lib/fields'
 
 /**
  * One document per photographer. Holds everything that belongs to the person
@@ -11,7 +10,6 @@ export default defineType({
   title: 'Person',
   type: 'document',
   groups: [
-    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'profile', title: 'Profil'},
     {name: 'portfolio', title: 'Portfolio'},
   ],
@@ -25,15 +23,14 @@ export default defineType({
       options: {source: 'name', maxLength: 96},
       validation: (r) => r.required(),
     }),
-    defineField({name: 'role', title: 'Rolle', type: 'string', group: 'profile'}),
+    defineField({name: 'role', title: 'Rolle', type: 'internationalizedArrayString', group: 'profile'}),
     defineField({name: 'email', title: 'E-Mail', type: 'string', group: 'profile'}),
     defineField({name: 'instagram', title: 'Instagram-URL', type: 'url', group: 'profile'}),
     defineField({name: 'photo', title: 'Foto', type: 'photo', group: 'profile'}),
     defineField({
       name: 'bio',
       title: 'Biografie',
-      type: 'text',
-      rows: 8,
+      type: 'internationalizedArrayText',
       group: 'profile',
       description: 'Der ausführliche Text für die eigene Personenseite.',
     }),
@@ -52,7 +49,6 @@ export default defineType({
       of: [{type: 'photo'}],
     }),
     defineField({name: 'order', title: 'Reihenfolge', type: 'number', group: 'profile'}),
-    i18nField,
   ],
   orderings: [{title: 'Reihenfolge', name: 'order', by: [{field: 'order', direction: 'asc'}]}],
   preview: {select: {title: 'name', subtitle: 'role', media: 'photo'}},

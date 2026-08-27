@@ -1,12 +1,10 @@
 import {defineField, defineType} from 'sanity'
-import {i18nField} from '../../lib/fields'
 
 export default defineType({
   name: 'siteSettings',
   title: 'Einstellungen',
   type: 'document',
   groups: [
-    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'contact', title: 'Kontakt'},
     {name: 'nav', title: 'Menü & Fußzeile'},
     {name: 'social', title: 'Social Media'},
@@ -32,13 +30,13 @@ export default defineType({
       type: 'object',
       group: 'contact',
       fields: [
-        defineField({name: 'phone', title: 'Telefon', type: 'string'}),
+        defineField({name: 'phone', title: 'Telefon', type: 'internationalizedArrayString'}),
         defineField({name: 'fax', title: 'Fax', type: 'string'}),
         defineField({name: 'email', title: 'E-Mail', type: 'string'}),
-        defineField({name: 'updated', title: 'Stand', type: 'string'}),
-        defineField({name: 'contact', title: 'Kontakt', type: 'string'}),
-        defineField({name: 'inquire', title: 'Anfragen', type: 'string'}),
-        defineField({name: 'selection', title: 'Auswahl', type: 'string'}),
+        defineField({name: 'updated', title: 'Stand', type: 'internationalizedArrayString'}),
+        defineField({name: 'contact', title: 'Kontakt', type: 'internationalizedArrayString'}),
+        defineField({name: 'inquire', title: 'Anfragen', type: 'internationalizedArrayString'}),
+        defineField({name: 'selection', title: 'Auswahl', type: 'internationalizedArrayString'}),
       ],
     }),
 
@@ -69,12 +67,12 @@ export default defineType({
       type: 'object',
       group: 'nav',
       fields: [
-        defineField({name: 'impressum', title: 'Impressum', type: 'string'}),
-        defineField({name: 'datenschutz', title: 'Datenschutz', type: 'string'}),
-        defineField({name: 'agb', title: 'AGB', type: 'string'}),
+        defineField({name: 'impressum', title: 'Impressum', type: 'internationalizedArrayString'}),
+        defineField({name: 'datenschutz', title: 'Datenschutz', type: 'internationalizedArrayString'}),
+        defineField({name: 'agb', title: 'AGB', type: 'internationalizedArrayString'}),
       ],
     }),
-    defineField({name: 'partnersLabel', title: 'Überschrift Partner-Logos', type: 'string', group: 'nav'}),
+    defineField({name: 'partnersLabel', title: 'Überschrift Partner-Logos', type: 'internationalizedArrayString', group: 'nav'}),
     defineField({
       name: 'menuImages',
       title: 'Bilder im Menü-Overlay',
@@ -92,7 +90,7 @@ export default defineType({
         {
           type: 'object',
           fields: [
-            defineField({name: 'name', title: 'Name', type: 'string'}),
+            defineField({name: 'name', title: 'Name', type: 'internationalizedArrayString'}),
             defineField({name: 'logo', title: 'Logo', type: 'photo'}),
             defineField({name: 'url', title: 'Webseite', type: 'url'}),
           ],
@@ -112,20 +110,20 @@ export default defineType({
       group: 'form',
       description: 'Gilt für alle Formulare auf der Seite.',
       fields: [
-        defineField({name: 'namePlaceholder', title: 'Platzhalter Name', type: 'string'}),
-        defineField({name: 'companyPlaceholder', title: 'Platzhalter Firma', type: 'string'}),
-        defineField({name: 'emailPlaceholder', title: 'Platzhalter E-Mail', type: 'string'}),
-        defineField({name: 'phonePlaceholder', title: 'Platzhalter Telefon', type: 'string'}),
-        defineField({name: 'inquiryPlaceholder', title: 'Platzhalter Anfrage', type: 'string'}),
-        defineField({name: 'messagePlaceholder', title: 'Platzhalter Nachricht', type: 'string'}),
-        defineField({name: 'submit', title: 'Button-Text', type: 'string'}),
-        defineField({name: 'success', title: 'Erfolgsmeldung', type: 'string'}),
-        defineField({name: 'errorName', title: 'Fehler: Name', type: 'string'}),
-        defineField({name: 'errorEmail', title: 'Fehler: E-Mail', type: 'string'}),
-        defineField({name: 'errorMessage', title: 'Fehler: Nachricht', type: 'string'}),
-        defineField({name: 'errorInquiry', title: 'Fehler: Anfrage', type: 'string'}),
-        defineField({name: 'selectionLabel', title: 'Beschriftung Auswahl', type: 'string'}),
-        defineField({name: 'noSelection', title: 'Text ohne Auswahl', type: 'string'}),
+        defineField({name: 'namePlaceholder', title: 'Platzhalter Name', type: 'internationalizedArrayString'}),
+        defineField({name: 'companyPlaceholder', title: 'Platzhalter Firma', type: 'internationalizedArrayString'}),
+        defineField({name: 'emailPlaceholder', title: 'Platzhalter E-Mail', type: 'internationalizedArrayString'}),
+        defineField({name: 'phonePlaceholder', title: 'Platzhalter Telefon', type: 'internationalizedArrayString'}),
+        defineField({name: 'inquiryPlaceholder', title: 'Platzhalter Anfrage', type: 'internationalizedArrayString'}),
+        defineField({name: 'messagePlaceholder', title: 'Platzhalter Nachricht', type: 'internationalizedArrayString'}),
+        defineField({name: 'submit', title: 'Button-Text', type: 'internationalizedArrayString'}),
+        defineField({name: 'success', title: 'Erfolgsmeldung', type: 'internationalizedArrayString'}),
+        defineField({name: 'errorName', title: 'Fehler: Name', type: 'internationalizedArrayString'}),
+        defineField({name: 'errorEmail', title: 'Fehler: E-Mail', type: 'internationalizedArrayString'}),
+        defineField({name: 'errorMessage', title: 'Fehler: Nachricht', type: 'internationalizedArrayString'}),
+        defineField({name: 'errorInquiry', title: 'Fehler: Anfrage', type: 'internationalizedArrayString'}),
+        defineField({name: 'selectionLabel', title: 'Beschriftung Auswahl', type: 'internationalizedArrayString'}),
+        defineField({name: 'noSelection', title: 'Text ohne Auswahl', type: 'internationalizedArrayString'}),
       ],
     }),
 
@@ -135,28 +133,27 @@ export default defineType({
       type: 'object',
       group: 'calendar',
       fields: [
-        defineField({name: 'hint', title: 'Hinweis', type: 'string'}),
-        defineField({name: 'blockedHint', title: 'Belegt', type: 'string'}),
-        defineField({name: 'blockedWarning', title: 'Warnung bei belegten Tagen', type: 'text', rows: 2}),
+        defineField({name: 'hint', title: 'Hinweis', type: 'internationalizedArrayString'}),
+        defineField({name: 'blockedHint', title: 'Belegt', type: 'internationalizedArrayString'}),
+        defineField({name: 'blockedWarning', title: 'Warnung bei belegten Tagen', type: 'internationalizedArrayText'}),
         defineField({
           name: 'months',
           title: 'Monatsnamen',
-          type: 'string',
+          type: 'internationalizedArrayString',
           description: 'Zwölf Namen, mit Komma getrennt.',
         }),
         defineField({
           name: 'monthsShort',
           title: 'Monatsnamen kurz',
-          type: 'string',
+          type: 'internationalizedArrayString',
           description: 'Zwölf Kurzformen, mit Komma getrennt.',
         }),
       ],
     }),
 
     defineField({name: 'defaultOgImage', title: 'Standard-Vorschaubild (Social Media)', type: 'photo', group: 'seo'}),
-    defineField({name: 'metaDescription', title: 'Standard-Beschreibung', type: 'text', rows: 3, group: 'seo'}),
+    defineField({name: 'metaDescription', title: 'Standard-Beschreibung', type: 'internationalizedArrayText', group: 'seo'}),
 
-    i18nField,
   ],
   preview: {prepare: () => ({title: 'Einstellungen'})},
 })

@@ -1,5 +1,5 @@
 import {getSiteContent} from '../sanity/queries'
-import {localize, type Lang} from './localize'
+import {type Lang} from './localize'
 import {portableTextToHtml} from './portable-text'
 import {KEY_BY_TYPE} from './navigation'
 
@@ -67,8 +67,7 @@ const infoKeys = (infos: any[] = []) =>
   infos.map((info) => clean({label: info?.label, value: info?.value}))
 
 export async function getBundles(lang: Lang): Promise<Bundles> {
-  const raw = await getSiteContent()
-  const c = localize(raw, lang)
+  const c = await getSiteContent(lang)
 
   const settings = c.siteSettings ?? {}
 

@@ -5,9 +5,9 @@ export default defineType({
   title: 'Ausbildung / Expertise',
   type: 'object',
   fields: [
-    defineField({name: 'title', title: 'Titel', type: 'string', validation: (r) => r.required()}),
-    defineField({name: 'detail', title: 'Detail', type: 'string'}),
-    defineField({name: 'year', title: 'Jahr', type: 'string'}),
+    defineField({name: 'title', title: 'Titel', type: 'internationalizedArrayString', validation: (r) => r.required()}),
+    defineField({name: 'detail', title: 'Detail', type: 'internationalizedArrayString'}),
+    defineField({name: 'year', title: 'Jahr', type: 'internationalizedArrayString'}),
   ],
   preview: {
     select: {title: 'title', subtitle: 'year'},

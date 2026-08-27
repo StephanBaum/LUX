@@ -12,11 +12,11 @@ export default defineType({
     defineField({
       name: 'alt',
       title: 'Bildbeschreibung (Alt-Text)',
-      type: 'string',
+      type: 'internationalizedArrayString',
       description: 'Kurze Beschreibung für Suchmaschinen und Screenreader.',
       validation: (rule) => rule.required().warning('Alt-Text fehlt.'),
     }),
-    defineField({name: 'caption', title: 'Bildunterschrift', type: 'string'}),
+    defineField({name: 'caption', title: 'Bildunterschrift', type: 'internationalizedArrayString'}),
   ],
   preview: {
     select: {alt: 'alt', caption: 'caption', media: 'asset'},

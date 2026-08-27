@@ -13,15 +13,14 @@ export default defineType({
     defineField({
       name: 'metaTitle',
       title: 'Titel bei Google',
-      type: 'string',
+      type: 'internationalizedArrayString',
       description: 'Etwa 55 Zeichen. Bleibt das Feld leer, wird die Überschrift der Seite benutzt.',
       validation: (rule) => rule.max(70).warning('Über 70 Zeichen kürzt Google ab.'),
     }),
     defineField({
       name: 'metaDescription',
       title: 'Beschreibung bei Google',
-      type: 'text',
-      rows: 3,
+      type: 'internationalizedArrayText',
       description: 'Etwa 155 Zeichen. Der Text unter dem Titel im Suchergebnis.',
       validation: (rule) => rule.max(180).warning('Über 180 Zeichen kürzt Google ab.'),
     }),

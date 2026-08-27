@@ -5,8 +5,8 @@ export default defineType({
   title: 'Info-Zeile',
   type: 'object',
   fields: [
-    defineField({name: 'label', title: 'Bezeichnung', type: 'string', validation: (r) => r.required()}),
-    defineField({name: 'value', title: 'Wert', type: 'string', validation: (r) => r.required()}),
+    defineField({name: 'label', title: 'Bezeichnung', type: 'internationalizedArrayString', validation: (r) => r.required()}),
+    defineField({name: 'value', title: 'Wert', type: 'internationalizedArrayString', validation: (r) => r.required()}),
   ],
   preview: {select: {title: 'label', subtitle: 'value'}},
 })

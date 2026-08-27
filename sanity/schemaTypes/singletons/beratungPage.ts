@@ -1,5 +1,4 @@
 import {defineField, defineType} from 'sanity'
-import {i18nField} from '../../lib/fields'
 
 /**
  * Follows the approved canvas design "Option B — Haltung zuerst":
@@ -10,7 +9,6 @@ export default defineType({
   title: 'Beratung',
   type: 'document',
   groups: [
-    {name: 'i18n', title: 'Übersetzungen'},
     {name: 'seo', title: 'Menü & Google'},
     {name: 'header', title: 'Seitenkopf'},
     {name: 'clients', title: 'Kunden'},
@@ -20,7 +18,7 @@ export default defineType({
     {name: 'cta', title: 'Aufruf am Seitenende'},
   ],
   fields: [
-    defineField({name: 'label', title: 'Kleine Beschriftung', type: 'string', group: 'header'}),
+    defineField({name: 'label', title: 'Kleine Beschriftung', type: 'internationalizedArrayString', group: 'header'}),
     defineField({name: 'header', title: 'Seitenkopf', type: 'pageHeader', group: 'header'}),
     defineField({
       name: 'heroImages',
@@ -32,7 +30,7 @@ export default defineType({
         'Die Bilder im Seitenkopf. Sie werden verstreut angeordnet und ziehen beim Scrollen weg.',
     }),
 
-    defineField({name: 'clientsLabel', title: 'Überschrift Kunden', type: 'string', group: 'clients'}),
+    defineField({name: 'clientsLabel', title: 'Überschrift Kunden', type: 'internationalizedArrayString', group: 'clients'}),
     defineField({
       name: 'clients',
       title: 'Kunden-Logos',
@@ -42,7 +40,7 @@ export default defineType({
         {
           type: 'object',
           fields: [
-            defineField({name: 'name', title: 'Name', type: 'string', validation: (r) => r.required()}),
+            defineField({name: 'name', title: 'Name', type: 'internationalizedArrayString', validation: (r) => r.required()}),
             defineField({name: 'logo', title: 'Logo', type: 'photo'}),
             defineField({name: 'url', title: 'Webseite', type: 'url'}),
           ],
@@ -51,19 +49,18 @@ export default defineType({
       ],
     }),
 
-    defineField({name: 'haltungLabel', title: 'Überschrift Haltung', type: 'string', group: 'haltung'}),
+    defineField({name: 'haltungLabel', title: 'Überschrift Haltung', type: 'internationalizedArrayString', group: 'haltung'}),
     defineField({
       name: 'haltungStatement',
       title: 'Aussage',
-      type: 'text',
-      rows: 3,
+      type: 'internationalizedArrayText',
       group: 'haltung',
       description: 'Der große Satz.',
     }),
-    defineField({name: 'haltungText', title: 'Fließtext', type: 'text', rows: 5, group: 'haltung'}),
+    defineField({name: 'haltungText', title: 'Fließtext', type: 'internationalizedArrayText', group: 'haltung'}),
 
-    defineField({name: 'leistungenLabel', title: 'Kleine Beschriftung', type: 'string', group: 'leistungen'}),
-    defineField({name: 'leistungenTitle', title: 'Überschrift', type: 'string', group: 'leistungen'}),
+    defineField({name: 'leistungenLabel', title: 'Kleine Beschriftung', type: 'internationalizedArrayString', group: 'leistungen'}),
+    defineField({name: 'leistungenTitle', title: 'Überschrift', type: 'internationalizedArrayString', group: 'leistungen'}),
     defineField({
       name: 'services',
       title: 'Leistungen',
@@ -72,7 +69,7 @@ export default defineType({
       of: [{type: 'reference', to: [{type: 'service'}]}],
     }),
 
-    defineField({name: 'fuerWenLabel', title: 'Überschrift Für wen', type: 'string', group: 'fuerWen'}),
+    defineField({name: 'fuerWenLabel', title: 'Überschrift Für wen', type: 'internationalizedArrayString', group: 'fuerWen'}),
     defineField({
       name: 'fuerWen',
       title: 'Zielgruppen',
@@ -82,8 +79,8 @@ export default defineType({
         {
           type: 'object',
           fields: [
-            defineField({name: 'title', title: 'Titel', type: 'string', validation: (r) => r.required()}),
-            defineField({name: 'text', title: 'Text', type: 'string'}),
+            defineField({name: 'title', title: 'Titel', type: 'internationalizedArrayString', validation: (r) => r.required()}),
+            defineField({name: 'text', title: 'Text', type: 'internationalizedArrayString'}),
           ],
           preview: {select: {title: 'title', subtitle: 'text'}},
         },
@@ -94,12 +91,11 @@ export default defineType({
     defineField({
       name: 'navLabel',
       title: 'Name im Menü',
-      type: 'string',
+      type: 'internationalizedArrayString',
       group: 'seo',
       description: 'So heißt die Seite in Menü und Fußzeile.',
     }),
     defineField({name: 'seo', title: 'Suchmaschine & Vorschau', type: 'pageSeo', group: 'seo'}),
-    i18nField,
   ],
   preview: {prepare: () => ({title: 'Beratung'})},
 })

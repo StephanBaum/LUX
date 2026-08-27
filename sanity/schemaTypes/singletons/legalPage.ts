@@ -1,5 +1,4 @@
 import {defineField, defineType} from 'sanity'
-import {i18nField} from '../../lib/fields'
 
 /**
  * Impressum, Datenschutz and AGB — three fixed documents with the ids
@@ -12,11 +11,10 @@ export default defineType({
   name: 'legalPage',
   title: 'Rechtstext',
   type: 'document',
-  groups: [{name: 'i18n', title: 'Übersetzungen'}],
   fields: [
-    defineField({name: 'title', title: 'Überschrift', type: 'string', validation: (r) => r.required()}),
-    defineField({name: 'intro', title: 'Einleitungstext', type: 'text', rows: 3}),
-    defineField({name: 'updatedLabel', title: 'Beschriftung "Stand"', type: 'string'}),
+    defineField({name: 'title', title: 'Überschrift', type: 'internationalizedArrayString', validation: (r) => r.required()}),
+    defineField({name: 'intro', title: 'Einleitungstext', type: 'internationalizedArrayText'}),
+    defineField({name: 'updatedLabel', title: 'Beschriftung "Stand"', type: 'internationalizedArrayString'}),
     defineField({name: 'updatedAt', title: 'Stand vom', type: 'date'}),
     defineField({
       name: 'sections',
@@ -27,34 +25,17 @@ export default defineType({
           type: 'object',
           name: 'legalSection',
           fields: [
-            defineField({name: 'title', title: 'Überschrift', type: 'string', validation: (r) => r.required()}),
+            defineField({name: 'title', title: 'Überschrift', type: 'internationalizedArrayString', validation: (r) => r.required()}),
             defineField({
               name: 'body',
               title: 'Text',
-              type: 'array',
-              of: [
-                {
-                  type: 'block',
-                  styles: [
-                    {title: 'Absatz', value: 'normal'},
-                    {title: 'Zwischen-Überschrift', value: 'h3'},
-                  ],
-                  lists: [{title: 'Liste', value: 'bullet'}],
-                  marks: {
-                    decorators: [
-                      {title: 'Fett', value: 'strong'},
-                      {title: 'Kursiv', value: 'em'},
-                    ],
-                  },
-                },
-              ],
+              type: 'internationalizedArrayRichText',
             }),
           ],
           preview: {select: {title: 'title'}},
         },
       ],
     }),
-    i18nField,
   ],
   preview: {select: {title: 'title'}},
 })

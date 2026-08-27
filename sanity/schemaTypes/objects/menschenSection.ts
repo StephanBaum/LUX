@@ -12,16 +12,15 @@ export default defineType({
   title: 'Abschnitt Menschen',
   type: 'object',
   fields: [
-    defineField({name: 'label', title: 'Kleine Beschriftung', type: 'string'}),
-    defineField({name: 'title', title: 'Überschrift', type: 'string'}),
+    defineField({name: 'label', title: 'Kleine Beschriftung', type: 'internationalizedArrayString'}),
+    defineField({name: 'title', title: 'Überschrift', type: 'internationalizedArrayString'}),
     defineField({
       name: 'bio',
       title: 'Gemeinsamer Text',
-      type: 'text',
-      rows: 5,
+      type: 'internationalizedArrayText',
       description: 'Der kurze Text über beide Fotografen. Ausführliche Biografien stehen bei der jeweiligen Person.',
     }),
-    defineField({name: 'educationTitle', title: 'Überschrift Expertise', type: 'string'}),
+    defineField({name: 'educationTitle', title: 'Überschrift Expertise', type: 'internationalizedArrayString'}),
     defineField({
       name: 'expertise',
       title: 'Expertise des Studios',
