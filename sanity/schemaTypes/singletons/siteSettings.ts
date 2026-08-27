@@ -6,7 +6,7 @@ export default defineType({
   title: 'Einstellungen',
   type: 'document',
   groups: [
-    {name: 'contact', title: 'Kontakt', default: true},
+    {name: 'contact', title: 'Kontakt'},
     {name: 'nav', title: 'Menü & Fußzeile'},
     {name: 'social', title: 'Social Media'},
     {name: 'form', title: 'Formular'},

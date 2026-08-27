@@ -6,7 +6,7 @@ export default defineType({
   title: 'Studio',
   type: 'document',
   groups: [
-    {name: 'header', title: 'Seitenkopf', default: true},
+    {name: 'header', title: 'Seitenkopf'},
     {name: 'menschen', title: 'Abschnitt Menschen'},
     {name: 'gallery', title: 'Galerie & Slider'},
     {name: 'cta', title: 'Aufruf am Seitenende'},

@@ -10,7 +10,7 @@ export default defineType({
   title: 'Beratung',
   type: 'document',
   groups: [
-    {name: 'header', title: 'Seitenkopf', default: true},
+    {name: 'header', title: 'Seitenkopf'},
     {name: 'clients', title: 'Kunden'},
     {name: 'haltung', title: 'Haltung'},
     {name: 'leistungen', title: 'Leistungen'},

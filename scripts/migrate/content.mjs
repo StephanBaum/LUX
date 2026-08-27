@@ -403,9 +403,10 @@ const beratungPage = {
     text: 'Experten-Bildkompetenz für Agenturen, Marken und Produktionen.',
   },
   clientsLabel: 'Ausgewählte Kunden',
-  // Six real client names still have to come from the client.
+  // Names supplied by the studio. The logo field on each one is empty: drop an
+  // image in and the page shows it instead of the name.
   clients: keyed(
-    [1, 2, 3, 4, 5, 6].map((i) => ({name: `Kunde ${i}`})),
+    ['Canon', 'ARRI', 'TUFA', 'Opel', 'ADC', 'Lillet', 'Arteholic'].map((name) => ({name})),
   ),
   haltungLabel: 'Haltung',
   haltungStatement:

@@ -26,7 +26,8 @@ const HERO_PLACEMENT = [
 const GALLERY_SHAPES = ['landscape', 'portrait-sm', 'portrait-md', 'portrait-lg'];
 
 // The photo that follows the cursor over each hero navigation link.
-const navImage = (i) => imageUrl(sliderImages[i] ?? heroImages[i], 900);
+const navImages = homePage?.navImages ?? [];
+const navImage = (i) => imageUrl(navImages[i] ?? sliderImages[i] ?? heroImages[i], 900);
 
 const organizationSchema = {
   '@type': 'Organization',
@@ -100,7 +101,13 @@ const organizationSchema = {
             <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
           </svg>
         </a>
-        <a href="/mieten" class="hero__nav-link" data-img={navImage(3)}>
+        <a href="/beratung" class="hero__nav-link" data-img={navImage(3)}>
+          <span class="hero__nav-text" data-i18n="nav.beratung">{t('nav.beratung')}</span>
+          <svg class="hero__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="/mieten" class="hero__nav-link" data-img={navImage(4)}>
           <span class="hero__nav-text" data-i18n="nav.mieten">{t('nav.mieten')}</span>
           <svg class="hero__nav-arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>

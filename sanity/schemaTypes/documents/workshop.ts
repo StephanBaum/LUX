@@ -6,7 +6,7 @@ export default defineType({
   title: 'Workshop',
   type: 'document',
   groups: [
-    {name: 'content', title: 'Inhalt', default: true},
+    {name: 'content', title: 'Inhalt'},
     {name: 'date', title: 'Termin'},
     {name: 'sync', title: 'Google Kalender'},
   ],

@@ -11,7 +11,7 @@ export default defineType({
   title: 'Person',
   type: 'document',
   groups: [
-    {name: 'profile', title: 'Profil', default: true},
+    {name: 'profile', title: 'Profil'},
     {name: 'portfolio', title: 'Portfolio'},
   ],
   fields: [

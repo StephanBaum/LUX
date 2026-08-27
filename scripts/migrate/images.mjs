@@ -19,6 +19,26 @@ const BERATUNG_SHOTS = join(
 
 const img = (name) => join(root, 'public', 'Assets', 'img', name)
 const shot = (name) => join(BERATUNG_SHOTS, name)
+const logo = (name) => join(root, 'scripts', 'migrate', 'logos', name)
+
+/**
+ * Client logos, if the files are there. See logos/README.md — drop a file in,
+ * re-run, and the Beratung page shows it instead of the client's name.
+ */
+const CLIENT_LOGOS = ['canon', 'arri', 'tufa', 'opel', 'adc', 'lillet', 'arteholic']
+
+async function clientLogos() {
+  const out = []
+  for (const [i, name] of CLIENT_LOGOS.entries()) {
+    let value = null
+    for (const ext of ['svg', 'png', 'jpg', 'webp']) {
+      value = await photo(logo(`${name}.${ext}`), `i${i}`)
+      if (value) break
+    }
+    if (value) out.push({index: i, logo: value})
+  }
+  return out
+}
 
 /** filename -> German alt text. Every seeded image needs one. */
 const ALT = {
@@ -57,7 +77,6 @@ async function assetId(path) {
   }
 
   if (!existsSync(path)) {
-    console.warn(`  skipped (missing on disk): ${path}`)
     uploaded.set(filename, null)
     return null
   }
@@ -108,6 +127,15 @@ const patches = [
     'homePage',
     async () => ({
       heroImages: await photos([0, 4, 6, 7].map((n) => img(`image ${n}.png`))),
+      // One per menu word: Veranstaltungen, Workshops, Studio, Beratung, Mieten.
+      // V3 used images 1, 3, 5 and 8; 8 was never uploaded, so 6 stands in.
+      navImages: await photos([
+        img('image 1.png'),
+        img('image 3.png'),
+        img('image 5.png'),
+        shot('shot-b.jpg'),
+        img('image 6.png'),
+      ]),
       sliderImages: await photos(HOME_SLIDER),
       'sectionMenschen.gallery': await photos(PROFILE_GALLERY),
     }),
@@ -149,7 +177,18 @@ const patches = [
   ]),
 ]
 
+// Logos are attached one by one, so a missing file leaves that client as text.
+const logos = await clientLogos()
+if (logos.length) {
+  console.log(`  found ${logos.length} client logo(s)`)
+} else {
+  console.log('  no client logos in scripts/migrate/logos/ — names stay as text')
+}
+
 let tx = client.transaction()
+logos.forEach(({index, logo: value}) => {
+  tx = tx.patch('beratungPage', (p) => p.set({[`clients[${index}].logo`]: value}))
+})
 for (const [id, build] of patches) {
   const fields = await build()
   const set = Object.fromEntries(Object.entries(fields).filter(([, v]) => v && (!Array.isArray(v) || v.length)))

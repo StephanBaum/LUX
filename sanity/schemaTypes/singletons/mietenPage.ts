@@ -6,7 +6,7 @@ export default defineType({
   title: 'Mieten',
   type: 'document',
   groups: [
-    {name: 'header', title: 'Seitenkopf', default: true},
+    {name: 'header', title: 'Seitenkopf'},
     {name: 'sections', title: 'Abschnitts-Überschriften'},
     {name: 'form', title: 'Anfrage-Formular'},
   ],

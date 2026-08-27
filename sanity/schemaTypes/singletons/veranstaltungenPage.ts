@@ -6,7 +6,7 @@ export default defineType({
   title: 'Veranstaltungen',
   type: 'document',
   groups: [
-    {name: 'header', title: 'Seitenkopf', default: true},
+    {name: 'header', title: 'Seitenkopf'},
     {name: 'sections', title: 'Beschriftungen'},
     {name: 'cta', title: 'Aufruf am Seitenende'},
   ],

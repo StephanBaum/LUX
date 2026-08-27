@@ -6,7 +6,7 @@ export default defineType({
   title: 'Startseite',
   type: 'document',
   groups: [
-    {name: 'hero', title: 'Titelbild', default: true},
+    {name: 'hero', title: 'Titelbild'},
     {name: 'studio', title: 'Abschnitt Studio'},
     {name: 'menschen', title: 'Abschnitt Menschen'},
     {name: 'slider', title: 'Bilder-Slider'},
@@ -19,6 +19,17 @@ export default defineType({
       type: 'array',
       group: 'hero',
       of: [{type: 'photo'}],
+    }),
+    defineField({
+      name: 'navImages',
+      title: 'Bilder hinter den Menü-Wörtern',
+      type: 'array',
+      group: 'hero',
+      of: [{type: 'photo'}],
+      description:
+        'Fünf Bilder. Sie folgen dem Mauszeiger, wenn man auf der Startseite über ' +
+        'Veranstaltungen, Workshops, Studio, Beratung oder Mieten fährt — in dieser Reihenfolge.',
+      validation: (rule) => rule.max(5),
     }),
     defineField({
       name: 'sectionStudio',
