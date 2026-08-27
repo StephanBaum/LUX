@@ -6,6 +6,7 @@ export default defineType({
   title: 'Mieten',
   type: 'document',
   groups: [
+    {name: 'seo', title: 'Menü & Google'},
     {name: 'header', title: 'Seitenkopf'},
     {name: 'sections', title: 'Abschnitts-Überschriften'},
     {name: 'form', title: 'Anfrage-Formular'},
@@ -55,6 +56,14 @@ export default defineType({
         defineField({name: 'errorInquiry', title: 'Fehler: Anfrage', type: 'string'}),
       ],
     }),
+    defineField({
+      name: 'navLabel',
+      title: 'Name im Menü',
+      type: 'string',
+      group: 'seo',
+      description: 'So heißt die Seite in Menü und Fußzeile.',
+    }),
+    defineField({name: 'seo', title: 'Suchmaschine & Vorschau', type: 'pageSeo', group: 'seo'}),
     i18nField,
   ],
   preview: {prepare: () => ({title: 'Mieten'})},

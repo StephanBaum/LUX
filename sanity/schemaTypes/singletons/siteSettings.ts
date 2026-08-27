@@ -42,16 +42,24 @@ export default defineType({
     }),
 
     defineField({
-      name: 'navLabels',
-      title: 'Menü-Beschriftungen',
-      type: 'object',
+      name: 'navigation',
+      title: 'Reihenfolge im Menü',
+      type: 'array',
       group: 'nav',
-      fields: [
-        defineField({name: 'studio', title: 'Studio', type: 'string'}),
-        defineField({name: 'mieten', title: 'Mieten', type: 'string'}),
-        defineField({name: 'workshops', title: 'Workshops', type: 'string'}),
-        defineField({name: 'veranstaltungen', title: 'Veranstaltungen', type: 'string'}),
-        defineField({name: 'beratung', title: 'Beratung', type: 'string'}),
+      description:
+        'Ziehen zum Sortieren. Name und Bild jeder Seite werden auf der Seite selbst ' +
+        'gepflegt, unter "Menü & Google" — so passen sie immer zusammen.',
+      of: [
+        {
+          type: 'reference',
+          to: [
+            {type: 'studioPage'},
+            {type: 'mietenPage'},
+            {type: 'workshopsPage'},
+            {type: 'veranstaltungenPage'},
+            {type: 'beratungPage'},
+          ],
+        },
       ],
     }),
     defineField({

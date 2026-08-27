@@ -74,10 +74,12 @@
 
 .clients__list {
   grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
+  /* Even columns across the full width, so no logo looks lost. */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
   align-items: center;
-  gap: var(--space-lg) var(--space-xl);
+  justify-items: center;
+  gap: var(--space-lg) var(--space-md);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -85,6 +87,10 @@
 
 /* Held back in grey so the row reads as a footnote, not a claim. */
 .clients__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   font-family: var(--font-family-detail);
   font-size: 1.0625rem;
   letter-spacing: 0.08em;
@@ -97,18 +103,24 @@
   color: var(--color-black);
 }
 
+/*
+ * A common box with `contain` inside it: the marks end up optically about the
+ * same size however different the files are.
+ */
 .clients__logo {
   display: block;
-  width: auto;
-  height: 2.25rem;
+  width: 100%;
+  max-width: 9rem;
+  height: 3.25rem;
   object-fit: contain;
-  /* Any logo the client uploads is flattened to the same grey. */
-  filter: grayscale(1) opacity(0.55);
+  object-position: center;
+  filter: grayscale(1) opacity(0.5);
   transition: filter 0.2s ease;
 }
 
 .clients__item:hover .clients__logo {
-  filter: grayscale(1) opacity(1);
+  /* Colour comes back under the pointer. */
+  filter: none;
 }
 
 /* --- Haltung ------------------------------------------------------------- */

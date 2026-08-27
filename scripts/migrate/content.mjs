@@ -242,13 +242,11 @@ const siteSettings = {
     inquire: global.common.inquire,
     selection: global.common.selection,
   },
-  navLabels: {
-    studio: global.nav.studio,
-    mieten: global.nav.mieten,
-    workshops: global.nav.workshops,
-    veranstaltungen: global.nav.veranstaltungen,
-    beratung: 'Beratung',
-  },
+  // The menu is an ordered list of the pages themselves; each page carries its
+  // own name and picture under "Menü & Google".
+  navigation: keyed(
+    ['veranstaltungenPage', 'workshopsPage', 'studioPage', 'beratungPage', 'mietenPage'].map(ref),
+  ),
   footerLabels: {
     impressum: global.footer.impressum,
     datenschutz: global.footer.datenschutz,
@@ -286,6 +284,7 @@ const siteSettings = {
 const homePage = {
   _id: 'homePage',
   _type: 'homePage',
+  navLabel: 'Startseite',
   sectionStudio: {
     label: index.section_studio.label,
     text: index.section_studio.text,
@@ -317,6 +316,7 @@ const homePage = {
 const studioPage = {
   _id: 'studioPage',
   _type: 'studioPage',
+  navLabel: global.nav.studio,
   header: {title: studio.header.title, text: studio.header.text},
   sectionMenschen: {
     label: studio.section_menschen.label,
@@ -347,6 +347,7 @@ const studioPage = {
 const mietenPage = {
   _id: 'mietenPage',
   _type: 'mietenPage',
+  navLabel: global.nav.mieten,
   header: {title: mieten.header.title, text: mieten.header.text},
   sectionLabels: {
     rooms: mieten.sections.rooms,
@@ -378,6 +379,7 @@ const mietenPage = {
 const workshopsPage = {
   _id: 'workshopsPage',
   _type: 'workshopsPage',
+  navLabel: global.nav.workshops,
   header: {title: workshops.header.title, text: workshops.header.text},
   registrationLabel: workshops.workshops.registration_label,
   emptyText: 'Zurzeit sind keine Workshops ausgeschrieben.',
@@ -387,6 +389,7 @@ const workshopsPage = {
 const veranstaltungenPage = {
   _id: 'veranstaltungenPage',
   _type: 'veranstaltungenPage',
+  navLabel: global.nav.veranstaltungen,
   header: {title: veranstaltungen.header.title, text: veranstaltungen.header.text},
   detailsTitle: veranstaltungen.events.details_title,
   registrationLabel: veranstaltungen.events.registration_label,
@@ -397,6 +400,7 @@ const veranstaltungenPage = {
 const beratungPage = {
   _id: 'beratungPage',
   _type: 'beratungPage',
+  navLabel: 'Beratung',
   label: 'Beratung',
   header: {
     title: 'Externe Beratung',
@@ -598,7 +602,28 @@ if (drafts.length && !force) {
   process.exit(1)
 }
 
-const tx = documents.reduce((t, doc) => t.createOrReplace(doc), client.transaction())
+/**
+ * Arrays the seed starts off but the client then fills in — logos on the
+ * client row, the partner names, the menu order. They are written only when
+ * the document does not have them yet, so re-seeding never throws that work
+ * away. Everything else is overwritten, which is the point of a seed.
+ */
+const CLIENT_OWNED = new Set(['clients', 'partnerLogos', 'navigation'])
+
+const tx = documents.reduce((t, doc) => {
+  const {_id, _type, ...fields} = doc
+
+  const owned = {}
+  const seeded = {}
+  for (const [key, value] of Object.entries(fields)) {
+    ;(CLIENT_OWNED.has(key) ? owned : seeded)[key] = value
+  }
+
+  return t
+    .createIfNotExists({_id, _type})
+    .patch(_id, (p) => p.set(seeded).setIfMissing(owned))
+}, client.transaction())
+
 documents.forEach((doc) => tx.delete(`drafts.${doc._id}`))
 RETIRED.forEach((id) => tx.delete(`drafts.${id}`).delete(id))
 await tx.commit()

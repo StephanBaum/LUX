@@ -101,7 +101,7 @@ const key = (doc) => doc.slug?.current ?? String(doc._id).replace(/^[a-z]+-/, ''
           {clients.map((client) => (
             <li class="clients__item">
               {client.logo?.asset
-                ? <Photo photo={client.logo} width={320} class="clients__logo" />
+                ? <Photo photo={client.logo} width={400} class="clients__logo" placeholder={false} />
                 : client.name}
             </li>
           ))}

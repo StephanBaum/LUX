@@ -6,6 +6,7 @@ export default defineType({
   title: 'Workshops',
   type: 'document',
   groups: [
+    {name: 'seo', title: 'Menü & Google'},
     {name: 'header', title: 'Seitenkopf'},
     {name: 'sections', title: 'Beschriftungen'},
     {name: 'cta', title: 'Aufruf am Seitenende'},
@@ -23,6 +24,14 @@ export default defineType({
       of: [{type: 'photo'}],
     }),
     defineField({name: 'cta', title: 'Aufruf am Seitenende', type: 'cta', group: 'cta'}),
+    defineField({
+      name: 'navLabel',
+      title: 'Name im Menü',
+      type: 'string',
+      group: 'seo',
+      description: 'So heißt die Seite in Menü und Fußzeile.',
+    }),
+    defineField({name: 'seo', title: 'Suchmaschine & Vorschau', type: 'pageSeo', group: 'seo'}),
     i18nField,
   ],
   preview: {prepare: () => ({title: 'Workshops'})},

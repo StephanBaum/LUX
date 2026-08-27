@@ -122,6 +122,13 @@
         // Fade out, change src, fade in
         imageTarget.classList.remove('is-visible');
         setTimeout(function() {
+          /*
+           * The image is rendered with a srcset, and a srcset beats src: without
+           * clearing it the browser keeps painting the first picture no matter
+           * which row is opened.
+           */
+          img.removeAttribute('srcset');
+          img.removeAttribute('sizes');
           img.src = imageSrc;
           img.onload = function() {
             imageTarget.classList.add('is-visible');

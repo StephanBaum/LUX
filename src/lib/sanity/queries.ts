@@ -2,7 +2,7 @@ import {sanityClient} from './client'
 
 /** Everything the site needs, in one round trip. */
 const SITE_QUERY = /* groq */ `{
-  "siteSettings": *[_id == "siteSettings"][0],
+  "siteSettings": *[_id == "siteSettings"][0]{..., navigation[]->},
   "homePage": *[_id == "homePage"][0]{
     ...,
     sectionMenschen{..., people[]->}

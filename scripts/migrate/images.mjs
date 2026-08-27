@@ -27,13 +27,32 @@ const logo = (name) => join(root, 'scripts', 'migrate', 'logos', name)
  */
 const CLIENT_LOGOS = ['canon', 'arri', 'tufa', 'opel', 'adc', 'lillet', 'arteholic']
 
+/**
+ * Anything already uploaded through the Studio counts too: match an asset
+ * whose filename contains the client's name, so a logo picked in the media
+ * browser survives a re-seed.
+ */
+async function uploadedLogo(name) {
+  const asset = await client.fetch(
+    `*[_type == "sanity.imageAsset" && lower(originalFilename) match $needle][0]{_id, originalFilename}`,
+    {needle: `*${name}*`},
+  )
+  return asset?._id ?? null
+}
+
 async function clientLogos() {
   const out = []
   for (const [i, name] of CLIENT_LOGOS.entries()) {
     let value = null
-    for (const ext of ['svg', 'png', 'jpg', 'webp']) {
+    for (const ext of ['svg', 'png', 'jpg', 'jpeg', 'webp', 'avif']) {
       value = await photo(logo(`${name}.${ext}`), `i${i}`)
       if (value) break
+    }
+    if (!value) {
+      const id = await uploadedLogo(name)
+      if (id) {
+        value = {_type: 'photo', _key: `i${i}`, asset: {_type: 'reference', _ref: id}, alt: name}
+      }
     }
     if (value) out.push({index: i, logo: value})
   }
@@ -127,15 +146,6 @@ const patches = [
     'homePage',
     async () => ({
       heroImages: await photos([0, 4, 6, 7].map((n) => img(`image ${n}.png`))),
-      // One per menu word: Veranstaltungen, Workshops, Studio, Beratung, Mieten.
-      // V3 used images 1, 3, 5 and 8; 8 was never uploaded, so 6 stands in.
-      navImages: await photos([
-        img('image 1.png'),
-        img('image 3.png'),
-        img('image 5.png'),
-        shot('shot-b.jpg'),
-        img('image 6.png'),
-      ]),
       sliderImages: await photos(HOME_SLIDER),
       'sectionMenschen.gallery': await photos(PROFILE_GALLERY),
     }),
@@ -149,6 +159,14 @@ const patches = [
   ],
   ['workshopsPage', async () => ({sliderImages: await photos(HOME_SLIDER)})],
   ['veranstaltungenPage', async () => ({sliderImages: await photos(HOME_SLIDER)})],
+
+  // Each page's own picture: shown when sharing it, and in the home menu.
+  ['homePage', async () => ({'seo.shareImage': await photo(img('image 0.png'))})],
+  ['studioPage', async () => ({'seo.shareImage': await photo(img('image 5.png'))})],
+  ['mietenPage', async () => ({'seo.shareImage': await photo(img('image 6.png'))})],
+  ['workshopsPage', async () => ({'seo.shareImage': await photo(img('image 3.png'))})],
+  ['veranstaltungenPage', async () => ({'seo.shareImage': await photo(img('image 1.png'))})],
+  ['beratungPage', async () => ({'seo.shareImage': await photo(shot('shot-b.jpg'))})],
   [
     'beratungPage',
     async () => ({

@@ -1,6 +1,7 @@
 import {getSiteContent} from '../sanity/queries'
 import {localize, type Lang} from './localize'
 import {portableTextToHtml} from './portable-text'
+import {KEY_BY_TYPE} from './navigation'
 
 /**
  * Turns Sanity documents into the key shape `src/scripts/i18n.js` already
@@ -71,8 +72,16 @@ export async function getBundles(lang: Lang): Promise<Bundles> {
 
   const settings = c.siteSettings ?? {}
 
+  // The menu words live on the pages themselves; collect them by page key.
+  const navPages: any[] = (settings.navigation ?? []).filter(Boolean)
+  const navLabels = Object.fromEntries(
+    navPages
+      .filter((page) => KEY_BY_TYPE[page?._type])
+      .map((page) => [KEY_BY_TYPE[page._type], page.navLabel || page.header?.title]),
+  )
+
   const _global = {
-    nav: clean(settings.navLabels ?? {}),
+    nav: clean(navLabels),
     footer: clean({...(settings.footerLabels ?? {}), partners_label: settings.partnersLabel}),
     contact: clean({
       studio_name: settings.studioName,

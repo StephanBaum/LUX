@@ -4,6 +4,7 @@ import infoRow from './objects/infoRow'
 import cta from './objects/cta'
 import pageHeader from './objects/pageHeader'
 import menschenSection from './objects/menschenSection'
+import pageSeo from './objects/pageSeo'
 
 import siteSettings from './singletons/siteSettings'
 import homePage from './singletons/homePage'
@@ -21,7 +22,7 @@ import workshop from './documents/workshop'
 import event from './documents/event'
 import service from './documents/service'
 
-export const objectTypes = [photo, expertiseItem, infoRow, cta, pageHeader, menschenSection]
+export const objectTypes = [photo, expertiseItem, infoRow, cta, pageHeader, menschenSection, pageSeo]
 
 export const singletonTypes = [
   siteSettings,

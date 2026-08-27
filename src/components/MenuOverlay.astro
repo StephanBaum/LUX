@@ -3,9 +3,10 @@
 import {getSiteContent} from '../lib/sanity/queries';
 import Photo from './Photo.astro';
 import {imageUrl} from '../lib/sanity/image';
+import {getNavigation} from '../lib/content/navigation';
 
 const {siteSettings} = await getSiteContent();
-const nav = siteSettings?.navLabels ?? {};
+const navigation = await getNavigation();
 const legal = siteSettings?.footerLabels ?? {};
 const partners = siteSettings?.partnerLogos ?? [];
 
@@ -31,36 +32,14 @@ const menuImages = [siteSettings?.menuImage, ...(homePage?.sliderImages ?? [])]
     </button>
 
     <nav class="menu-overlay__nav">
-      <a href="/workshops" class="menu-overlay__link">
-        <span data-i18n="nav.workshops">{nav.workshops}</span>
-        <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-        </svg>
-      </a>
-      <a href="/veranstaltungen" class="menu-overlay__link">
-        <span data-i18n="nav.veranstaltungen">{nav.veranstaltungen}</span>
-        <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-        </svg>
-      </a>
-      <a href="/studio" class="menu-overlay__link">
-        <span data-i18n="nav.studio">{nav.studio}</span>
-        <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-        </svg>
-      </a>
-      <a href="/beratung" class="menu-overlay__link">
-        <span data-i18n="nav.beratung">{nav.beratung}</span>
-        <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-        </svg>
-      </a>
-      <a href="/mieten" class="menu-overlay__link">
-        <span data-i18n="nav.mieten">{nav.mieten}</span>
-        <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
-        </svg>
-      </a>
+      {navigation.map((entry) => (
+        <a href={entry.href} class="menu-overlay__link">
+          <span data-i18n={`nav.${entry.key}`}>{entry.label}</span>
+          <svg class="menu-overlay__arrow" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 0V27H24V6.37305L3.17383 27.1016L0.351562 24.2666L20.7139 4H0V0H28Z" fill="currentColor"/>
+          </svg>
+        </a>
+      ))}
     </nav>
 
     <div class="menu-overlay__contact">
