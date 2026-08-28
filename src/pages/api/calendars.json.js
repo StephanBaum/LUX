@@ -1,15 +1,22 @@
 /**
- * The days the studio is already booked, for the calendar on the Mieten page.
+ * The days the studio is not free, for the calendar on the Mieten page.
  *
- * One feed, deliberately. The workshops and the events used to be read here
- * too, but those pages come from Sanity now and their calendars are kept in
- * step by the two-way sync — reading them again here would have been two
- * network calls per page load for something nobody looks at.
+ * Two sources, and they are not alike:
  *
- * The reservations calendar stays a read-only iCal feed. Nothing writes to it,
- * the studio fills it from Google as it always has, and the website only needs
- * to know which days are taken.
+ * - **Reservations** stay a read-only iCal feed. Nothing writes to it, the
+ *   studio fills it from Google as it always has, and the website only needs
+ *   to know which days are taken.
+ * - **Workshops and events** come from Sanity. They used to be read here as
+ *   two more iCal feeds, which was two extra network calls per page load and
+ *   was dropped. Their dates live in Sanity now, so one query gets both and
+ *   the old cost does not come back.
+ *
+ * A workshop fills the rooms, so its day cannot also be rented out. Leaving
+ * them out let someone book a room on top of the studio's own programme.
  */
+
+import {sanityClient} from '../../lib/sanity/client'
+import {asBlockedDates, PAST_WINDOW, FUTURE_WINDOW} from '../../lib/content/occupancy'
 
 export const prerender = false;
 
@@ -20,10 +27,30 @@ const calendarConfig = {
       type: 'blocked'
     }
   },
-  futureWindow: 365,
-  pastWindow: 30,
+  futureWindow: FUTURE_WINDOW,
+  pastWindow: PAST_WINDOW,
   cacheDuration: 300
 };
+
+/**
+ * The studio's own programme, straight out of Sanity.
+ *
+ * `sanityClient` only sees published documents, so a workshop still being
+ * written does not take a day off the rental calendar. A failure here must
+ * not take the reservations down with it — the calendar is more useful with
+ * one source than with none.
+ */
+async function fetchStudioDates() {
+  try {
+    const docs = await sanityClient.fetch(
+      `*[_type in ["workshop", "event"] && defined(startAt)]{_id, _type, title, startAt, endAt}`
+    );
+    return {name: 'studio', type: 'blocked', events: asBlockedDates(docs)};
+  } catch (error) {
+    console.error('Error reading workshops and events from Sanity:', error.message);
+    return {name: 'studio', type: 'blocked', events: [], error: error.message};
+  }
+}
 
 /**
  * Parse iCal data into events array
@@ -161,12 +188,12 @@ export async function GET() {
     feeds: {}
   };
 
-  // Fetch all configured feeds in parallel
+  // Fetch every source in parallel; the slowest one sets the pace.
   const feedPromises = Object.entries(calendarConfig.feeds).map(
     ([name, config]) => fetchFeed(name, config)
   );
 
-  const feedResults = await Promise.all(feedPromises);
+  const feedResults = await Promise.all([...feedPromises, fetchStudioDates()]);
 
   // Organize results by feed name and type
   for (const result of feedResults) {
@@ -180,7 +207,8 @@ export async function GET() {
 
   results.blocked = feedResults
     .filter(r => r.type === 'blocked')
-    .flatMap(r => r.events);
+    .flatMap(r => r.events)
+    .sort((a, b) => new Date(a.start) - new Date(b.start));
 
   return new Response(JSON.stringify(results, null, 2), {
     status: 200,
