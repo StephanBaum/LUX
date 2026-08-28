@@ -46,13 +46,32 @@ The alternatives were a paid private dataset — the Growth trial ends around
 service. Both cost money and both create a second place where personal data
 lives and has to be deleted on request.
 
-**So nothing about a reservation is stored on the website.** The three places
-a visitor's details exist are the studio's mailbox, the studio's Google
-calendar, and the visitor's own inbox. All three are places the studio already
-keeps such things, and deleting the calendar entry and the mail deletes it
-everywhere.
+**So nothing about a reservation is stored on the website.** This is the same
+reasoning that already governs `src/pages/api/inquiry.ts`.
 
-This is the same reasoning that already governs `src/pages/api/inquiry.ts`.
+### Google is not a second place to put it either
+
+The first draft of this design wrote the visitor's name, address and telephone
+number into the calendar entry. It does not any more.
+
+The calendar's owners are `baumsteph@gmail.com` and
+`florian.luxenburger@gmail.com` — free consumer Google accounts, not Google
+Workspace. A consumer account comes with no *Auftragsverarbeitungsvertrag*, so
+there is no contract making Google a processor for the studio's customer data.
+Nobody involved here is a lawyer, and this is not legal advice; it is a bet
+not worth making when it is avoidable, and it is avoidable.
+
+**The calendar only ever needed to know which days are taken.** It never
+needed the name. So the entry carries two dates and a reference code, and
+nothing else. Section 7 has the shape.
+
+That leaves the visitor's details in exactly two places, both of which the
+studio already runs: **its own mailbox at its own host**, and the visitor's
+own inbox. Deleting the mail deletes the record.
+
+The catch is that the approve and decline links then have no name to read
+back, so the token has to carry it — which is why section 6 encrypts the
+token instead of merely signing it.
 
 ---
 
@@ -110,36 +129,55 @@ This is not optional. Without it the feature approves everything by itself.
 
 ## 6. The token
 
-The link carries a signed token and nothing else:
+Because the calendar holds no name, the token has to. So it is **encrypted**,
+not signed — the link is the only carrier of the visitor's address between the
+request and the studio's click.
 
 ```json
-{"c": "<calendarId>", "e": "<eventId>", "a": "approve", "x": 1788600000}
+{
+  "r": "7f3a91",              "// reference, also in the calendar summary": null,
+  "c": "<calendarId>",
+  "e": "<eventId>",
+  "a": "approve",
+  "n": "Anna Weber",
+  "m": "anna@example.com",
+  "d": "2026-10-02/2026-10-04",
+  "x": 1789200000
+}
 ```
 
-`base64url(payload) + "." + base64url(HMAC-SHA256(payload, secret))`
+**AES-256-GCM.** The output is `base64url(iv ‖ ciphertext ‖ authTag)` — a
+12-byte random IV, and GCM's tag authenticates as well as encrypts, so a
+tampered token fails to decrypt rather than needing a separate signature.
 
-- **Signed, not encrypted, and deliberately empty of personal data.** A URL
-  ends up in mail logs, browser history and proxy logs. The name and address
-  are read back from the calendar entry when the button is pressed, so the
-  link itself says nothing about anybody.
-- **`x` is an expiry**, seven days out. A late click is refused with a page
-  saying so.
-- **Signed with `RESERVATION_SECRET`**, a new variable — not `SYNC_SECRET`.
-  The calendar sync secret is handed to Google and to Sanity; a link secret
-  that ends up in the studio's mailbox should not be able to drive the sync
+- **The key** is `RESERVATION_SECRET`, a new variable, 32 bytes of hex. Not
+  `SYNC_SECRET`: that one is handed to Google and to Sanity, and a secret
+  sitting in the studio's mailbox must not be able to drive the sync
   endpoints if it leaks.
-- **Timing-safe comparison** (`crypto.timingSafeEqual`) so the signature
-  cannot be guessed a byte at a time.
+- **`x` is an expiry**, seven days out, checked after decryption. A late
+  click is refused with a page saying so.
+- **Roughly 500 characters** in the URL. Well inside every mail client's
+  limit.
+
+### Is a name in a URL acceptable now?
+
+It is ciphertext, readable only by the server holding the key. It travels in
+the same e-mail whose body already lists the visitor's details in plain
+German, so it adds no exposure the studio does not already have — and unlike
+the body, it stays unreadable in Vercel's request logs.
 
 ### Pressing the button twice
 
-- **Approve twice** — the entry is patched to the same values again. Nothing
-  changes and the visitor is not mailed a second time, because the code only
-  mails when the entry was still tentative.
-- **Decline twice** — the entry is already gone. Google answers 404 or 410,
-  which is read as "already handled" and shown as such. No second mail.
-- **Approve after Decline** — the entry is gone, so approving is refused with
-  "this request no longer exists".
+The **calendar entry is the state machine**, even though it holds no name:
+
+- **Approve twice** — the entry is already `confirmed`, so the code changes
+  nothing and sends no second mail.
+- **Decline twice** — the entry is gone. Google answers 404 or 410, read as
+  "already handled". No second mail.
+- **Approve after Decline** — the entry is gone, so it is refused with "this
+  request no longer exists".
+- **The studio deleted the entry by hand** — same as declined. The link says
+  the request no longer exists.
 
 ---
 
@@ -148,29 +186,38 @@ The link carries a signed token and nothing else:
 One entry in the **reservations** calendar, the same feed `/mieten` already
 reads. That is what makes the hold visible with no new plumbing.
 
+One entry, and **no personal data in it**:
+
 | Field | Tentative (held) | Confirmed (approved) |
 |---|---|---|
-| `summary` | `Angefragt: <name>` | `Gebucht: <name>` |
+| `summary` | `Angefragt — 7f3a91` | `Gebucht — 7f3a91` |
 | `status` | `tentative` | `confirmed` |
 | `transparency` | `opaque` | `opaque` |
-| `description` | name, e-mail, telephone, company, rooms, equipment, message | unchanged |
+| `description` | `Anfrage über die Website. Die Angaben stehen in der E-Mail mit dieser Nummer.` | unchanged |
 | `extendedProperties.private` | `lux=reservation`, `held=<ISO timestamp>` | `lux=reservation` |
 | `start` / `end` | the chosen days | unchanged |
+
+**The reference code is how the two halves meet.** `7f3a91` is six random hex
+characters. It is in the calendar summary and in the subject line of the
+studio's e-mail, so seeing a held day in the calendar tells them which message
+to open. It identifies nobody on its own.
 
 `extendedProperties.private.lux` marks the entries this feature owns, so the
 expiry job can never touch a booking the studio typed in by hand.
 
-**The description carries the personal data.** That is on purpose: it is the
-studio's own private calendar, it is where they would have written it anyway,
-and it means the token can stay empty.
+A collision between two live reference codes is possible and harmless — the
+e-mail also carries the dates. Six hex characters is 16 million values against
+a handful of open requests.
 
-> **The calendar must be private first, and on 2026-08-28 it was not.**
-> Its sharing list held `reader: ANYONE (public)`, and the site was reading it
-> through the **public** iCal address. Anyone could fetch every entry with one
-> unauthenticated request; this was demonstrated, not assumed. Writing a
-> visitor's name, address and telephone number into a calendar in that state
-> would publish them. Section 13 carries the fix, and it must be done before
-> a single line of this feature is written.
+> **The calendar was world-readable on 2026-08-28, and is not any more.**
+> Its sharing list held `reader: ANYONE (public)` and the site read it through
+> the **public** iCal address; one unauthenticated request returned every
+> entry. This was demonstrated, not assumed. It was closed the same day: the
+> site now uses the secret address, the public address answers 404, and the
+> whole path was tested end to end with a temporary entry.
+>
+> Section 13 keeps the procedure, because the setting can be switched back
+> with two clicks.
 
 ---
 
@@ -217,7 +264,7 @@ Four messages, all German, all plain text with a simple HTML twin.
 
 | # | To | When | Says |
 |---|---|---|---|
-| 1 | studio | on request | who, when, which rooms, which equipment, the message, and the two buttons |
+| 1 | studio | on request | the reference code in the subject, then who, when, which rooms, which equipment, the message, and the two buttons |
 | 2 | visitor | on request | we have your request for these days, you will hear within two working days |
 | 3 | visitor | on approve | the days are yours, what happens next, how to reach the studio |
 | 4 | visitor | on decline | those days are not possible, please ask again for another date |
@@ -226,9 +273,14 @@ The mailer in `inquiry.ts` moves to `src/lib/mail.ts` unchanged in behaviour —
 the same lazy transport, the same timeouts, the same `oneLine` guard against a
 robot writing its own headers. Both endpoints then use it.
 
-**If the mail fails after the hold was written**, the hold is deleted again
-before answering the visitor with an error. A held day nobody was told about
-is worse than no hold.
+**If the mail to the studio fails after the hold was written**, the hold is
+deleted again before answering the visitor with an error. The mail is now the
+only record of who asked, so a hold whose mail never arrived is a day blocked
+for a request nobody can read. That is worse than no hold.
+
+Mail 2, to the visitor, is sent after mail 1 and its failure is not fatal —
+the request is safely in the studio's inbox by then, and the visitor learns of
+it from the reply.
 
 ---
 
@@ -253,8 +305,8 @@ Three outcomes:
 | File | New? | Purpose |
 |---|---|---|
 | `src/lib/mail.ts` | new (moved) | the transport and the send helper |
-| `src/lib/reservation/token.ts` | new | sign, verify, expire |
-| `src/lib/reservation/hold.ts` | new | build the entry, read it back, decide if it may expire |
+| `src/lib/reservation/token.ts` | new | encrypt, decrypt, expire |
+| `src/lib/reservation/hold.ts` | new | the reference code, build the entry, decide if it may expire |
 | `src/lib/reservation/messages.ts` | new | the four e-mails |
 | `src/pages/api/reservation.ts` | new | take the request |
 | `src/pages/api/reservation/[action].ts` | new | the confirm page, then the deed |
@@ -268,11 +320,14 @@ Three outcomes:
 
 Pure functions, tested with `node --test` as the rest of `src/lib` is:
 
-- **token** — round trip; a tampered payload fails; a tampered signature
-  fails; an expired token fails; a token signed with another secret fails.
+- **token** — round trip returns every field; a flipped byte of ciphertext
+  fails to decrypt rather than returning rubbish; a flipped byte of the auth
+  tag fails; an expired token fails; a token made with another key fails; two
+  tokens of the same payload differ, because the IV is random.
 - **hold** — the entry has the right summary, status and marker in both
-  states; the description contains what it should; reading it back gives the
-  visitor's address again.
+  states; **no field of it contains the visitor's name, address or telephone
+  number**, asserted directly, because that is the whole point; the reference
+  code appears in both the summary and the mail subject.
 - **expiry** — an entry eight days old with the marker may go; one six days
   old may not; one **without** the marker may never go, however old; a
   confirmed booking may never go.
@@ -296,26 +351,26 @@ There is **no new calendar**. It is the one the studio already uses, named
 | Variable | What |
 |---|---|
 | `GOOGLE_CALENDAR_RESERVATIONS` | the id above |
-| `RESERVATION_SECRET` | a long random string; signs the links |
+| `RESERVATION_SECRET` | 32 bytes of hex; the key the links are encrypted with |
 
-Sharing with the service account is **done** — it was added on 2026-08-28 and
-verified: it can read the entries and the sharing list, so it has owner
-rights and can write the holds.
+Generate the key with `openssl rand -hex 32`. Changing it later makes every
+link already sent unopenable, which is a safe failure — the studio answers
+those requests by hand.
 
-### Closing the calendar, in this order
+### Already done on 2026-08-28
 
-Doing it the other way round leaves the Mieten calendar empty until the next
-deploy, because the public address stops answering the moment the calendar
-turns private. The secret address works either way, so it goes first.
+- **The service account was shared in** and verified: it can read the entries
+  and the sharing list, so it holds owner rights and can write the holds.
+- **The calendar was made private.** The site was moved to the secret iCal
+  address first, then the public setting was switched off — that order, or
+  the Mieten calendar goes empty until the next deploy. Verified after each
+  step: the public address answers 404, and a temporary entry travelled from
+  the private calendar to `/api/calendars.json` in fifteen seconds.
 
-1. Google Calendar → the `LUX` calendar → Settings → **Secret address in iCal
-   format** → copy it.
-2. Put it in `ICAL_RESERVATIONS_URL`, in `.env` **and** in Vercel. Deploy.
-3. Check `/api/calendars.json` still answers with `"error": null`.
-4. Only now: Settings → **untick "Make available to public"**.
-5. Check `/api/calendars.json` one more time.
-
-Until step 4 is done, nothing may write a name into this calendar.
+If the calendar ever has to be moved or rebuilt, that is the order to repeat:
+secret address into `ICAL_RESERVATIONS_URL`, deploy, check
+`/api/calendars.json` answers with `"error": null`, and only then untick
+**Make available to public**.
 
 The outstanding SMTP settings are still needed. Nothing mails without them.
 
@@ -332,13 +387,24 @@ The outstanding SMTP settings are still needed. Nothing mails without them.
   Google publishes it, which is usually seconds but is not guaranteed. The
   visitor is told their request is in, not that the day is now theirs, so a
   short lag is invisible.
-- **Personal data in the calendar description.** The studio must know that
-  deleting a request means deleting the calendar entry. Written into
+- **The mailbox is now the only record.** Deleting a request means deleting
+  the e-mail; the calendar entry carries nothing to delete. That is simpler,
+  but it also means an accidentally emptied mailbox loses the details of any
+  request not yet answered. The held day survives, so nothing is
+  double-booked — the studio just has to ask again. Written into
   `docs/calendar-setup.md`.
-- **A calendar can be made public again with two clicks.** If that happens
-  after this feature exists, every visitor's name and telephone number becomes
-  world-readable. `docs/calendar-setup.md` must say so beside the setting, in
-  the words the studio will read, not only in this spec.
+- **Somebody re-adds the name to the calendar summary** because it is more
+  convenient to read. That is how the personal data gets back into Google.
+  The reason lives in a test that asserts the entry contains no name, so the
+  change fails rather than passes quietly.
+- **A calendar can be made public again with two clicks.** It carries no names
+  now, so the damage is limited to the studio's bookings being visible — but
+  `docs/calendar-setup.md` must still say so beside the setting, in the words
+  the studio will read.
+- **`RESERVATION_SECRET` is lost or rotated.** Every link already sent stops
+  opening. The requests are not lost — they are in the mailbox and the days
+  are still held — but they have to be answered by hand. Worth a line in the
+  setup document.
 - **The Growth trial ends around 2026-09-27.** This design does not depend on
   it — that is why nothing is stored.
 
@@ -346,8 +412,7 @@ The outstanding SMTP settings are still needed. Nothing mails without them.
 
 ## 15. Order of work
 
-0. **The calendar goes private** (section 13). Nothing else starts until it is,
-   because every later step writes a name into it.
+0. **The calendar goes private** — done on 2026-08-28, see section 13.
 1. `src/lib/mail.ts` extracted, `inquiry.ts` still green.
 2. `token.ts` with its tests.
 3. `hold.ts` and the expiry rule, with tests.
