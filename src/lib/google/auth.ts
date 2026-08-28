@@ -20,11 +20,27 @@ const base64url = (value: string | Buffer) =>
 
 let cached: {token: string; until: number} | null = null
 
+/**
+ * The private key as OpenSSL wants it, whichever way it was pasted.
+ *
+ * A key can arrive with real line breaks, or written on one line with each
+ * break spelled out as the two characters \ and n — that is the only shape a
+ * single-line .env entry can hold, and it is what `npm run google:key` writes.
+ * Both have to end up as real breaks or the signing throws
+ * `error:1E08010C:DECODER routines::unsupported`, which says nothing about
+ * what is actually wrong.
+ */
+export function normalisePrivateKey(value: string | undefined | null) {
+  const raw = value ?? ''
+  // Quotes only come from a .env file that needed them. A key that arrives
+  // unquoted is handed back as it is, trailing line break and all.
+  const bare = /^\s*["']/.test(raw) ? raw.trim().replace(/^["']|["']$/g, '') : raw
+  return bare.replace(/\\n/g, '\n')
+}
+
 export function calendarCredentials() {
   const email = import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
-  // Vercel cannot hold a real line break in a variable, so the key arrives
-  // with the breaks written out as \n and has to be put back together.
-  const key = (import.meta.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\n/g, '\n')
+  const key = normalisePrivateKey(import.meta.env.GOOGLE_PRIVATE_KEY)
   return email && key ? {email, key} : null
 }
 

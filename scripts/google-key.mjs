@@ -29,7 +29,7 @@ if (!key.client_email || !key.private_key) {
 
 const values = {
   GOOGLE_SERVICE_ACCOUNT_EMAIL: key.client_email,
-  GOOGLE_PRIVATE_KEY: key.private_key.replace(/\n/g, '\n'),
+  GOOGLE_PRIVATE_KEY: key.private_key.replace(/\n/g, '\\n'),
 }
 
 const path = join(root, '.env')

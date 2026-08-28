@@ -31,7 +31,7 @@ const unsigned = `${b64(JSON.stringify({alg: 'RS256', typ: 'JWT'}))}.${b64(
     exp: now + 3600,
   }),
 )}`
-const key = (process.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\n/g, '\n')
+const key = (process.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\\n/g, '\n')
 const assertion = `${unsigned}.${b64(createSign('RSA-SHA256').update(unsigned).sign(key))}`
 const access = (
   await fetch(TOKEN_URL, {

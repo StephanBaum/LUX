@@ -26,7 +26,7 @@ const b64 = (v) =>
 
 async function token() {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
-  const key = (process.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\n/g, '\n')
+  const key = (process.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\\n/g, '\n')
   const now = Math.floor(Date.now() / 1000)
   const unsigned = `${b64(JSON.stringify({alg: 'RS256', typ: 'JWT'}))}.${b64(
     JSON.stringify({

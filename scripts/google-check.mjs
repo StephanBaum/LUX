@@ -15,7 +15,7 @@ const TOKEN_URL = 'https://oauth2.googleapis.com/token'
 const b64 = (v) => Buffer.from(v).toString('base64').replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')
 
 const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
-const key = (process.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\n/g, '\n')
+const key = (process.env.GOOGLE_PRIVATE_KEY ?? '').replace(/\\n/g, '\n')
 if (!email || !key) { console.error('Zugangsdaten fehlen.'); process.exit(1) }
 
 const now = Math.floor(Date.now() / 1000)
