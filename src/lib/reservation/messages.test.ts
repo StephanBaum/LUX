@@ -29,8 +29,8 @@ test('the visitor is told we have it, and never sees a link meant for the studio
 })
 
 test('a yes and a no both name the days', () => {
-  assert.ok(approved(req, '7f3a91').text.includes('2. Oktober'))
-  assert.ok(declined(req, '7f3a91').text.includes('2. Oktober'))
+  assert.ok(approved(req, '7f3a91').text.includes('2. bis 4. Oktober 2026'))
+  assert.ok(declined(req, '7f3a91').text.includes('2. bis 4. Oktober 2026'))
 })
 
 test('a decline is kind and invites another date', () => {
@@ -41,7 +41,7 @@ test('a decline is kind and invites another date', () => {
 
 test('one day reads as one day, not as a range to itself', () => {
   assert.equal(germanRange('2026-10-02', '2026-10-03'), '2. Oktober 2026')
-  assert.equal(germanRange('2026-10-02', '2026-10-05'), '2. Oktober bis 4. Oktober 2026')
+  assert.equal(germanRange('2026-10-02', '2026-10-05'), '2. bis 4. Oktober 2026')
 })
 
 test('a missing company or telephone leaves no empty line behind', () => {

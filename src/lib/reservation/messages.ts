@@ -29,9 +29,9 @@ export function germanRange(startAt: string, endAt: string) {
     return `${from.n}. ${from.m} ${from.y}`
   }
   if (from.m === to.m && from.y === to.y) {
-    return `${from.n}. ${from.m} bis ${to.n}. ${to.m} ${to.y}`
+    return `${from.n}. bis ${to.n}. ${to.m} ${to.y}`
   }
-  return `${from.n}. ${from.m} bis ${to.n}. ${to.m} ${to.y}`
+  return `${from.n}. bis ${to.n}. ${to.m} ${to.y}`
 }
 
 const SIGN_OFF = ['', 'Herzliche Grüße', 'LUX Studio'].join('\n')
