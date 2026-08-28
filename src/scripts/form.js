@@ -273,16 +273,47 @@
     this.form.classList.add('is-sending');
     if (this.submitButton) this.submitButton.disabled = true;
 
-    fetch('/api/inquiry', {
+    /*
+     * A request with dates holds those days and needs approving; one without
+     * is an enquiry and stays an e-mail, exactly as before.
+     */
+    var startEl = document.querySelector('[data-calendar-start]');
+    var endEl = document.querySelector('[data-calendar-end]');
+    var start = startEl && startEl.value;
+    var end = endEl && endEl.value;
+    var endpoint = '/api/inquiry';
+
+    if (start && end) {
+      endpoint = '/api/reservation';
+      data.startAt = start;
+      // The end is exclusive everywhere else, so the last chosen day is included.
+      var after = new Date(end + 'T12:00:00Z');
+      after.setUTCDate(after.getUTCDate() + 1);
+      data.endAt = after.toISOString().slice(0, 10);
+    }
+
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
       .then(function(response) {
+        if (response.status === 409) {
+          return response.json().then(function(body) {
+            self.showTaken(body && body.error);
+            throw new Error('taken');
+          });
+        }
         if (!response.ok) throw new Error(String(response.status));
+        return response.json();
+      })
+      .then(function(body) {
+        // Not set up yet: the request was not taken, so say so plainly.
+        if (body && body.skipped) throw new Error('skipped');
         self.showSuccess();
       })
-      .catch(function() {
+      .catch(function(error) {
+        if (error && error.message === 'taken') return;
         // The enquiry is not lost — it is still in the form, and the failure
         // message carries the studio's address so it can be sent by hand.
         if (failed) failed.hidden = false;
@@ -291,6 +322,24 @@
       .then(function() {
         self.form.classList.remove('is-sending');
       });
+  };
+
+  /**
+   * Somebody else took the days between the page loading and the send. Say so,
+   * re-read the calendar so they grey out, and leave the form filled in.
+   */
+  Form.prototype.showTaken = function(message) {
+    var failed = this.form.querySelector('[data-form-failed]');
+    if (failed) {
+      failed.hidden = false;
+      var text = message || 'Diese Tage sind inzwischen vergeben.';
+      var slot = failed.querySelector('[data-form-failed-text]') || failed;
+      slot.textContent = text;
+    }
+    if (this.submitButton) this.submitButton.disabled = false;
+
+    var cal = document.querySelector('.calendar');
+    if (cal && cal._calendarInstance) cal._calendarInstance.loadBlockedDates();
   };
 
   Form.prototype.showSuccess = function() {
