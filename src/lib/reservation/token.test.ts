@@ -59,3 +59,24 @@ test('rubbish in gives a thrown error, not a crash', () => {
   assert.throws(() => open('not-a-token', KEY, NOW))
   assert.throws(() => open('', KEY, NOW))
 })
+
+test('a key of the right length but not hex is refused', () => {
+  assert.throws(
+    () => seal(claim(), 'z'.repeat(64)),
+    (err: Error) => err.message.includes('RESERVATION_SECRET')
+  )
+})
+
+test('a 64-hex key with trailing junk is refused', () => {
+  assert.throws(
+    () => seal(claim(), 'a'.repeat(64) + ' extra'),
+    (err: Error) => err.message.includes('RESERVATION_SECRET')
+  )
+})
+
+test('a too-short key is refused', () => {
+  assert.throws(
+    () => seal(claim(), 'ab'),
+    (err: Error) => err.message.includes('RESERVATION_SECRET')
+  )
+})

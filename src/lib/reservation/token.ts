@@ -34,10 +34,10 @@ export type ReservationClaim = {
 }
 
 function keyOf(key: string) {
-  const bytes = Buffer.from(key, 'hex')
-  if (bytes.length !== 32) {
+  if (!/^[0-9a-f]{64}$/i.test(key)) {
     throw new Error('RESERVATION_SECRET muss 32 Bytes als Hex sein (openssl rand -hex 32).')
   }
+  const bytes = Buffer.from(key, 'hex')
   return bytes
 }
 
