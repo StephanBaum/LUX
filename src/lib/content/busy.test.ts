@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
-import {parseIcal, withinWindow} from './busy.ts'
+import {parseIcal, withinWindow, fetchReservations} from './busy.ts'
 
 const ICS = `BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -48,4 +48,19 @@ test('only what falls in the window survives', () => {
     now,
   )
   assert.deepEqual(kept.map((e) => e.uid), ['soon'])
+})
+
+// Deliberate shape: type: 'blocked' and events: [] are set even with no URL
+// configured, so this feed still lands in the endpoint's `blocked` filter.
+// The pre-refactor endpoint omitted `type` here by accident (an early return
+// left it undefined, which JSON.stringify then dropped), silently excluding
+// the feed. That was a bug, not a contract — this pins the corrected shape.
+test('with no URL configured, the feed still reports its type rather than omitting it', async () => {
+  const result = await fetchReservations('')
+  assert.deepEqual(result, {
+    name: 'reservations',
+    type: 'blocked',
+    events: [],
+    error: 'No URL configured',
+  })
 })
