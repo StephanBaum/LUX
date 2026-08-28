@@ -24,6 +24,7 @@ export async function expireHolds(deps: Deps, now = new Date()) {
     maxResults: '250',
     showDeleted: 'false',
     singleEvents: 'false',
+    privateExtendedProperty: 'lux=reservation',
   })
 
   let expired = 0

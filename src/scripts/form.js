@@ -280,7 +280,9 @@
     var startEl = document.querySelector('[data-calendar-start]');
     var endEl = document.querySelector('[data-calendar-end]');
     var start = startEl && startEl.value;
-    var end = endEl && endEl.value;
+    // One click picks a single day and leaves the end empty. That is a
+    // one-day booking, not an enquiry without dates.
+    var end = (endEl && endEl.value) || start;
     var endpoint = '/api/inquiry';
 
     if (start && end) {
@@ -292,11 +294,15 @@
       data.endAt = after.toISOString().slice(0, 10);
     }
 
-    fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+    var post = function(url) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    };
+
+    post(endpoint)
       .then(function(response) {
         if (response.status === 409) {
           return response.json().then(function(body) {
@@ -308,8 +314,15 @@
         return response.json();
       })
       .then(function(body) {
-        // Not set up yet: the request was not taken, so say so plainly.
-        if (body && body.skipped) throw new Error('skipped');
+        // Not set up yet: this deployment has no reservation mailer, so it
+        // falls back to the plain enquiry, exactly as it did before dates
+        // could be held. Its own success or failure is what the visitor sees.
+        if (body && body.skipped) {
+          return post('/api/inquiry').then(function(response) {
+            if (!response.ok) throw new Error(String(response.status));
+            self.showSuccess();
+          });
+        }
         self.showSuccess();
       })
       .catch(function(error) {
@@ -338,6 +351,7 @@
     }
     if (this.submitButton) this.submitButton.disabled = false;
 
+    if (window.icalClient && window.icalClient.clearCache) window.icalClient.clearCache();
     var cal = document.querySelector('.calendar');
     if (cal && cal._calendarInstance) cal._calendarInstance.loadBlockedDates();
   };

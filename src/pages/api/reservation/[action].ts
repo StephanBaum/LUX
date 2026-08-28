@@ -129,7 +129,16 @@ export const POST: APIRoute = async ({params, url}) => {
     }
     await patchRawEvent(claim.c, claim.e, confirmedPatch(claim.r))
     const mail = approved(request, claim.r)
-    await sendMail({to: claim.m, subject: mail.subject, text: mail.text})
+    try {
+      await sendMail({to: claim.m, subject: mail.subject, text: mail.text})
+    } catch (error: any) {
+      console.error('[reservation] approval mail failed', error?.message ?? error)
+      return page('Zugesagt, aber ohne E-Mail', `<h1>Zugesagt</h1>
+        <p>${escapeHtml(claim.n)} ist für ${dates(claim)} eingetragen und der
+        Zeitraum ist im Kalender gebucht.</p>
+        <p><strong>Die Bestätigung konnte nicht verschickt werden.</strong>
+        Bitte antworten Sie ${escapeHtml(claim.m)} von Hand.</p>`)
+    }
     return page('Zugesagt', `<h1>Zugesagt</h1>
       <p>${escapeHtml(claim.n)} hat die Zusage für ${dates(claim)} bekommen.
       Der Zeitraum ist im Kalender gebucht.</p>`)
@@ -137,7 +146,15 @@ export const POST: APIRoute = async ({params, url}) => {
 
   await deleteEvent(claim.c, claim.e)
   const mail = declined(request, claim.r)
-  await sendMail({to: claim.m, subject: mail.subject, text: mail.text})
+  try {
+    await sendMail({to: claim.m, subject: mail.subject, text: mail.text})
+  } catch (error: any) {
+    console.error('[reservation] decline mail failed', error?.message ?? error)
+    return page('Abgesagt, aber ohne E-Mail', `<h1>Abgesagt</h1>
+      <p>${dates(claim)} ist wieder frei im Kalender.</p>
+      <p><strong>Die Absage konnte nicht verschickt werden.</strong>
+      Bitte antworten Sie ${escapeHtml(claim.m)} von Hand.</p>`)
+  }
   return page('Abgesagt', `<h1>Abgesagt</h1>
     <p>${escapeHtml(claim.n)} hat eine freundliche Absage bekommen.
     ${dates(claim)} ist wieder frei.</p>`)

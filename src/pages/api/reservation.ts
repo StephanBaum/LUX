@@ -126,8 +126,8 @@ export const POST: APIRoute = async ({request}) => {
    * mail never arrived is a day blocked for a request nobody can read. If it
    * fails, the hold goes with it.
    */
-  const message = toStudio(req, ref, {approve: link('approve'), decline: link('decline')})
   try {
+    const message = toStudio(req, ref, {approve: link('approve'), decline: link('decline')})
     await sendMail({
       to,
       replyTo: {name: oneLine(req.name), address: req.email},

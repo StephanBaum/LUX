@@ -46,3 +46,16 @@ test('no calendar configured does nothing rather than throwing', async () => {
   const result = await expireHolds({calendarId: '', list: async () => ({items: []}), remove: async () => {}}, NOW)
   assert.equal(result.expired, 0)
 })
+
+test('the list is narrowed to entries this feature marked itself', async () => {
+  let params: Record<string, string> | undefined
+  await expireHolds(
+    {
+      calendarId: 'cal',
+      list: async (_c, p) => { params = p; return {items: []} },
+      remove: async () => {},
+    },
+    NOW,
+  )
+  assert.equal(params && params.privateExtendedProperty, 'lux=reservation')
+})
