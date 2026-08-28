@@ -12,6 +12,7 @@ export type CalendarEvent = {
   updated?: string
   start?: {dateTime?: string; date?: string}
   end?: {dateTime?: string; date?: string}
+  extendedProperties?: {private?: Record<string, string | null>}
 }
 
 async function call(path: string, init: RequestInit = {}) {
@@ -70,6 +71,34 @@ export const patchEvent = (
     method: 'PATCH',
     body: JSON.stringify(asEvent(appointment)),
   })
+
+/*
+ * The Appointment helpers above carry a title and two dates, which is all the
+ * workshop sync ever needs. A reservation hold also has a status, a
+ * description and a private marker, so these three take the event body whole.
+ */
+
+export const createRawEvent = (calendarId: string, body: object): Promise<CalendarEvent> =>
+  call(`/calendars/${encodeURIComponent(calendarId)}/events`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+
+export const patchRawEvent = (
+  calendarId: string,
+  eventId: string,
+  body: object,
+): Promise<CalendarEvent> =>
+  call(`/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
+
+export const listEvents = (
+  calendarId: string,
+  params: Record<string, string> = {},
+): Promise<{items?: CalendarEvent[]}> =>
+  call(`/calendars/${encodeURIComponent(calendarId)}/events?${new URLSearchParams(params)}`)
 
 export async function deleteEvent(calendarId: string, eventId: string) {
   try {
