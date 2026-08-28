@@ -20,20 +20,76 @@ import {sendMail, studioAddress} from '../../../lib/mail'
  */
 export const prerender = false
 
-const page = (title: string, body: string) =>
+/**
+ * Every page the studio and the guest land on, in the site's own clothes:
+ * the black bar, the white card on grey, Inter, the teal from main.css.
+ *
+ * These are read once, on a phone, by somebody deciding something — so the
+ * decision is the only thing that looks clickable, and everything else gets
+ * out of the way.
+ */
+const page = (title: string, body: string, ref?: string) =>
   new Response(
     `<!doctype html><html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>${title} — LUX Studio</title>
+<meta name="color-scheme" content="light only">
+<title>${escapeHtml(title)} — LUX Studio</title>
 <style>
- body{font-family:system-ui,sans-serif;max-width:34rem;margin:12vh auto;padding:0 1.5rem;line-height:1.5;color:#111}
- h1{font-size:1.4rem;font-weight:600}
- dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1rem;margin:1.5rem 0}
- dt{color:#666} dd{margin:0}
- button{font:inherit;padding:.7rem 1.4rem;border:0;background:#111;color:#fff;cursor:pointer}
- .muted{color:#666;font-size:.9rem}
-</style></head><body>${body}</body></html>`,
+ :root{
+   --ink:#000;--paper:#fff;--wash:#F5F5F5;--line:#D4D4D4;--soft:#737373;--teal:#2A9D8F;
+   --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+ }
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--wash);font-family:var(--font);color:var(--ink);
+      -webkit-text-size-adjust:100%;line-height:1.5}
+ .wrap{max-width:640px;margin:0 auto;padding:32px 16px 64px}
+ .card{background:var(--paper);border:1px solid var(--line)}
+ .bar{background:var(--ink);color:var(--paper);padding:22px 32px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px}
+ .mark{font-weight:700;font-size:16px;letter-spacing:.18em}
+ .ref{font-size:12px;letter-spacing:.04em;color:var(--line);white-space:nowrap}
+ .ref b{color:var(--paper);font-weight:500}
+ .inner{padding:36px 32px 32px}
+ h1{margin:0 0 6px;font-size:24px;line-height:1.3;font-weight:600}
+ .lead{margin:0 0 28px;color:var(--soft);font-size:16px}
+ p{margin:0 0 18px;font-size:16px;line-height:1.6}
+ dl{display:grid;grid-template-columns:96px 1fr;gap:0;margin:0 0 28px}
+ dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);
+    padding:0 0 14px;font-weight:500}
+ dd{margin:0;padding:0 0 14px;font-size:15px;word-break:break-word}
+ form{margin:0 0 8px}
+ .field{margin:0 0 20px}
+ label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+       color:var(--soft);font-weight:500;margin:0 0 8px}
+ input[type=date]{font:400 16px/1.4 var(--font);color:var(--ink);width:100%;
+   padding:12px 14px;border:1px solid var(--line);background:var(--paper);border-radius:0}
+ input[type=date]:focus{outline:2px solid var(--teal);outline-offset:-2px;border-color:var(--teal)}
+ .dates{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ @media (max-width:30rem){.dates{grid-template-columns:1fr}}
+ button{font:500 15px/1.3 var(--font);padding:15px 30px;border:1px solid var(--teal);
+        background:var(--teal);color:var(--paper);cursor:pointer;border-radius:0;
+        width:100%;margin:4px 0 0}
+ @media (min-width:30rem){button{width:auto;min-width:220px}}
+ button:hover{background:#248C80;border-color:#248C80}
+ .muted{margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--line);
+        color:var(--soft);font-size:13px;line-height:1.6}
+ .done{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+       font-weight:500;color:var(--teal);margin:0 0 10px}
+ .warn{color:#B3261E}
+ .foot{padding:16px 32px;color:var(--soft);font-size:12px}
+</style></head><body>
+<div class="wrap">
+  <div class="card">
+    <div class="bar">
+      <span class="mark">LUX STUDIO</span>
+      ${ref ? `<span class="ref">Buchung <b>${escapeHtml(ref).toUpperCase()}</b></span>` : ''}
+    </div>
+    <div class="inner">${body}</div>
+  </div>
+  <div class="foot">LUX Studio · Schwalbach</div>
+</div>
+</body></html>`,
     {status: 200, headers: {'Content-Type': 'text/html; charset=utf-8'}},
   )
 
@@ -85,7 +141,7 @@ export const GET: APIRoute = async ({params, url}) => {
       <p>Eine Absage ist so kurz vor dem Termin nicht mehr online möglich —
       dafür brauchen wir mindestens ${CANCEL_DEADLINE_DAYS} Tage Vorlauf.</p>
       <p>Bitte rufen Sie uns an oder antworten Sie einfach auf Ihre
-      Bestätigungs-E-Mail. Wir finden eine Lösung.</p>`)
+      Bestätigungs-E-Mail. Wir finden eine Lösung.</p>`, claim.r)
   }
 
   if (action === 'reschedule') {
@@ -96,39 +152,48 @@ export const GET: APIRoute = async ({params, url}) => {
 
     return page('Termin ändern', `
       <h1>Termin ändern</h1>
+      <p class="lead">${escapeHtml(claim.n)}</p>
       <dl>
-        <dt>Gast</dt><dd>${escapeHtml(claim.n)}</dd>
         <dt>Bisher</dt><dd>${dates(claim)}</dd>
+        <dt>E-Mail</dt><dd>${escapeHtml(claim.m)}</dd>
       </dl>
       <form method="post">
-        <label>Neuer Beginn<br><input type="date" name="startAt" value="${was}" required></label>
-        <label>Letzter Tag<br><input type="date" name="endAt" value="${lastDay.toISOString().slice(0, 10)}" required></label>
+        <div class="dates">
+          <div class="field">
+            <label for="s">Neuer Beginn</label>
+            <input id="s" type="date" name="startAt" value="${was}" required>
+          </div>
+          <div class="field">
+            <label for="e">Letzter Tag</label>
+            <input id="e" type="date" name="endAt" value="${lastDay.toISOString().slice(0, 10)}" required>
+          </div>
+        </div>
         <button type="submit">Termin verschieben</button>
       </form>
-      <p class="muted">Der Kalendereintrag wird verschoben und der Gast bekommt
-      die neuen Daten per E-Mail.</p>`)
+      <p class="muted">Der Kalendereintrag wird verschoben und ${escapeHtml(claim.n)}
+      bekommt die alten und die neuen Daten per E-Mail.</p>`, claim.r)
   }
 
   const verb = action === 'approve' ? 'Zusagen' : 'Absagen'
   const heading = action === 'cancel' ? 'Termin absagen' : `Anfrage ${escapeHtml(claim.r).toUpperCase()}`
 
   return page(verb, `
-    <h1>${heading}</h1>
+    <h1>${action === 'cancel' ? 'Termin absagen' : action === 'approve' ? 'Anfrage zusagen' : 'Anfrage absagen'}</h1>
+    <p class="lead">${escapeHtml(claim.n)}</p>
     <dl>
-      <dt>Wer</dt><dd>${escapeHtml(claim.n)}</dd>
-      <dt>E-Mail</dt><dd>${escapeHtml(claim.m)}</dd>
       <dt>Zeitraum</dt><dd>${dates(claim)}</dd>
+      <dt>E-Mail</dt><dd>${escapeHtml(claim.m)}</dd>
     </dl>
     <form method="post">
       <button type="submit">${action === 'cancel' ? 'Termin absagen' : verb}</button>
     </form>
     <p class="muted">${
       action === 'approve'
-        ? 'Der Zeitraum wird gebucht und der Gast bekommt eine Zusage.'
+        ? 'Der Zeitraum wird gebucht und der Gast bekommt sofort eine Zusage.'
         : action === 'cancel'
           ? 'Der Zeitraum wird wieder frei. Das Studio wird benachrichtigt.'
           : 'Der Zeitraum wird wieder frei und der Gast bekommt eine freundliche Absage.'
-    }</p>`)
+    }</p>`, claim.r)
 }
 
 export const POST: APIRoute = async ({params, url, request}) => {
@@ -152,17 +217,18 @@ export const POST: APIRoute = async ({params, url, request}) => {
     if (error?.status !== 404 && error?.status !== 410) {
       console.error('[reservation] calendar unreachable', error?.message ?? error)
       return page('Gerade nicht möglich', `<h1>Gerade nicht möglich</h1>
-        <p>Der Kalender antwortet im Moment nicht. Es wurde nichts verändert
-        und nichts verschickt. Bitte öffnen Sie den Link in ein paar Minuten
-        noch einmal.</p>`)
+        <p>Der Kalender antwortet im Moment nicht.</p>
+        <p><strong>Es wurde nichts verändert und nichts verschickt.</strong>
+        Bitte öffnen Sie den Link in ein paar Minuten noch einmal.</p>`, claim.r)
     }
     event = null
   }
 
   if (!event || event.status === 'cancelled') {
-    return page('Schon erledigt', `<h1>Schon erledigt</h1>
+    return page('Schon erledigt', `<span class="done">Bereits erledigt</span>
+      <h1>Schon erledigt</h1>
       <p>Diese Anfrage wurde bereits beantwortet oder der Eintrag wurde entfernt.
-      Es wurde nichts noch einmal verschickt.</p>`)
+      Es wurde nichts noch einmal verschickt.</p>`, claim.r)
   }
 
   // The entry names the rooms, so the visitor's mail can too.
@@ -170,8 +236,9 @@ export const POST: APIRoute = async ({params, url, request}) => {
 
   if (action === 'approve') {
     if (event.status === 'confirmed') {
-      return page('Schon zugesagt', `<h1>Schon zugesagt</h1>
-        <p>Diese Anfrage ist bereits bestätigt. Es wurde nichts noch einmal verschickt.</p>`)
+      return page('Schon zugesagt', `<span class="done">Bereits erledigt</span>
+        <h1>Schon zugesagt</h1>
+        <p>Diese Anfrage ist bereits bestätigt. Es wurde nichts noch einmal verschickt.</p>`, claim.r)
     }
     await patchRawEvent(claim.c, claim.e, confirmedPatch(event.summary))
     /*
@@ -191,15 +258,21 @@ export const POST: APIRoute = async ({params, url, request}) => {
       await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
     } catch (error: any) {
       console.error('[reservation] approval mail failed', error?.message ?? error)
-      return page('Zugesagt, aber ohne E-Mail', `<h1>Zugesagt</h1>
-        <p>${escapeHtml(claim.n)} ist für ${dates(claim)} eingetragen und der
-        Zeitraum ist im Kalender gebucht.</p>
-        <p><strong>Die Bestätigung konnte nicht verschickt werden.</strong>
-        Bitte antworten Sie ${escapeHtml(claim.m)} von Hand.</p>`)
+      return page('Zugesagt, aber ohne E-Mail', `<span class="done">Erledigt</span>
+        <h1>Zugesagt</h1>
+        <p>${escapeHtml(claim.n)} ist für <strong>${dates(claim)}</strong> eingetragen
+        und der Zeitraum ist im Kalender gebucht.</p>
+        <p class="warn"><strong>Die Bestätigung konnte nicht verschickt werden.</strong></p>
+        <p>Bitte antworten Sie <a href="mailto:${escapeHtml(claim.m)}">${escapeHtml(claim.m)}</a>
+        von Hand.</p>`, claim.r)
     }
-    return page('Zugesagt', `<h1>Zugesagt</h1>
-      <p>${escapeHtml(claim.n)} hat die Zusage für ${dates(claim)} bekommen.
-      Der Zeitraum ist im Kalender gebucht.</p>`)
+    return page('Zugesagt', `<span class="done">Erledigt</span>
+      <h1>Zugesagt</h1>
+      <p>${escapeHtml(claim.n)} hat die Zusage für <strong>${dates(claim)}</strong> bekommen.
+      Der Zeitraum ist im Kalender gebucht.</p>
+      <p class="muted">Sie können den Termin später über „Termin ändern" in der
+      ursprünglichen E-Mail verschieben. Bitte nicht im Kalender ziehen —
+      davon erfährt der Gast nichts.</p>`, claim.r)
   }
 
   if (action === 'reschedule') {
@@ -210,7 +283,8 @@ export const POST: APIRoute = async ({params, url, request}) => {
 
     if (!DAY.test(startAt) || !DAY.test(lastDay) || lastDay < startAt) {
       return page('Ungültig', `<h1>Ungültige Daten</h1>
-        <p>Bitte einen Beginn und einen letzten Tag wählen, der nicht davor liegt.</p>`)
+        <p>Bitte einen Beginn und einen letzten Tag wählen, der nicht davor liegt.</p>
+        <p><strong>Es wurde nichts verändert.</strong></p>`, claim.r)
     }
 
     // Stored ends are exclusive everywhere, so the day after the last one.
@@ -231,8 +305,10 @@ export const POST: APIRoute = async ({params, url, request}) => {
 
     if (overlaps({startAt, endAt}, busy)) {
       return page('Belegt', `<h1>Diese Tage sind belegt</h1>
-        <p>Im neuen Zeitraum liegt bereits etwas anderes. Es wurde nichts
-        verändert und nichts verschickt.</p>`)
+        <p>Im neuen Zeitraum liegt bereits etwas anderes — eine andere Buchung
+        oder ein Workshop.</p>
+        <p><strong>Es wurde nichts verändert und nichts verschickt.</strong>
+        Gehen Sie zurück und wählen Sie andere Tage.</p>`, claim.r)
     }
 
     const before = {startAt: from, endAt: to}
@@ -243,16 +319,22 @@ export const POST: APIRoute = async ({params, url, request}) => {
       await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
     } catch (error: any) {
       console.error('[reservation] reschedule mail failed', error?.message ?? error)
-      return page('Verschoben, aber ohne E-Mail', `<h1>Verschoben</h1>
-        <p>Der Termin steht jetzt auf ${escapeHtml(germanRange(startAt, endAt))}.</p>
-        <p><strong>Die Benachrichtigung konnte nicht verschickt werden.</strong>
-        Bitte sagen Sie ${escapeHtml(claim.m)} von Hand Bescheid.</p>`)
+      return page('Verschoben, aber ohne E-Mail', `<span class="done">Erledigt</span>
+        <h1>Termin verschoben</h1>
+        <p>Der Termin steht jetzt auf <strong>${escapeHtml(germanRange(startAt, endAt))}</strong>.</p>
+        <p class="warn"><strong>Die Benachrichtigung konnte nicht verschickt werden.</strong></p>
+        <p>Bitte sagen Sie <a href="mailto:${escapeHtml(claim.m)}">${escapeHtml(claim.m)}</a>
+        von Hand Bescheid.</p>`, claim.r)
     }
 
-    return page('Verschoben', `<h1>Termin verschoben</h1>
-      <p>Von ${escapeHtml(germanRange(before.startAt, before.endAt))}
-      auf ${escapeHtml(germanRange(startAt, endAt))}.</p>
-      <p class="muted">${escapeHtml(claim.n)} hat die neuen Daten per E-Mail bekommen.</p>`)
+    return page('Verschoben', `<span class="done">Erledigt</span>
+      <h1>Termin verschoben</h1>
+      <dl>
+        <dt>Bisher</dt><dd>${escapeHtml(germanRange(before.startAt, before.endAt))}</dd>
+        <dt>Neu</dt><dd><strong>${escapeHtml(germanRange(startAt, endAt))}</strong></dd>
+      </dl>
+      <p class="muted">${escapeHtml(claim.n)} hat die alten und die neuen Daten
+      per E-Mail bekommen.</p>`, claim.r)
   }
 
   if (action === 'cancel') {
@@ -260,8 +342,9 @@ export const POST: APIRoute = async ({params, url, request}) => {
     // tab could be pressed after the deadline has passed.
     if (!canCancel(from)) {
       return page('Zu kurzfristig', `<h1>Zu kurzfristig</h1>
-        <p>Eine Absage ist so kurz vor dem Termin nicht mehr online möglich.
-        Bitte rufen Sie uns an oder antworten Sie auf Ihre Bestätigung.</p>`)
+        <p>Eine Absage ist so kurz vor dem Termin nicht mehr online möglich.</p>
+        <p>Bitte rufen Sie uns an oder antworten Sie einfach auf Ihre
+        Bestätigungs-E-Mail. Wir finden eine Lösung.</p>`, claim.r)
     }
 
     await deleteEvent(claim.c, claim.e)
@@ -280,9 +363,14 @@ export const POST: APIRoute = async ({params, url, request}) => {
       told = false
     }
 
-    return page('Abgesagt', `<h1>Ihr Termin ist abgesagt</h1>
-      <p>${dates(claim)} ist wieder frei. Schade — und gerne ein anderes Mal.</p>
-      ${told ? '<p class="muted">Eine Bestätigung ist unterwegs.</p>' : '<p class="muted">Die Bestätigungs-E-Mail konnte nicht verschickt werden, die Absage gilt trotzdem.</p>'}`)
+    return page('Abgesagt', `<span class="done">Erledigt</span>
+      <h1>Ihr Termin ist abgesagt</h1>
+      <p><strong>${dates(claim)}</strong> ist wieder frei. Schade — und gerne ein anderes Mal.</p>
+      ${
+        told
+          ? '<p class="muted">Eine Bestätigung ist unterwegs.</p>'
+          : '<p class="muted warn">Die Bestätigungs-E-Mail konnte nicht verschickt werden. Die Absage gilt trotzdem.</p>'
+      }`, claim.r)
   }
 
   await deleteEvent(claim.c, claim.e)
