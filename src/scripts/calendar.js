@@ -56,8 +56,15 @@
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);
 
-    // Blocked dates from iCal
+    // Blocked dates from iCal and from the studio's own programme
     this.blockedRanges = [];
+
+    // The hover card: the element, the day it belongs to, and whether a
+    // finger opened it — a tapped card must not close on the next mouseout.
+    this.card = null;
+    this.cardDay = null;
+    this.cardOpenByTap = false;
+    this.hideTimer = null;
 
     // Store instance on container for language change re-rendering
     this.container._calendarInstance = this;
@@ -65,6 +72,8 @@
     // Store handlers for cleanup
     this.handlers = {
       gridClick: [],
+      card: [],
+      dismiss: null,
       prevClick: null,
       nextClick: null
     };
@@ -112,15 +121,21 @@
     }, 250);
   };
 
-  Calendar.prototype.isDateBlocked = function(date) {
+  /**
+   * Every appointment that falls on this day.
+   *
+   * The hover card needs to know which one, not merely that there is one,
+   * so the matching is here and isDateBlocked is the yes/no on top of it.
+   */
+  Calendar.prototype.rangesOn = function(date) {
     if (!this.blockedRanges || this.blockedRanges.length === 0) {
-      return false;
+      return [];
     }
 
     var checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
 
-    return this.blockedRanges.some(function(range) {
+    return this.blockedRanges.filter(function(range) {
       var rangeStart = new Date(range.start);
       rangeStart.setHours(0, 0, 0, 0);
 
@@ -139,11 +154,152 @@
     });
   };
 
+  Calendar.prototype.isDateBlocked = function(date) {
+    return this.rangesOn(date).length > 0;
+  };
+
+  /* ------------------------------------------------ the hover card ------ */
+
+  /** A translated string, or the German the site was written in. */
+  function say(key, fallback) {
+    if (window.i18n) {
+      var translated = window.i18n.getTranslation(key);
+      if (translated && translated !== key) return translated;
+    }
+    return fallback;
+  }
+
+  /**
+   * What a blocked day says when you point at it.
+   *
+   * A workshop or an event is the studio's own programme and is already
+   * public on its own page, so it is named, pictured and linked. A
+   * reservation is somebody else's booking: the server sends nothing but its
+   * dates, and all the visitor is told is that the day is taken.
+   */
+  Calendar.prototype.cardContents = function(ranges) {
+    var card = document.createElement('div');
+    card.className = 'calendar__card';
+
+    var studio = ranges.filter(function(r) { return r.source === 'studio'; });
+    if (studio.length === 0) {
+      var plain = document.createElement('p');
+      plain.className = 'calendar__card-plain';
+      plain.textContent = say('calendar.booked', 'Belegt');
+      card.appendChild(plain);
+      return card;
+    }
+
+    studio.forEach(function(range) {
+      var item = document.createElement('div');
+      item.className = 'calendar__card-item';
+
+      if (range.image) {
+        var img = document.createElement('img');
+        img.className = 'calendar__card-image';
+        img.src = range.image;
+        img.alt = '';
+        img.loading = 'lazy';
+        item.appendChild(img);
+      }
+
+      var title = document.createElement('p');
+      title.className = 'calendar__card-title';
+      title.textContent = range.summary || say('calendar.booked', 'Belegt');
+      item.appendChild(title);
+
+      if (range.href) {
+        var link = document.createElement('a');
+        link.className = 'calendar__card-link';
+        link.href = range.href;
+        link.textContent = say('calendar.card_more', 'Mehr erfahren');
+        item.appendChild(link);
+      }
+
+      card.appendChild(item);
+    });
+
+    return card;
+  };
+
+  Calendar.prototype.showCard = function(dayEl) {
+    var ranges = this.rangesOn(new Date(dayEl.dataset.date));
+    if (ranges.length === 0) return;
+
+    this.hideCard(true);
+
+    var card = this.cardContents(ranges);
+    this.card = card;
+    this.cardDay = dayEl;
+    this.container.appendChild(card);
+
+    // Sit under the day, and stay inside the calendar rather than inside the
+    // page — the calendar is what the card is positioned against.
+    var day = dayEl.getBoundingClientRect();
+    var box = this.container.getBoundingClientRect();
+    var left = day.left - box.left + day.width / 2 - card.offsetWidth / 2;
+    left = Math.max(4, Math.min(left, box.width - card.offsetWidth - 4));
+    card.style.left = left + 'px';
+    card.style.top = day.bottom - box.top + 6 + 'px';
+
+    // A card that can be clicked has to be reachable by the mouse, so
+    // leaving the day does not close it while the pointer is on its way.
+    var self = this;
+    card.addEventListener('mouseenter', function() { self.cancelHide(); });
+    card.addEventListener('mouseleave', function() { self.scheduleHide(); });
+
+    dayEl.classList.add('calendar__day--showing-card');
+  };
+
+  Calendar.prototype.cancelHide = function() {
+    if (this.hideTimer) {
+      clearTimeout(this.hideTimer);
+      this.hideTimer = null;
+    }
+  };
+
+  Calendar.prototype.scheduleHide = function() {
+    var self = this;
+    this.cancelHide();
+    this.hideTimer = setTimeout(function() { self.hideCard(); }, 220);
+  };
+
+  Calendar.prototype.hideCard = function(immediately) {
+    this.cancelHide();
+    if (this.cardDay) {
+      this.cardDay.classList.remove('calendar__day--showing-card');
+      this.cardDay = null;
+    }
+    if (this.card) {
+      this.card.remove();
+      this.card = null;
+    }
+    if (!immediately) this.cardOpenByTap = false;
+  };
+
   Calendar.prototype.cleanup = function() {
     var self = this;
     this.handlers.gridClick.forEach(function(item) {
       item.grid.removeEventListener('click', item.handler);
     });
+
+    /*
+     * Astro's view transitions swap the whole body, so a listener left on
+     * document outlives the page it belonged to and a card left in the DOM
+     * is orphaned. Both go here.
+     */
+    this.handlers.card.forEach(function(item) {
+      item.grid.removeEventListener('mouseover', item.over);
+      item.grid.removeEventListener('mouseout', item.out);
+      item.grid.removeEventListener('click', item.tap);
+    });
+    this.handlers.card = [];
+    if (this.handlers.dismiss) {
+      document.removeEventListener('click', this.handlers.dismiss);
+      document.removeEventListener('keydown', this.handlers.dismiss);
+      this.handlers.dismiss = null;
+    }
+    this.hideCard(true);
     if (this.prevBtn && this.handlers.prevClick) {
       this.prevBtn.removeEventListener('click', this.handlers.prevClick);
     }
@@ -154,6 +310,10 @@
   };
 
   Calendar.prototype.render = function() {
+    // The day the card belongs to is about to be replaced, so the card goes
+    // with it — otherwise it hangs there pointing at nothing.
+    this.hideCard(true);
+
     this.renderMonth(this.grids[0], this.currentMonth);
 
     var nextMonth = new Date(this.currentMonth);
@@ -244,8 +404,47 @@
 
         grid.addEventListener('click', handler);
         self.handlers.gridClick.push({ grid: grid, handler: handler });
+
+        /*
+         * The card. A mouse points at a day; a finger has no hover at all, so
+         * a tap on a blocked day opens the card instead of doing nothing.
+         */
+        var over = function(e) {
+          var blocked = e.target.closest('.calendar__day--blocked');
+          if (!blocked || blocked === self.cardDay) return;
+          self.cancelHide();
+          self.showCard(blocked);
+        };
+        var out = function(e) {
+          if (self.cardOpenByTap) return;
+          if (e.target.closest('.calendar__day--blocked')) self.scheduleHide();
+        };
+        var tap = function(e) {
+          var blocked = e.target.closest('.calendar__day--blocked');
+          if (!blocked) return;
+          if (self.cardDay === blocked) {
+            self.hideCard();
+          } else {
+            self.cardOpenByTap = true;
+            self.showCard(blocked);
+          }
+        };
+
+        grid.addEventListener('mouseover', over);
+        grid.addEventListener('mouseout', out);
+        grid.addEventListener('click', tap);
+        self.handlers.card.push({ grid: grid, over: over, out: out, tap: tap });
       }
     });
+
+    // A tap anywhere else, or Escape, puts the card away.
+    this.handlers.dismiss = function(e) {
+      if (e.type === 'keydown' && e.key !== 'Escape') return;
+      if (e.type === 'click' && self.container.contains(e.target)) return;
+      self.hideCard();
+    };
+    document.addEventListener('click', this.handlers.dismiss);
+    document.addEventListener('keydown', this.handlers.dismiss);
 
     if (this.prevBtn) {
       this.handlers.prevClick = function() { self.changeMonth(-1); };

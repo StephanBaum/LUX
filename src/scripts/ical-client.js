@@ -60,7 +60,12 @@
         return {
           start: new Date(event.start),
           end: event.end ? new Date(event.end) : new Date(event.start),
-          summary: event.summary
+          // 'studio' days are the studio's own programme and may be named.
+          // 'reservations' arrive with nothing but dates, on purpose.
+          source: event.source || 'reservations',
+          summary: event.summary,
+          href: event.href,
+          image: event.image
         };
       });
     });

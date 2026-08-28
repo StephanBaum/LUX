@@ -16,7 +16,8 @@
  */
 
 import {sanityClient} from '../../lib/sanity/client'
-import {asBlockedDates, PAST_WINDOW, FUTURE_WINDOW} from '../../lib/content/occupancy'
+import {imageUrl} from '../../lib/sanity/image'
+import {asBlockedDates, asBookedDates, PAST_WINDOW, FUTURE_WINDOW} from '../../lib/content/occupancy'
 
 export const prerender = false;
 
@@ -43,9 +44,13 @@ const calendarConfig = {
 async function fetchStudioDates() {
   try {
     const docs = await sanityClient.fetch(
-      `*[_type in ["workshop", "event"] && defined(startAt)]{_id, _type, title, startAt, endAt}`
+      `*[_type in ["workshop", "event"] && defined(startAt)]{_id, _type, title, slug, photo, startAt, endAt}`
     );
-    return {name: 'studio', type: 'blocked', events: asBlockedDates(docs)};
+    return {
+      name: 'studio',
+      type: 'blocked',
+      events: asBlockedDates(docs, new Date(), imageUrl)
+    };
   } catch (error) {
     console.error('Error reading workshops and events from Sanity:', error.message);
     return {name: 'studio', type: 'blocked', events: [], error: error.message};
@@ -172,10 +177,13 @@ async function fetchFeed(name, config) {
       return eventStart >= pastDate && eventStart <= futureDate;
     });
 
-    // Sort by start date
-    filteredEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
-
-    return { name, type: config.type, events: filteredEvents };
+    /*
+     * asBookedDates keeps the dates and throws the rest away. A reservation's
+     * summary is a customer's name, and everything returned here is sent to
+     * the browser, so it is dropped now rather than hidden in the markup
+     * later — no future change to the calendar can leak what is not there.
+     */
+    return { name, type: config.type, events: asBookedDates(filteredEvents) };
   } catch (error) {
     console.error(`Error fetching ${name} calendar:`, error.message);
     return { name, type: config.type, events: [], error: error.message };

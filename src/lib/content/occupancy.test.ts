@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
-import {asBlockedDates} from './occupancy.ts'
+import {asBlockedDates, asBookedDates} from './occupancy.ts'
 
 const NOW = new Date('2026-09-01T12:00:00.000Z')
 
@@ -72,4 +72,68 @@ test('the earliest appointment comes first', () => {
 test('nothing in, nothing out', () => {
   assert.deepEqual(asBlockedDates([], NOW), [])
   assert.deepEqual(asBlockedDates(null, NOW), [])
+})
+
+// ---------------------------------------------------------------- the card
+
+test('a studio day says it is the studio, and where to read more', () => {
+  const [workshop] = asBlockedDates([doc()], NOW)
+  assert.equal(workshop.source, 'studio')
+  assert.equal(workshop.href, '/workshops#workshop-1')
+
+  const [event] = asBlockedDates([doc({_type: 'event', _id: 'event-9'})], NOW)
+  assert.equal(event.href, '/veranstaltungen#event-9')
+})
+
+test('a slug is nicer in a URL than an id, when there is one', () => {
+  const [blocked] = asBlockedDates([doc({slug: {current: 'dunkelkammer-basics'}})], NOW)
+  assert.equal(blocked.href, '/workshops#dunkelkammer-basics')
+})
+
+test('a photo becomes a small image, and no photo becomes nothing', () => {
+  const seen: unknown[] = []
+  const imageFor = (photo: unknown, w: number, h: number) => {
+    seen.push([photo, w, h])
+    return 'https://cdn.sanity.io/thumb.jpg'
+  }
+
+  const photo = {asset: {_ref: 'image-abc123-800x600-jpg'}}
+  const [shown] = asBlockedDates([doc({photo})], NOW, imageFor)
+  assert.equal(shown.image, 'https://cdn.sanity.io/thumb.jpg')
+  assert.deepEqual(seen, [[photo, 320, 200]], 'a card wants a card-sized crop')
+
+  const [bare] = asBlockedDates([doc({photo: null})], NOW, imageFor)
+  assert.equal(bare.image, undefined)
+  assert.equal(seen.length, 1, 'no photo means the builder is never asked')
+})
+
+test('an unknown type gets no link rather than a broken one', () => {
+  const [odd] = asBlockedDates([doc({_type: 'something-else'})], NOW)
+  assert.equal(odd.href, undefined)
+})
+
+// -------------------------------------------------- what a reservation shows
+
+test('a reservation never carries a name, a link or a picture', () => {
+  const [booked] = asBookedDates([
+    {uid: 'r1', summary: 'Hochzeit Familie Müller', start: '2026-09-10', end: '2026-09-11'},
+  ])
+  assert.equal(booked.source, 'reservations')
+  assert.equal(booked.type, 'blocked')
+  assert.equal(booked.summary, undefined, 'a customer name must never reach the browser')
+  assert.equal(booked.href, undefined)
+  assert.equal(booked.image, undefined)
+  assert.equal(booked.start, '2026-09-10')
+  assert.equal(booked.end, '2026-09-11')
+})
+
+test('a reservation keeps blocking even with no name at all', () => {
+  const [booked] = asBookedDates([{uid: 'r2', start: '2026-09-12'}])
+  assert.equal(booked.start, '2026-09-12')
+  assert.equal(booked.end, '2026-09-12')
+})
+
+test('nothing in, nothing out, for reservations too', () => {
+  assert.deepEqual(asBookedDates([]), [])
+  assert.deepEqual(asBookedDates(null), [])
 })

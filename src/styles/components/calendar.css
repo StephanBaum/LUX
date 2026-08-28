@@ -5,6 +5,8 @@
 
 .calendar {
   width: 100%;
+  /* The hover card is positioned against the calendar, not the page. */
+  position: relative;
 }
 
 .calendar__header {
@@ -149,6 +151,69 @@
 
 .calendar__day--blocked:hover {
   background-color: var(--color-gray-200, #e5e5e5);
+}
+
+/* A blocked day is worth pointing at, so it does not read as forbidden. */
+.calendar__day--blocked:hover,
+.calendar__day--showing-card {
+  cursor: help;
+}
+
+/*
+ * What a blocked day says when you point at it.
+ *
+ * A reservation shows one word. A workshop or an event shows its photograph,
+ * its name and a link to its page, so the card has to be reachable by the
+ * mouse — the script keeps it open long enough to walk onto it.
+ */
+.calendar__card {
+  position: absolute;
+  z-index: 20;
+  width: 15rem;
+  padding: var(--space-sm, 0.75rem);
+  background-color: var(--color-white, #fff);
+  border: 1px solid var(--color-gray-200, #e5e5e5);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  font-size: var(--font-size-sm, 0.875rem);
+  line-height: 1.4;
+}
+
+.calendar__card-plain {
+  margin: 0;
+  color: var(--color-gray-500, #737373);
+}
+
+.calendar__card-item + .calendar__card-item {
+  margin-top: var(--space-sm, 0.75rem);
+  padding-top: var(--space-sm, 0.75rem);
+  border-top: 1px solid var(--color-gray-200, #e5e5e5);
+}
+
+.calendar__card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+  margin-bottom: var(--space-xs, 0.5rem);
+}
+
+.calendar__card-title {
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.calendar__card-link {
+  display: inline-block;
+  margin-top: var(--space-xs, 0.5rem);
+  text-decoration: underline;
+}
+
+/* On a narrow screen the card is a tap away, so it gets more room. */
+@media (max-width: 30rem) {
+  .calendar__card {
+    width: calc(100% - 0.5rem);
+  }
 }
 
 .calendar__day--today {

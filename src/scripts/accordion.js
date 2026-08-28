@@ -50,6 +50,14 @@
         }
       });
 
+      /*
+       * A link may name one item in the URL hash — the Mieten calendar sends
+       * people here from a blocked day. Open that one instead of the first,
+       * and scroll to it, because the browser's own jump lands on an item
+       * that is still shut.
+       */
+      openFromHash(accordion, items, imageTarget);
+
       // Initialize image for initially open item
       if (imageTarget) {
         var openItem = accordion.querySelector('.accordion__item.is-open');
@@ -66,6 +74,35 @@
       });
       clickHandlers = [];
     };
+  }
+
+  /**
+   * Open the item the URL hash names, if this accordion holds it.
+   *
+   * The id comes from Sanity, so it is read with an attribute selector rather
+   * than pasted into a CSS selector — a document id is not guaranteed to be
+   * a valid one.
+   */
+  function openFromHash(accordion, items, imageTarget) {
+    var wanted = decodeURIComponent((window.location.hash || '').slice(1));
+    if (!wanted) return;
+
+    var target = null;
+    items.forEach(function(item) {
+      if (item.id === wanted) target = item;
+    });
+    if (!target) return;
+
+    items.forEach(function(item) {
+      item.classList.remove('is-open');
+    });
+    target.classList.add('is-open');
+    if (imageTarget) updateExternalImage(target, imageTarget);
+
+    // After the open animation, so the final position is the one we scroll to.
+    setTimeout(function() {
+      target.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 100);
   }
 
   function toggleItem(item, allItems, imageTarget) {

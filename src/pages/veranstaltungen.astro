@@ -71,7 +71,7 @@ const items = (events ?? []).map((event, i) => ({
       <div class="subpage-section__content" data-animate="fade-up">
         <div class="accordion" data-accordion data-accordion-images>
           {items.map((item, i) => (
-            <div class={`accordion__item${i === 0 ? ' is-open' : ''}`} data-accordion-item data-image={item.image}>
+            <div id={item.key} class={`accordion__item${i === 0 ? ' is-open' : ''}`} data-accordion-item data-image={item.image}>
               <button class="accordion__header" data-accordion-trigger>
                 <span class="accordion__label">{item.label}</span>
                 <span class="accordion__title" data-i18n={`events.${item.key}.title`}>{item.title}</span>
