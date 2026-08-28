@@ -295,6 +295,12 @@ export type ReservationClaim = {
 }
 
 function keyOf(key: string) {
+  // Not just a length check: Node's hex decoder stops at the first invalid
+  // pair, so a 64-character key with anything appended still yields 32 bytes
+  // and would pass unnoticed.
+  if (!/^[0-9a-f]{64}$/i.test(key)) {
+    throw new Error('RESERVATION_SECRET muss 32 Bytes als Hex sein (openssl rand -hex 32).')
+  }
   const bytes = Buffer.from(key, 'hex')
   if (bytes.length !== 32) {
     throw new Error('RESERVATION_SECRET muss 32 Bytes als Hex sein (openssl rand -hex 32).')
