@@ -99,10 +99,20 @@ export const POST: APIRoute = async ({params, url}) => {
   const request = {name: claim.n, email: claim.m, startAt: from, endAt: to}
 
   // The calendar entry is the state: tentative, confirmed, or gone.
+  // Only 404 and 410 mean the entry is really gone. Any other failure is
+  // Google being unwell, and must not be reported as "already handled" —
+  // the studio would believe the booking was done and stop chasing it.
   let event: any = null
   try {
     event = await getEvent(claim.c, claim.e)
-  } catch {
+  } catch (error: any) {
+    if (error?.status !== 404 && error?.status !== 410) {
+      console.error('[reservation] calendar unreachable', error?.message ?? error)
+      return page('Gerade nicht möglich', `<h1>Gerade nicht möglich</h1>
+        <p>Der Kalender antwortet im Moment nicht. Es wurde nichts verändert
+        und nichts verschickt. Bitte öffnen Sie den Link in ein paar Minuten
+        noch einmal.</p>`)
+    }
     event = null
   }
 
