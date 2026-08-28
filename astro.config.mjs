@@ -76,6 +76,19 @@ export default defineConfig({
   site: siteUrl,
   output: 'static',
   adapter: vercel(),
+  /*
+   * Google's calendar push notification is a POST with no body and no
+   * Content-Type. Astro's origin check reads that as a cross-site form
+   * submission and answers "Cross-site POST form submissions are forbidden"
+   * before /api/sync/from-google is ever reached, so a change made in Google
+   * Calendar never arrived. The check cannot be turned off for one route.
+   *
+   * Nothing on this site authenticates with a cookie — the only cookie is the
+   * language preference — so there is no session for a forged request to ride
+   * on. The endpoints that change something guard themselves: both sync routes
+   * demand SYNC_SECRET, and the enquiry form has a honeypot.
+   */
+  security: {checkOrigin: false},
   integrations: [
     staleChunkGuard(),
     sitemap({
