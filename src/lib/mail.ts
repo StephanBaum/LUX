@@ -44,16 +44,22 @@ export async function sendMail(message: {
   to: string
   subject: string
   text: string
+  /**
+   * Sent alongside the text, never instead of it. A client that blocks HTML,
+   * or a person who prefers plain mail, still gets the whole message.
+   */
+  html?: string
   replyTo?: {name: string; address: string}
 }) {
   const post = mailer()
   if (!post) throw new Error('Der Mailversand ist nicht eingerichtet.')
 
   await post.sendMail({
-    from: {name: 'LUX Studio Website', address: env.SMTP_FROM || env.SMTP_USER},
+    from: {name: 'LUX Studio', address: env.SMTP_FROM || env.SMTP_USER},
     to: message.to,
     replyTo: message.replyTo,
     subject: oneLine(message.subject),
     text: message.text,
+    ...(message.html ? {html: message.html} : {}),
   })
 }

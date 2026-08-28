@@ -267,6 +267,16 @@
     // can see. What they were shown is what gets sent.
     if (this.dateDisplay) data.datum = this.dateDisplay.textContent.trim();
     if (this.selectionDisplay) data.auswahl = this.selectionDisplay.textContent.trim();
+
+    /*
+     * Rooms and equipment as two lists, not one comma-joined line. The
+     * summary the visitor sees runs them together, which is fine to read and
+     * useless to lay out — the e-mail wants them apart, and the calendar
+     * entry is named after the room.
+     */
+    data.raeume = this.tickedLabels(this.roomCheckboxes, '.accordion__item', '.accordion__title');
+    data.technik = this.tickedLabels(this.equipmentCheckboxes, '.checkbox-group__label', '.checkbox-group__text');
+
     data.seite = window.location.href;
 
     if (failed) failed.hidden = true;
@@ -354,6 +364,22 @@
     if (window.icalClient && window.icalClient.clearCache) window.icalClient.clearCache();
     var cal = document.querySelector('.calendar');
     if (cal && cal._calendarInstance) cal._calendarInstance.loadBlockedDates();
+  };
+
+  /** The visible names of the ticked boxes, in the order they appear. */
+  Form.prototype.tickedLabels = function(checkboxes, wrapper, label) {
+    var names = [];
+    if (!checkboxes) return names;
+
+    checkboxes.forEach(function(checkbox) {
+      if (!checkbox.checked) return;
+      var box = checkbox.closest(wrapper);
+      if (!box) return;
+      var text = box.querySelector(label);
+      if (text && text.textContent.trim()) names.push(text.textContent.trim());
+    });
+
+    return names;
   };
 
   Form.prototype.showSuccess = function() {

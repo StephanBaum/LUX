@@ -24,7 +24,9 @@ export type Request = {
   firma?: string
   telefon?: string
   anfrage?: string
-  auswahl?: string
+  /** The rooms and the kit, kept apart so the e-mail can lay them out. */
+  raeume?: string[]
+  technik?: string[]
   /** Both are calendar days, YYYY-MM-DD. */
   startAt: string
   endAt: string
@@ -33,23 +35,50 @@ export type Request = {
 export const reference = () => randomBytes(3).toString('hex')
 
 /**
+ * What the entry is called in the calendar: the word, then the rooms asked
+ * for. With no room chosen the word stands on its own rather than trailing an
+ * empty pair of quotes.
+ */
+export const title = (word: string, rooms: string[] = []) => {
+  const named = rooms.filter((room) => typeof room === 'string' && room.trim())
+  return named.length ? `${word} „${named.join(', ')}“` : word
+}
+
+/**
  * Google treats an all-day `end.date` as exclusive, which is the same rule the
  * Mieten calendar already uses for the iCal feed. The caller passes the day
  * after the last booked day.
  */
-export const heldEvent = (ref: string, startAt: string, endAt: string, now = new Date()) => ({
-  summary: `Angefragt — ${ref}`,
+export const heldEvent = (
+  ref: string,
+  startAt: string,
+  endAt: string,
+  rooms: string[] = [],
+  now = new Date(),
+) => ({
+  // The room, not a code. A room name belongs to the studio, so it may be
+  // shown; the dates are already the entry's own dates. The reference stays
+  // out of sight in the private properties, where the sync needs it and
+  // nobody has to read it.
+  summary: title('Anfrage', rooms),
   description: DESCRIPTION,
   status: 'tentative',
   transparency: 'opaque',
   start: {date: startAt},
   end: {date: endAt},
-  extendedProperties: {private: {lux: MARK, held: now.toISOString()}},
+  extendedProperties: {private: {lux: MARK, ref, held: now.toISOString()}},
 })
 
-/** Google deletes a private property when it is set to null. */
-export const confirmedPatch = (ref: string) => ({
-  summary: `Gebucht — ${ref}`,
+/**
+ * Approving keeps whatever room the hold named and only changes the word in
+ * front of it, so a booking reads the same way it did as a request.
+ *
+ * Google deletes a private property when it is set to null.
+ */
+export const confirmedPatch = (currentSummary?: string) => ({
+  summary: currentSummary?.startsWith('Anfrage')
+    ? currentSummary.replace(/^Anfrage/, 'Gebucht')
+    : 'Gebucht',
   status: 'confirmed',
   extendedProperties: {private: {lux: MARK, held: null}},
 })
@@ -88,4 +117,17 @@ export function overlaps(
     const bEnd = Number.isFinite(bTo) && bTo > bFrom ? bTo : bFrom + 86_400_000
     return from < bEnd && bFrom < to
   })
+}
+
+/**
+ * The rooms back out of an entry's title.
+ *
+ * The approve and decline pages know the dates and the person from the link,
+ * but not what was booked — the token deliberately stays small. The calendar
+ * entry already says it, so the yes can name the room without the link having
+ * to carry it.
+ */
+export function roomsFromTitle(summary?: string) {
+  const match = String(summary ?? '').match(/„([^“]+)“/)
+  return match ? match[1].split(',').map((room) => room.trim()).filter(Boolean) : []
 }

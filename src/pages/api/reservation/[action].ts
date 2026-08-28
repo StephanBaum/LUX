@@ -1,6 +1,6 @@
 import type {APIRoute} from 'astro'
 import {open, type ReservationClaim} from '../../../lib/reservation/token'
-import {confirmedPatch} from '../../../lib/reservation/hold'
+import {confirmedPatch, roomsFromTitle} from '../../../lib/reservation/hold'
 import {getEvent, patchRawEvent, deleteEvent} from '../../../lib/google/calendar'
 import {approved, declined, germanRange} from '../../../lib/reservation/messages'
 import {sendMail} from '../../../lib/mail'
@@ -96,7 +96,7 @@ export const POST: APIRoute = async ({params, url}) => {
   if (claim instanceof Response) return claim
 
   const [from, to] = claim.d.split('/')
-  const request = {name: claim.n, email: claim.m, startAt: from, endAt: to}
+  let request = {name: claim.n, email: claim.m, startAt: from, endAt: to, raeume: [] as string[]}
 
   // The calendar entry is the state: tentative, confirmed, or gone.
   // Only 404 and 410 mean the entry is really gone. Any other failure is
@@ -122,15 +122,18 @@ export const POST: APIRoute = async ({params, url}) => {
       Es wurde nichts noch einmal verschickt.</p>`)
   }
 
+  // The entry names the rooms, so the visitor's mail can too.
+  request = {...request, raeume: roomsFromTitle(event.summary)}
+
   if (action === 'approve') {
     if (event.status === 'confirmed') {
       return page('Schon zugesagt', `<h1>Schon zugesagt</h1>
         <p>Diese Anfrage ist bereits bestätigt. Es wurde nichts noch einmal verschickt.</p>`)
     }
-    await patchRawEvent(claim.c, claim.e, confirmedPatch(claim.r))
+    await patchRawEvent(claim.c, claim.e, confirmedPatch(event.summary))
     const mail = approved(request, claim.r)
     try {
-      await sendMail({to: claim.m, subject: mail.subject, text: mail.text})
+      await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
     } catch (error: any) {
       console.error('[reservation] approval mail failed', error?.message ?? error)
       return page('Zugesagt, aber ohne E-Mail', `<h1>Zugesagt</h1>
@@ -147,7 +150,7 @@ export const POST: APIRoute = async ({params, url}) => {
   await deleteEvent(claim.c, claim.e)
   const mail = declined(request, claim.r)
   try {
-    await sendMail({to: claim.m, subject: mail.subject, text: mail.text})
+    await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
   } catch (error: any) {
     console.error('[reservation] decline mail failed', error?.message ?? error)
     return page('Abgesagt, aber ohne E-Mail', `<h1>Abgesagt</h1>

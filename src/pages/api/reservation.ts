@@ -30,6 +30,15 @@ const json = (body: unknown, status = 200) =>
 const clean = (value: unknown, limit: number) =>
   typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, limit) : ''
 
+/**
+ * The ticked rooms and equipment. A list, capped in both directions, because
+ * it is written by whoever is posting and ends up in an e-mail.
+ */
+const cleanList = (value: unknown) =>
+  Array.isArray(value)
+    ? value.map((entry) => clean(entry, 120)).filter(Boolean).slice(0, 40)
+    : []
+
 const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const LOOKS_LIKE_DAY = /^\d{4}-\d{2}-\d{2}$/
 
@@ -60,7 +69,8 @@ export const POST: APIRoute = async ({request}) => {
     firma: clean(body.firma, 120) || undefined,
     telefon: clean(body.telefon, 60) || undefined,
     anfrage: clean(body.anfrage, 4000),
-    auswahl: clean(body.auswahl, 300) || undefined,
+    raeume: cleanList(body.raeume),
+    technik: cleanList(body.technik),
     startAt: clean(body.startAt, 10),
     endAt: clean(body.endAt, 10),
   }
@@ -100,7 +110,7 @@ export const POST: APIRoute = async ({request}) => {
 
   let eventId: string
   try {
-    const created = await createRawEvent(calendarId, heldEvent(ref, req.startAt, req.endAt))
+    const created = await createRawEvent(calendarId, heldEvent(ref, req.startAt, req.endAt, req.raeume))
     eventId = created.id as string
   } catch (error: any) {
     console.error('[reservation] hold failed', error?.message ?? error)
@@ -133,6 +143,7 @@ export const POST: APIRoute = async ({request}) => {
       replyTo: {name: oneLine(req.name), address: req.email},
       subject: message.subject,
       text: message.text,
+      html: message.html,
     })
   } catch (error: any) {
     console.error('[reservation] studio mail failed', error?.message ?? error)
@@ -143,7 +154,7 @@ export const POST: APIRoute = async ({request}) => {
   // The request is safe in the studio's inbox by now, so this one may fail.
   const note = received(req, ref)
   try {
-    await sendMail({to: req.email, subject: note.subject, text: note.text})
+    await sendMail({to: req.email, subject: note.subject, text: note.text, html: note.html})
   } catch (error: any) {
     console.error('[reservation] visitor mail failed', error?.message ?? error)
   }

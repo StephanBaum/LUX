@@ -8,14 +8,17 @@ const req = {
   firma: 'Weber Fotografie',
   telefon: '0170 1234567',
   anfrage: 'Wir brauchen das große Studio für ein Editorial.',
-  auswahl: 'Großes Studio, Profoto D2 1000',
+  raeume: ['Großes Studio'],
+  technik: ['Profoto D2 1000', 'ARRI SkyPanel S60', 'Reflektor 5-in-1'],
   startAt: '2026-10-02',
   endAt: '2026-10-05',
 }
 
-test('the studio sees the reference, the person and both buttons', () => {
+test('the studio sees who, when and both buttons — and no code', () => {
   const m = toStudio(req, '7f3a91', {approve: 'https://x/a', decline: 'https://x/d'})
-  assert.ok(m.subject.includes('7f3a91'), m.subject)
+  assert.ok(m.subject.includes('Anna Weber'), m.subject)
+  assert.ok(m.subject.includes('2. bis 4. Oktober 2026'), m.subject)
+  assert.equal(m.subject.includes('7f3a91'), false, 'a code in the subject helps nobody')
   assert.ok(m.text.includes('Anna Weber'))
   assert.ok(m.text.includes('anna@example.com'))
   assert.ok(m.text.includes('https://x/a'))
@@ -57,4 +60,73 @@ test('a range that crosses a month names both months', () => {
 
 test('a range that crosses the new year keeps the old month', () => {
   assert.equal(germanRange('2026-12-30', '2027-01-02'), '30. Dezember bis 1. Januar 2027')
+})
+
+// ------------------------------------------------------------------- HTML
+
+test('every message goes out as HTML as well as text', () => {
+  for (const m of [
+    toStudio(req, 'r', {approve: 'https://x/a', decline: 'https://x/d'}),
+    received(req, 'r'),
+    approved(req, 'r'),
+    declined(req, 'r'),
+  ]) {
+    assert.ok(m.html.startsWith('<!doctype html>'), 'needs a document')
+    assert.ok(m.html.includes('LUX STUDIO'), 'needs the wordmark')
+    assert.ok(m.text.length > 40, 'and a readable plain-text twin')
+  }
+})
+
+test('the studio email lists every piece of equipment, not a blob', () => {
+  const m = toStudio(req, 'r', {approve: 'https://x/a', decline: 'https://x/d'})
+  for (const kit of req.technik) {
+    assert.ok(m.html.includes(kit), `${kit} missing from the HTML`)
+    assert.ok(m.text.includes(kit), `${kit} missing from the text`)
+  }
+  assert.ok(m.html.includes('Großes Studio'))
+  assert.ok(m.html.includes('Technik'), 'kit gets its own labelled row')
+  assert.ok(m.html.includes('Räume'), 'rooms get their own labelled row')
+})
+
+test('the visitor is told what they asked for, too', () => {
+  const m = received(req, 'r')
+  assert.ok(m.html.includes('Profoto D2 1000'))
+  assert.ok(m.html.includes('Großes Studio'))
+})
+
+test('no reference code reaches anybody, in either part', () => {
+  for (const m of [
+    toStudio(req, '7f3a91', {approve: 'https://x/a', decline: 'https://x/d'}),
+    received(req, '7f3a91'),
+    approved(req, '7f3a91'),
+    declined(req, '7f3a91'),
+  ]) {
+    assert.equal(m.subject.includes('7f3a91'), false)
+    assert.equal(m.text.includes('7f3a91'), false)
+    assert.equal(m.html.includes('7f3a91'), false)
+  }
+})
+
+test('the visitor never receives a link meant for the studio', () => {
+  for (const m of [received(req, 'r'), approved(req, 'r'), declined(req, 'r')]) {
+    assert.equal(/https?:\/\//.test(m.text), false, 'no link in the text')
+    assert.equal(m.html.includes('/api/reservation/'), false, 'no approve link in the HTML')
+  }
+})
+
+test('a visitor cannot inject markup through their own name', () => {
+  const nasty = {...req, name: '<script>alert(1)</script>', firma: 'A & B "Co"'}
+  const m = toStudio(nasty, 'r', {approve: 'https://x/a', decline: 'https://x/d'})
+  assert.equal(m.html.includes('<script>'), false, 'the tag must be escaped')
+  assert.ok(m.html.includes('&lt;script&gt;'))
+  assert.ok(m.html.includes('&amp;'), 'and the ampersand too')
+})
+
+test('a request with no kit and no room simply omits those rows', () => {
+  const bare = {...req, raeume: [], technik: [], telefon: undefined, firma: undefined}
+  const m = toStudio(bare, 'r', {approve: 'https://x/a', decline: 'https://x/d'})
+  assert.equal(m.html.includes('Technik'), false)
+  assert.equal(m.html.includes('Räume'), false)
+  assert.equal(m.html.includes('Telefon'), false)
+  assert.ok(m.html.includes('Zeitraum'), 'but the dates stay')
 })
