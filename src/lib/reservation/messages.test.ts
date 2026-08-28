@@ -50,3 +50,11 @@ test('a missing company or telephone leaves no empty line behind', () => {
   assert.equal(m.text.includes('Firma:'), false)
   assert.equal(m.text.includes('Telefon:'), false)
 })
+
+test('a range that crosses a month names both months', () => {
+  assert.equal(germanRange('2026-09-28', '2026-10-04'), '28. September bis 3. Oktober 2026')
+})
+
+test('a range that crosses the new year keeps the old month', () => {
+  assert.equal(germanRange('2026-12-30', '2027-01-02'), '30. Dezember bis 1. Januar 2027')
+})
