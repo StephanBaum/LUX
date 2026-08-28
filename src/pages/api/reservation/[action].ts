@@ -1,9 +1,9 @@
 import type {APIRoute} from 'astro'
-import {open, type ReservationClaim} from '../../../lib/reservation/token'
-import {confirmedPatch, roomsFromTitle} from '../../../lib/reservation/hold'
+import {open, seal, type ReservationClaim} from '../../../lib/reservation/token'
+import {confirmedPatch, roomsFromTitle, canCancel, cancelUntil, CANCEL_DEADLINE_DAYS} from '../../../lib/reservation/hold'
 import {getEvent, patchRawEvent, deleteEvent} from '../../../lib/google/calendar'
-import {approved, declined, germanRange} from '../../../lib/reservation/messages'
-import {sendMail} from '../../../lib/mail'
+import {approved, declined, germanRange, germanDay, cancelledByGuest, cancelConfirmed} from '../../../lib/reservation/messages'
+import {sendMail, studioAddress} from '../../../lib/mail'
 
 /**
  * Zusagen und Absagen.
@@ -64,32 +64,51 @@ const dates = (claim: ReservationClaim) => {
 }
 
 export const GET: APIRoute = async ({params, url}) => {
-  const action = params.action === 'approve' ? 'approve' : params.action === 'decline' ? 'decline' : ''
+  const action = ['approve', 'decline', 'cancel'].includes(params.action ?? '') ? (params.action as string) : ''
   if (!action) return problem('Unbekannte Aktion.')
 
   const claim = read(url, action)
   if (claim instanceof Response) return claim
 
+  const [from] = claim.d.split('/')
+
+  /*
+   * The guest may call it off themselves up to the deadline. Refusing here,
+   * before the button is ever drawn, means a late guest is told to telephone
+   * rather than left pressing something that will not work.
+   */
+  if (action === 'cancel' && !canCancel(from)) {
+    return page('Zu kurzfristig', `<h1>Zu kurzfristig</h1>
+      <p>Eine Absage ist so kurz vor dem Termin nicht mehr online möglich —
+      dafür brauchen wir mindestens ${CANCEL_DEADLINE_DAYS} Tage Vorlauf.</p>
+      <p>Bitte rufen Sie uns an oder antworten Sie einfach auf Ihre
+      Bestätigungs-E-Mail. Wir finden eine Lösung.</p>`)
+  }
+
   const verb = action === 'approve' ? 'Zusagen' : 'Absagen'
+  const heading = action === 'cancel' ? 'Termin absagen' : `Anfrage ${escapeHtml(claim.r).toUpperCase()}`
+
   return page(verb, `
-    <h1>Anfrage ${claim.r}</h1>
+    <h1>${heading}</h1>
     <dl>
       <dt>Wer</dt><dd>${escapeHtml(claim.n)}</dd>
       <dt>E-Mail</dt><dd>${escapeHtml(claim.m)}</dd>
       <dt>Zeitraum</dt><dd>${dates(claim)}</dd>
     </dl>
     <form method="post">
-      <button type="submit">${verb}</button>
+      <button type="submit">${action === 'cancel' ? 'Termin absagen' : verb}</button>
     </form>
     <p class="muted">${
       action === 'approve'
         ? 'Der Zeitraum wird gebucht und der Gast bekommt eine Zusage.'
-        : 'Der Zeitraum wird wieder frei und der Gast bekommt eine freundliche Absage.'
+        : action === 'cancel'
+          ? 'Der Zeitraum wird wieder frei. Das Studio wird benachrichtigt.'
+          : 'Der Zeitraum wird wieder frei und der Gast bekommt eine freundliche Absage.'
     }</p>`)
 }
 
 export const POST: APIRoute = async ({params, url}) => {
-  const action = params.action === 'approve' ? 'approve' : params.action === 'decline' ? 'decline' : ''
+  const action = ['approve', 'decline', 'cancel'].includes(params.action ?? '') ? (params.action as string) : ''
   if (!action) return problem('Unbekannte Aktion.')
 
   const claim = read(url, action)
@@ -131,7 +150,19 @@ export const POST: APIRoute = async ({params, url}) => {
         <p>Diese Anfrage ist bereits bestätigt. Es wurde nichts noch einmal verschickt.</p>`)
     }
     await patchRawEvent(claim.c, claim.e, confirmedPatch(event.summary))
-    const mail = approved(request, claim.r)
+    /*
+     * The yes carries the guest's cancel link. It outlives the studio's own
+     * two links, because a booking approved in March may be called off in
+     * May — so it runs to the end of the booking, and the deadline is
+     * enforced when it is pressed.
+     */
+    const key = import.meta.env.RESERVATION_SECRET
+    const site = (import.meta.env.PUBLIC_SITE_URL ?? '').replace(/\/$/, '')
+    let cancelLink: string | undefined
+    if (key && site) {
+      cancelLink = `${site}/api/reservation/cancel?t=${seal({...claim, a: 'cancel', x: Date.parse(`${to}T23:59:59Z`)}, key)}`
+    }
+    const mail = approved(request, claim.r, cancelLink)
     try {
       await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
     } catch (error: any) {
@@ -145,6 +176,36 @@ export const POST: APIRoute = async ({params, url}) => {
     return page('Zugesagt', `<h1>Zugesagt</h1>
       <p>${escapeHtml(claim.n)} hat die Zusage für ${dates(claim)} bekommen.
       Der Zeitraum ist im Kalender gebucht.</p>`)
+  }
+
+  if (action === 'cancel') {
+    // Checked again here: the page refuses late, but a link kept open in a
+    // tab could be pressed after the deadline has passed.
+    if (!canCancel(from)) {
+      return page('Zu kurzfristig', `<h1>Zu kurzfristig</h1>
+        <p>Eine Absage ist so kurz vor dem Termin nicht mehr online möglich.
+        Bitte rufen Sie uns an oder antworten Sie auf Ihre Bestätigung.</p>`)
+    }
+
+    await deleteEvent(claim.c, claim.e)
+
+    // The studio must hear about this; the guest gets it in writing. Neither
+    // failing may undo the cancellation — the days are already free.
+    const studio = studioAddress()
+    const toStudioMail = cancelledByGuest(request, claim.r)
+    const toGuest = cancelConfirmed(request, claim.r)
+    let told = true
+    try {
+      if (studio) await sendMail({to: studio, subject: toStudioMail.subject, text: toStudioMail.text, html: toStudioMail.html})
+      await sendMail({to: claim.m, subject: toGuest.subject, text: toGuest.text, html: toGuest.html})
+    } catch (error: any) {
+      console.error('[reservation] cancellation mail failed', error?.message ?? error)
+      told = false
+    }
+
+    return page('Abgesagt', `<h1>Ihr Termin ist abgesagt</h1>
+      <p>${dates(claim)} ist wieder frei. Schade — und gerne ein anderes Mal.</p>
+      ${told ? '<p class="muted">Eine Bestätigung ist unterwegs.</p>' : '<p class="muted">Die Bestätigungs-E-Mail konnte nicht verschickt werden, die Absage gilt trotzdem.</p>'}`)
   }
 
   await deleteEvent(claim.c, claim.e)

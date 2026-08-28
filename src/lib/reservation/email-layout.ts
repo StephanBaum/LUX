@@ -102,7 +102,7 @@ export const note = (html: string) =>
  * subject in the inbox list; hiding it in the markup keeps the top of the
  * mail clean while still saying something useful there.
  */
-export function shell(options: {title: string; preheader: string; body: string}) {
+export function shell(options: {title: string; preheader: string; body: string; ref?: string}) {
   return `<!doctype html>
 <html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -114,7 +114,16 @@ export function shell(options: {title: string; preheader: string; body: string})
   <tr><td align="center" style="padding:32px 16px">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:100%;background:${WHITE};border:1px solid ${GREY_300}">
       <tr><td bgcolor="${BLACK}" style="background:${BLACK};padding:22px 32px">
-        <span style="font:700 16px/20px ${FONT};letter-spacing:.18em;color:${WHITE}">LUX STUDIO</span>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td align="left" style="font:700 16px/20px ${FONT};letter-spacing:.18em;color:${WHITE}">LUX STUDIO</td>
+            ${
+              options.ref
+                ? `<td align="right" style="font:400 12px/20px ${FONT};letter-spacing:.04em;color:${GREY_300};white-space:nowrap">Buchung <span style="color:${WHITE};font-weight:500">${esc(options.ref)}</span></td>`
+                : ''
+            }
+          </tr>
+        </table>
       </td></tr>
       <tr><td style="padding:36px 32px 32px 32px">${options.body}</td></tr>
     </table>

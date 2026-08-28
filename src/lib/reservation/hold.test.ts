@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
-import {reference, title, heldEvent, confirmedPatch, mayExpire, overlaps} from './hold.ts'
+import {reference, title, shown, heldEvent, confirmedPatch, mayExpire, overlaps, canCancel, cancelUntil} from './hold.ts'
 
 const NOW = new Date('2026-10-01T12:00:00.000Z')
 
@@ -36,11 +36,39 @@ test('no room chosen leaves the word standing alone, not empty quotes', () => {
   assert.equal(blank.summary, 'Anfrage')
 })
 
-test('the reference is never on show, only in the private properties', () => {
+test('the title stays free of the number; the description carries it', () => {
   const e = heldEvent('7f3a91', '2026-10-02', '2026-10-05', ['Großes Studio'], NOW) as any
-  assert.equal(e.summary.includes('7f3a91'), false, 'a code means nothing to whoever reads the calendar')
-  assert.equal(e.description.includes('7f3a91'), false)
-  assert.equal(e.extendedProperties.private.ref, '7f3a91', 'but the system still needs it')
+  assert.equal(e.summary.includes('7F3A91'), false, 'the title is for reading at a glance')
+  assert.ok(e.description.includes('Buchung 7F3A91'), 'the description is what Google searches')
+  assert.equal(e.extendedProperties.private.ref, '7f3a91')
+})
+
+test('the description warns that deleting by hand tells the guest nothing', () => {
+  const e = heldEvent('7f3a91', '2026-10-02', '2026-10-05', [], NOW) as any
+  assert.ok(/von Hand gelöscht/.test(e.description))
+  assert.ok(/erfährt nichts/.test(e.description))
+})
+
+test('a booking number is shown in uppercase', () => {
+  assert.equal(shown('7f3a91'), '7F3A91')
+})
+
+test('a guest may cancel up to seven days before the first day', () => {
+  const start = '2026-10-15'
+  assert.equal(canCancel(start, new Date('2026-10-01T12:00:00Z')), true, 'two weeks out')
+  assert.equal(canCancel(start, new Date('2026-10-07T23:00:00Z')), true, 'just over eight days')
+  assert.equal(canCancel(start, new Date('2026-10-08T12:00:00Z')), false, 'exactly seven days is too late')
+  assert.equal(canCancel(start, new Date('2026-10-14T12:00:00Z')), false, 'the day before, certainly not')
+  assert.equal(canCancel(start, new Date('2026-10-20T12:00:00Z')), false, 'after it has happened')
+})
+
+test('a nonsense date cannot be cancelled rather than throwing', () => {
+  assert.equal(canCancel('not-a-date', NOW), false)
+})
+
+test('the guest can be told the last day they may cancel', () => {
+  assert.equal(cancelUntil('2026-10-15'), '2026-10-08')
+  assert.equal(cancelUntil('2026-01-03'), '2025-12-27')
 })
 
 test('a hold names nobody — this is the whole point', () => {

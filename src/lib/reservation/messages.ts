@@ -1,4 +1,5 @@
-import {shell, heading, para, rows, row, listRow, quote, button, note} from './email-layout.ts'
+import {shell, heading, para, rows, row, listRow, quote, button, note, esc} from './email-layout.ts'
+import {shown, cancelUntil, CANCEL_DEADLINE_DAYS} from './hold.ts'
 import type {Request} from './hold'
 
 /** The three fields every message needs; the rest only the studio's does. */
@@ -33,6 +34,13 @@ export function germanRange(startAt: string, endAt: string) {
     return `${from.n}. bis ${to.n}. ${to.m} ${to.y}`
   }
   return `${from.n}. ${from.m} bis ${to.n}. ${to.m} ${to.y}`
+}
+
+
+/** A single day in German, for "you may cancel until …". */
+export function germanDay(iso: string) {
+  const d = day(iso)
+  return `${d.n}. ${d.m} ${d.y}`
 }
 
 const SIGN_OFF = ['', 'Herzliche Grüße', 'LUX Studio'].join('\n')
@@ -84,6 +92,7 @@ export function toStudio(req: Request, ref: string, links: {approve: string; dec
 
   const text = lines([
     `Neue Anfrage — ${when}`,
+    `Buchung ${shown(ref)}`,
     '',
     `Name:      ${req.name}`,
     req.firma && `Firma:     ${req.firma}`,
@@ -107,14 +116,14 @@ export function toStudio(req: Request, ref: string, links: {approve: string; dec
   ])
 
   return {
-    subject: `Neue Anfrage: ${req.name}, ${when}`,
+    subject: `Neue Anfrage: ${req.name}, ${when} · ${shown(ref)}`,
     text,
-    html: shell({title: 'Neue Anfrage', preheader: `${who} — ${when}`, body}),
+    html: shell({title: 'Neue Anfrage', preheader: `${who} — ${when}`, body, ref: shown(ref)}),
   }
 }
 
 /** "We have it." Sent the moment the days are held. */
-export function received(req: Told, ref: string) {
+export function received(req: Told, ref: string, cancelLink?: string) {
   const when = germanRange(req.startAt, req.endAt)
   const raeume = list(req.raeume)
   const technik = list(req.technik)
@@ -126,6 +135,7 @@ export function received(req: Told, ref: string) {
         'Werktagen mit einer Zu- oder Absage.',
     ) +
     rows(row('Zeitraum', when) + listRow('Räume', raeume) + listRow('Technik', technik)) +
+    cancelBlock(req, cancelLink) +
     note('Sie brauchen nichts weiter zu tun. Antworten Sie einfach auf diese E-Mail, wenn sich etwas ändert.')
 
   const text = lines([
@@ -137,18 +147,19 @@ export function received(req: Told, ref: string) {
     '',
     raeume.length && `Räume:   ${raeume.join(', ')}`,
     technik.length && `Technik: ${technik.join(', ')}`,
+    ...cancelLines(req, cancelLink),
     SIGN_OFF,
   ])
 
   return {
-    subject: 'Ihre Anfrage bei LUX Studio',
+    subject: `Ihre Anfrage bei LUX Studio · ${shown(ref)}`,
     text,
-    html: shell({title: 'Ihre Anfrage ist da', preheader: `Vorgemerkt: ${when}`, body}),
+    html: shell({title: 'Ihre Anfrage ist da', preheader: `Vorgemerkt: ${when}`, body, ref: shown(ref)}),
   }
 }
 
 /** The yes. */
-export function approved(req: Told, ref: string) {
+export function approved(req: Told, ref: string, cancelLink?: string) {
   const when = germanRange(req.startAt, req.endAt)
   const raeume = list(req.raeume)
   const technik = list(req.technik)
@@ -161,6 +172,7 @@ export function approved(req: Told, ref: string) {
       'Melden Sie sich bitte kurz vor dem Termin, damit wir Schlüssel und ' +
         'Einweisung abstimmen können.',
     ) +
+    cancelBlock(req, cancelLink) +
     note('Für Änderungen genügt eine Antwort auf diese E-Mail.')
 
   const text = lines([
@@ -174,13 +186,14 @@ export function approved(req: Told, ref: string) {
     'Melden Sie sich bitte kurz vor dem Termin, damit wir Schlüssel und',
     'Einweisung abstimmen können. Für Änderungen genügt eine Antwort auf',
     'diese E-Mail.',
+    ...cancelLines(req, cancelLink),
     SIGN_OFF,
   ])
 
   return {
-    subject: `Ihre Buchung: ${when}`,
+    subject: `Ihre Buchung: ${when} · ${shown(ref)}`,
     text,
-    html: shell({title: 'Der Termin ist Ihrer', preheader: `Gebucht: ${when}`, body}),
+    html: shell({title: 'Der Termin ist Ihrer', preheader: `Gebucht: ${when}`, body, ref: shown(ref)}),
   }
 }
 
@@ -212,8 +225,87 @@ export function declined(req: Told, ref: string) {
   ])
 
   return {
-    subject: `Ihre Anfrage für ${when}`,
+    subject: `Ihre Anfrage für ${when} · ${shown(ref)}`,
     text,
-    html: shell({title: 'Leider nicht möglich', preheader: `${when} ist nicht frei`, body}),
+    html: shell({title: 'Leider nicht möglich', preheader: `${when} ist nicht frei`, body, ref: shown(ref)}),
+  }
+}
+
+/**
+ * The guest's own way out.
+ *
+ * Shown in both messages the guest receives, with the date it stops working,
+ * so nobody discovers the deadline by being refused. The page enforces it —
+ * this only says so.
+ */
+function cancelBlock(req: Told, link?: string) {
+  if (!link) return ''
+  return (
+    button('Termin absagen', link, 'secondary') +
+    note(
+      `Sie können bis zum ${esc(germanDay(cancelUntil(req.startAt)))} hier selbst absagen. ` +
+        `Danach — also innerhalb von ${CANCEL_DEADLINE_DAYS} Tagen vor dem Termin — ` +
+        'rufen Sie uns bitte an oder antworten Sie auf diese E-Mail.',
+    )
+  )
+}
+
+/** The plain-text twin of the block above. */
+function cancelLines(req: Told, link?: string) {
+  if (!link) return []
+  return [
+    '',
+    'Termin absagen:',
+    link,
+    `Selbst absagen können Sie bis zum ${germanDay(cancelUntil(req.startAt))}.`,
+    `Danach rufen Sie uns bitte an oder antworten Sie auf diese E-Mail.`,
+  ]
+}
+
+/** The guest called it off. The studio needs to know, and to see the days again. */
+export function cancelledByGuest(req: Told, ref: string) {
+  const when = germanRange(req.startAt, req.endAt)
+  const body =
+    heading('Abgesagt vom Gast', when) +
+    para(`${req.name} hat den Termin über den Link in der Bestätigung abgesagt.`) +
+    rows(row('Zeitraum', when) + row('Gast', req.name) + row('E-Mail', req.email ?? '', req.email ? `mailto:${req.email}` : undefined)) +
+    note('Der Eintrag ist aus dem Kalender entfernt und die Tage sind wieder frei. Es ist nichts weiter zu tun.')
+
+  return {
+    subject: `Abgesagt vom Gast: ${req.name}, ${when} · ${shown(ref)}`,
+    text: lines([
+      `${req.name} hat den Termin abgesagt.`,
+      '',
+      `Zeitraum: ${when}`,
+      req.email && `E-Mail:   ${req.email}`,
+      `Buchung:  ${shown(ref)}`,
+      '',
+      'Der Eintrag ist aus dem Kalender entfernt und die Tage sind wieder frei.',
+    ]),
+    html: shell({title: 'Abgesagt vom Gast', preheader: `${req.name} — ${when}`, body, ref: shown(ref)}),
+  }
+}
+
+/** And the guest gets it in writing, so nobody wonders whether it worked. */
+export function cancelConfirmed(req: Told, ref: string) {
+  const when = germanRange(req.startAt, req.endAt)
+  const body =
+    heading('Ihr Termin ist abgesagt', when) +
+    para(`Guten Tag ${req.name}, wir haben Ihre Absage erhalten. Der Zeitraum ist wieder frei.`) +
+    para('Schade — und gerne ein anderes Mal. Antworten Sie einfach auf diese E-Mail, wenn Sie einen neuen Termin suchen.') +
+    note('Es entstehen Ihnen keine Kosten.')
+
+  return {
+    subject: `Absage bestätigt: ${when} · ${shown(ref)}`,
+    text: lines([
+      `Guten Tag ${req.name},`,
+      '',
+      `wir haben Ihre Absage für ${when} erhalten. Der Zeitraum ist wieder frei.`,
+      '',
+      'Schade — und gerne ein anderes Mal. Antworten Sie einfach auf diese',
+      'E-Mail, wenn Sie einen neuen Termin suchen.',
+      SIGN_OFF,
+    ]),
+    html: shell({title: 'Ihr Termin ist abgesagt', preheader: `Abgesagt: ${when}`, body, ref: shown(ref)}),
   }
 }

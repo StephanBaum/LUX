@@ -117,7 +117,7 @@ export const POST: APIRoute = async ({request}) => {
     return json({error: 'Die Anfrage konnte nicht gespeichert werden.'}, 502)
   }
 
-  const link = (a: 'approve' | 'decline') => {
+  const link = (a: 'approve' | 'decline' | 'cancel') => {
     const claim: ReservationClaim = {
       r: ref,
       c: calendarId,
@@ -126,7 +126,12 @@ export const POST: APIRoute = async ({request}) => {
       n: req.name,
       m: req.email,
       d: `${req.startAt}/${req.endAt}`,
-      x: Date.now() + SEVEN_DAYS,
+      /*
+       * The studio's two links lapse after a week. The guest's own way out
+       * has to outlive that — a booking made in March is cancelled in May —
+       * so it runs to the day after the booking ends.
+       */
+      x: a === 'cancel' ? Date.parse(`${req.endAt}T23:59:59Z`) : Date.now() + SEVEN_DAYS,
     }
     return `${site.replace(/\/$/, '')}/api/reservation/${a}?t=${seal(claim, key)}`
   }
@@ -152,7 +157,7 @@ export const POST: APIRoute = async ({request}) => {
   }
 
   // The request is safe in the studio's inbox by now, so this one may fail.
-  const note = received(req, ref)
+  const note = received(req, ref, link('cancel'))
   try {
     await sendMail({to: req.email, subject: note.subject, text: note.text, html: note.html})
   } catch (error: any) {

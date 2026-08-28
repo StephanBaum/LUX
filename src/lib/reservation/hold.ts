@@ -13,10 +13,37 @@ import {randomBytes} from 'node:crypto'
  */
 
 const MARK = 'reservation'
+const BREAK = String.fromCharCode(10)
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
 
-const DESCRIPTION =
-  'Anfrage über die Website. Name und Kontakt stehen in der E-Mail mit dieser Nummer.'
+/**
+ * How long before the first booked day a guest may still cancel themselves.
+ * Inside it they are asked to telephone instead, so a late change is a
+ * conversation rather than a silent gap in the diary.
+ */
+export const CANCEL_DEADLINE_DAYS = 7
+
+/** The booking number, as it is shown to people: six uppercase hex. */
+export const shown = (ref: string) => String(ref ?? '').toUpperCase()
+
+/**
+ * What the calendar entry says about itself.
+ *
+ * It carries the booking number so the studio can paste it into Google's
+ * search and land on the right day, and it says plainly that deleting the
+ * entry by hand tells the guest nothing — the site stores no address, so
+ * only the link in the e-mail can send an answer.
+ */
+const description = (ref: string) =>
+  [
+    `Buchung ${shown(ref)}`,
+    '',
+    'Anfrage über die Website. Name und Kontakt stehen in der E-Mail mit dieser Nummer.',
+    '',
+    'Zum Absagen bitte den Link in der E-Mail benutzen. Wird dieser Termin hier',
+    'von Hand gelöscht, wird der Zeitraum zwar wieder frei, aber der Gast',
+    'erfährt nichts davon.',
+  ].join(BREAK)
 
 export type Request = {
   name: string
@@ -61,7 +88,7 @@ export const heldEvent = (
   // out of sight in the private properties, where the sync needs it and
   // nobody has to read it.
   summary: title('Anfrage', rooms),
-  description: DESCRIPTION,
+  description: description(ref),
   status: 'tentative',
   transparency: 'opaque',
   start: {date: startAt},
@@ -127,6 +154,26 @@ export function overlaps(
  * entry already says it, so the yes can name the room without the link having
  * to carry it.
  */
+/**
+ * May the guest still call it off themselves?
+ *
+ * Measured to the start of the first booked day, so a booking beginning on
+ * the 15th can be cancelled until the end of the 8th when the deadline is
+ * seven days.
+ */
+export function canCancel(startAt: string, now = new Date()) {
+  const start = Date.parse(`${startAt}T00:00:00Z`)
+  if (!Number.isFinite(start)) return false
+  return start - now.getTime() > CANCEL_DEADLINE_DAYS * 24 * 60 * 60 * 1000
+}
+
+/** The last day a guest may cancel, for telling them so. */
+export function cancelUntil(startAt: string) {
+  const start = new Date(`${startAt}T00:00:00Z`)
+  start.setUTCDate(start.getUTCDate() - CANCEL_DEADLINE_DAYS)
+  return start.toISOString().slice(0, 10)
+}
+
 export function roomsFromTitle(summary?: string) {
   const match = String(summary ?? '').match(/„([^“]+)“/)
   return match ? match[1].split(',').map((room) => room.trim()).filter(Boolean) : []

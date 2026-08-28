@@ -23,7 +23,7 @@ export type ReservationClaim = {
   c: string
   /** Event id — the held entry. */
   e: string
-  a: 'approve' | 'decline'
+  a: 'approve' | 'decline' | 'cancel'
   /** The visitor's name and address, which live nowhere else but the mailbox. */
   n: string
   m: string
