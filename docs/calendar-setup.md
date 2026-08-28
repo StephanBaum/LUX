@@ -147,3 +147,60 @@ them, and round-tripping them would lose them.
 When both sides change between syncs, each field goes to whoever changed it
 last, and whatever loses is written into the document's note. Nothing
 disappears without a word.
+
+---
+
+## Reservierungen zu- und absagen
+
+Wählt jemand auf der Mieten-Seite einen Zeitraum, wird er sofort im
+Reservierungskalender vorgemerkt und Sie bekommen eine E-Mail mit zwei
+Links: **Zusagen** und **Absagen**.
+
+Beide öffnen eine Seite mit einer Schaltfläche. Erst die Schaltfläche sagt zu
+oder ab. Das ist Absicht: Mailprogramme rufen jeden Link in einer Nachricht
+selbst auf, um ihn zu prüfen, und würden sonst für Sie zusagen.
+
+Antworten Sie sieben Tage nicht, wird die Vormerkung nachts von selbst
+gelöscht und der Zeitraum wieder frei.
+
+### Zwei neue Einstellungen
+
+| Variable | Wert |
+|---|---|
+| `GOOGLE_CALENDAR_RESERVATIONS` | die Kalender-ID des Reservierungskalenders |
+| `RESERVATION_SECRET` | `openssl rand -hex 32` |
+
+Wird `RESERVATION_SECRET` gewechselt, lassen sich bereits verschickte Links
+nicht mehr öffnen. Die Anfragen sind nicht verloren — sie stehen in Ihrem
+Postfach und die Tage bleiben vorgemerkt —, aber Sie müssen sie von Hand
+beantworten.
+
+### Was im Kalender steht, und was nicht
+
+Im Kalendereintrag stehen **nur die Tage und eine Nummer**, zum Beispiel
+`Angefragt — 7f3a91`. Name, E-Mail und Telefonnummer stehen ausschließlich in
+der E-Mail mit derselben Nummer.
+
+Das ist kein Zufall: Der Kalender gehört einem normalen Google-Konto, für das
+es keinen Auftragsverarbeitungsvertrag gibt. Kundendaten gehören dort nicht
+hinein. **Bitte tragen Sie Namen nicht nachträglich in den Kalendertitel
+ein.**
+
+Ihr Postfach ist damit der einzige Ort, an dem die Angaben liegen. Eine
+Anfrage löschen heißt: die E-Mail löschen.
+
+### Der Kalender muss privat bleiben
+
+Am 28.08.2026 stand der Reservierungskalender auf **öffentlich** — jeder im
+Internet konnte alle Einträge lesen. Das ist behoben: Die Website liest ihn
+über die **geheime** iCal-Adresse, und „Öffentlich verfügbar machen" ist aus.
+
+Schalten Sie das bitte nicht wieder ein. Muss der Kalender einmal neu
+eingerichtet werden, ist die Reihenfolge:
+
+1. Geheime iCal-Adresse kopieren und als `ICAL_RESERVATIONS_URL` eintragen.
+2. Neu deployen.
+3. Prüfen, dass `/api/calendars.json` bei `reservations` `"error": null` zeigt.
+4. Erst danach „Öffentlich verfügbar machen" abschalten.
+
+Andersherum ist der Mieten-Kalender bis zum nächsten Deploy leer.
