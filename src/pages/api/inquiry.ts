@@ -1,5 +1,5 @@
 import type {APIRoute} from 'astro'
-import nodemailer from 'nodemailer'
+import {sendMail, oneLine, mailer, studioAddress} from '../../lib/mail'
 
 /**
  * The rental enquiry, on its way to the studio's inbox.
@@ -13,8 +13,6 @@ import nodemailer from 'nodemailer'
  * message either.
  */
 export const prerender = false
-
-const env = import.meta.env
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -38,42 +36,11 @@ type Inquiry = {
 const clean = (value: unknown, limit: number) =>
   typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, limit) : ''
 
-/** A header must never carry a line break, or a robot could add its own headers. */
-const oneLine = (value: string) => value.replace(/[\r\n]+/g, ' ')
-
 const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-let transport: nodemailer.Transporter | null = null
-
-function mailer() {
-  if (transport) return transport
-
-  const host = env.SMTP_HOST
-  const user = env.SMTP_USER
-  const pass = env.SMTP_PASS
-  if (!host || !user || !pass) return null
-
-  const port = Number(env.SMTP_PORT ?? 587)
-
-  transport = nodemailer.createTransport({
-    host,
-    port,
-    // 465 is SSL from the first byte; 587 starts plain and upgrades.
-    secure: port === 465,
-    auth: {user, pass},
-    // A serverless function is killed if it waits too long. Fail loudly instead.
-    connectionTimeout: 10_000,
-    greetingTimeout: 10_000,
-    socketTimeout: 15_000,
-  })
-
-  return transport
-}
-
 export const POST: APIRoute = async ({request}) => {
-  const post = mailer()
-  const to = env.INQUIRY_TO || env.SMTP_USER
-  if (!post || !to) {
+  const to = studioAddress()
+  if (!mailer() || !to) {
     return json({error: 'Der Mailversand ist nicht eingerichtet.'}, 500)
   }
 
@@ -116,8 +83,7 @@ export const POST: APIRoute = async ({request}) => {
   ].filter(Boolean)
 
   try {
-    await post.sendMail({
-      from: {name: 'LUX Studio Website', address: env.SMTP_FROM || env.SMTP_USER},
+    await sendMail({
       to,
       // Answering the mail answers the person, not the website.
       replyTo: {name: oneLine(name), address: email},
