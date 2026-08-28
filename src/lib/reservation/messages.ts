@@ -65,7 +65,7 @@ const lines = (parts: (string | false | undefined | null)[]) =>
   parts.filter((line) => line !== undefined && line !== null && line !== false).join('\n')
 
 /** The request that lands in the studio's inbox, with the two buttons. */
-export function toStudio(req: Request, ref: string, links: {approve: string; decline: string}) {
+export function toStudio(req: Request, ref: string, links: {approve: string; decline: string; reschedule?: string}) {
   const when = germanRange(req.startAt, req.endAt)
   const raeume = list(req.raeume)
   const technik = list(req.technik)
@@ -83,11 +83,15 @@ export function toStudio(req: Request, ref: string, links: {approve: string; dec
     quote(req.anfrage ?? '') +
     button('Zusagen', links.approve, 'primary') +
     button('Absagen', links.decline, 'secondary') +
+    (links.reschedule ? button('Termin ändern', links.reschedule, 'secondary') : '') +
     note(
       'Beide Schaltflächen öffnen eine Seite, auf der Sie noch einmal bestätigen. ' +
         'Das ist Absicht: Mailprogramme rufen Links selbst auf, um sie zu prüfen, ' +
         'und würden sonst für Sie zusagen.<br>' +
-        'Ohne Antwort läuft die Vormerkung nach sieben Tagen ab und der Zeitraum wird wieder frei.',
+        'Ohne Antwort läuft die Vormerkung nach sieben Tagen ab und der Zeitraum wird wieder frei.<br>' +
+        '<strong>Heben Sie diese E-Mail auf.</strong> „Termin ändern" funktioniert bis zum Ende ' +
+        'der gebuchten Tage — bitte damit umbuchen und nicht im Kalender ziehen, sonst erfährt ' +
+        'der Gast nichts davon.',
     )
 
   const text = lines([
@@ -109,6 +113,9 @@ export function toStudio(req: Request, ref: string, links: {approve: string; dec
     '',
     'Absagen:',
     links.decline,
+    links.reschedule && '',
+    links.reschedule && 'Termin ändern:',
+    links.reschedule || '',
     '',
     'Beide Links öffnen eine Seite mit einer Schaltfläche. Erst die Schaltfläche',
     'sagt zu oder ab, damit kein Mailprogramm das aus Versehen für Sie tut.',
@@ -307,5 +314,34 @@ export function cancelConfirmed(req: Told, ref: string) {
       SIGN_OFF,
     ]),
     html: shell({title: 'Ihr Termin ist abgesagt', preheader: `Abgesagt: ${when}`, body, ref: shown(ref)}),
+  }
+}
+
+/** The days moved. The guest has to hear the new ones. */
+export function moved(req: Told, ref: string, before: {startAt: string; endAt: string}) {
+  const was = germanRange(before.startAt, before.endAt)
+  const now = germanRange(req.startAt, req.endAt)
+  const body =
+    heading('Ihr Termin wurde verschoben', now) +
+    para(`Guten Tag ${req.name}, wir mussten Ihren Termin verlegen.`) +
+    rows(row('Bisher', was) + row('Neu', now) + listRow('Räume', list(req.raeume))) +
+    para('Passt das so? Wenn nicht, antworten Sie einfach auf diese E-Mail und wir finden einen anderen Termin.') +
+    note('Der neue Zeitraum ist für Sie reserviert.')
+
+  return {
+    subject: `Neuer Termin: ${now} · ${shown(ref)}`,
+    text: lines([
+      `Guten Tag ${req.name},`,
+      '',
+      'wir mussten Ihren Termin verlegen.',
+      '',
+      `Bisher: ${was}`,
+      `Neu:    ${now}`,
+      '',
+      'Passt das so? Wenn nicht, antworten Sie einfach auf diese E-Mail und',
+      'wir finden einen anderen Termin.',
+      SIGN_OFF,
+    ]),
+    html: shell({title: 'Ihr Termin wurde verschoben', preheader: `Neu: ${now}`, body, ref: shown(ref)}),
   }
 }

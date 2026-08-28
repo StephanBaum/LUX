@@ -1,8 +1,11 @@
 import type {APIRoute} from 'astro'
 import {open, seal, type ReservationClaim} from '../../../lib/reservation/token'
-import {confirmedPatch, roomsFromTitle, canCancel, cancelUntil, CANCEL_DEADLINE_DAYS} from '../../../lib/reservation/hold'
+import {confirmedPatch, roomsFromTitle, canCancel, cancelUntil, CANCEL_DEADLINE_DAYS, overlaps} from '../../../lib/reservation/hold'
 import {getEvent, patchRawEvent, deleteEvent} from '../../../lib/google/calendar'
-import {approved, declined, germanRange, germanDay, cancelledByGuest, cancelConfirmed} from '../../../lib/reservation/messages'
+import {fetchReservations} from '../../../lib/content/busy'
+import {sanityClient} from '../../../lib/sanity/client'
+import {asBlockedDates} from '../../../lib/content/occupancy'
+import {approved, declined, germanRange, germanDay, cancelledByGuest, cancelConfirmed, moved} from '../../../lib/reservation/messages'
 import {sendMail, studioAddress} from '../../../lib/mail'
 
 /**
@@ -64,7 +67,7 @@ const dates = (claim: ReservationClaim) => {
 }
 
 export const GET: APIRoute = async ({params, url}) => {
-  const action = ['approve', 'decline', 'cancel'].includes(params.action ?? '') ? (params.action as string) : ''
+  const action = ['approve', 'decline', 'cancel', 'reschedule'].includes(params.action ?? '') ? (params.action as string) : ''
   if (!action) return problem('Unbekannte Aktion.')
 
   const claim = read(url, action)
@@ -83,6 +86,27 @@ export const GET: APIRoute = async ({params, url}) => {
       dafür brauchen wir mindestens ${CANCEL_DEADLINE_DAYS} Tage Vorlauf.</p>
       <p>Bitte rufen Sie uns an oder antworten Sie einfach auf Ihre
       Bestätigungs-E-Mail. Wir finden eine Lösung.</p>`)
+  }
+
+  if (action === 'reschedule') {
+    const [was, wasEnd] = claim.d.split('/')
+    // The end shown is the last booked day; the stored one is exclusive.
+    const lastDay = new Date(`${wasEnd}T12:00:00Z`)
+    lastDay.setUTCDate(lastDay.getUTCDate() - 1)
+
+    return page('Termin ändern', `
+      <h1>Termin ändern</h1>
+      <dl>
+        <dt>Gast</dt><dd>${escapeHtml(claim.n)}</dd>
+        <dt>Bisher</dt><dd>${dates(claim)}</dd>
+      </dl>
+      <form method="post">
+        <label>Neuer Beginn<br><input type="date" name="startAt" value="${was}" required></label>
+        <label>Letzter Tag<br><input type="date" name="endAt" value="${lastDay.toISOString().slice(0, 10)}" required></label>
+        <button type="submit">Termin verschieben</button>
+      </form>
+      <p class="muted">Der Kalendereintrag wird verschoben und der Gast bekommt
+      die neuen Daten per E-Mail.</p>`)
   }
 
   const verb = action === 'approve' ? 'Zusagen' : 'Absagen'
@@ -107,15 +131,15 @@ export const GET: APIRoute = async ({params, url}) => {
     }</p>`)
 }
 
-export const POST: APIRoute = async ({params, url}) => {
-  const action = ['approve', 'decline', 'cancel'].includes(params.action ?? '') ? (params.action as string) : ''
+export const POST: APIRoute = async ({params, url, request}) => {
+  const action = ['approve', 'decline', 'cancel', 'reschedule'].includes(params.action ?? '') ? (params.action as string) : ''
   if (!action) return problem('Unbekannte Aktion.')
 
   const claim = read(url, action)
   if (claim instanceof Response) return claim
 
   const [from, to] = claim.d.split('/')
-  let request = {name: claim.n, email: claim.m, startAt: from, endAt: to, raeume: [] as string[]}
+  let guest = {name: claim.n, email: claim.m, startAt: from, endAt: to, raeume: [] as string[]}
 
   // The calendar entry is the state: tentative, confirmed, or gone.
   // Only 404 and 410 mean the entry is really gone. Any other failure is
@@ -142,7 +166,7 @@ export const POST: APIRoute = async ({params, url}) => {
   }
 
   // The entry names the rooms, so the visitor's mail can too.
-  request = {...request, raeume: roomsFromTitle(event.summary)}
+  guest = {...guest, raeume: roomsFromTitle(event.summary)}
 
   if (action === 'approve') {
     if (event.status === 'confirmed') {
@@ -162,7 +186,7 @@ export const POST: APIRoute = async ({params, url}) => {
     if (key && site) {
       cancelLink = `${site}/api/reservation/cancel?t=${seal({...claim, a: 'cancel', x: Date.parse(`${to}T23:59:59Z`)}, key)}`
     }
-    const mail = approved(request, claim.r, cancelLink)
+    const mail = approved(guest, claim.r, cancelLink)
     try {
       await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
     } catch (error: any) {
@@ -176,6 +200,59 @@ export const POST: APIRoute = async ({params, url}) => {
     return page('Zugesagt', `<h1>Zugesagt</h1>
       <p>${escapeHtml(claim.n)} hat die Zusage für ${dates(claim)} bekommen.
       Der Zeitraum ist im Kalender gebucht.</p>`)
+  }
+
+  if (action === 'reschedule') {
+    const form = await request.formData().catch(() => null)
+    const startAt = String(form?.get('startAt') ?? '')
+    const lastDay = String(form?.get('endAt') ?? '')
+    const DAY = /^\d{4}-\d{2}-\d{2}$/
+
+    if (!DAY.test(startAt) || !DAY.test(lastDay) || lastDay < startAt) {
+      return page('Ungültig', `<h1>Ungültige Daten</h1>
+        <p>Bitte einen Beginn und einen letzten Tag wählen, der nicht davor liegt.</p>`)
+    }
+
+    // Stored ends are exclusive everywhere, so the day after the last one.
+    const after = new Date(`${lastDay}T12:00:00Z`)
+    after.setUTCDate(after.getUTCDate() + 1)
+    const endAt = after.toISOString().slice(0, 10)
+
+    // The new days must be free — of everything except this booking itself.
+    const [reservations, docs] = await Promise.all([
+      fetchReservations(import.meta.env.ICAL_RESERVATIONS_URL || ''),
+      sanityClient
+        .fetch(`*[_type in ["workshop", "event"] && defined(startAt)]{_id, _type, title, startAt, endAt}`)
+        .catch(() => []),
+    ])
+    const busy = [...reservations.events, ...asBlockedDates(docs)].filter(
+      (b) => !(b.uid && event.id && String(b.uid).includes(String(event.id))),
+    )
+
+    if (overlaps({startAt, endAt}, busy)) {
+      return page('Belegt', `<h1>Diese Tage sind belegt</h1>
+        <p>Im neuen Zeitraum liegt bereits etwas anderes. Es wurde nichts
+        verändert und nichts verschickt.</p>`)
+    }
+
+    const before = {startAt: from, endAt: to}
+    await patchRawEvent(claim.c, claim.e, {start: {date: startAt}, end: {date: endAt}})
+
+    const mail = moved({...guest, startAt, endAt}, claim.r, before)
+    try {
+      await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
+    } catch (error: any) {
+      console.error('[reservation] reschedule mail failed', error?.message ?? error)
+      return page('Verschoben, aber ohne E-Mail', `<h1>Verschoben</h1>
+        <p>Der Termin steht jetzt auf ${escapeHtml(germanRange(startAt, endAt))}.</p>
+        <p><strong>Die Benachrichtigung konnte nicht verschickt werden.</strong>
+        Bitte sagen Sie ${escapeHtml(claim.m)} von Hand Bescheid.</p>`)
+    }
+
+    return page('Verschoben', `<h1>Termin verschoben</h1>
+      <p>Von ${escapeHtml(germanRange(before.startAt, before.endAt))}
+      auf ${escapeHtml(germanRange(startAt, endAt))}.</p>
+      <p class="muted">${escapeHtml(claim.n)} hat die neuen Daten per E-Mail bekommen.</p>`)
   }
 
   if (action === 'cancel') {
@@ -192,8 +269,8 @@ export const POST: APIRoute = async ({params, url}) => {
     // The studio must hear about this; the guest gets it in writing. Neither
     // failing may undo the cancellation — the days are already free.
     const studio = studioAddress()
-    const toStudioMail = cancelledByGuest(request, claim.r)
-    const toGuest = cancelConfirmed(request, claim.r)
+    const toStudioMail = cancelledByGuest(guest, claim.r)
+    const toGuest = cancelConfirmed(guest, claim.r)
     let told = true
     try {
       if (studio) await sendMail({to: studio, subject: toStudioMail.subject, text: toStudioMail.text, html: toStudioMail.html})
@@ -209,7 +286,7 @@ export const POST: APIRoute = async ({params, url}) => {
   }
 
   await deleteEvent(claim.c, claim.e)
-  const mail = declined(request, claim.r)
+  const mail = declined(guest, claim.r)
   try {
     await sendMail({to: claim.m, subject: mail.subject, text: mail.text, html: mail.html})
   } catch (error: any) {

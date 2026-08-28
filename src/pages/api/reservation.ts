@@ -117,7 +117,7 @@ export const POST: APIRoute = async ({request}) => {
     return json({error: 'Die Anfrage konnte nicht gespeichert werden.'}, 502)
   }
 
-  const link = (a: 'approve' | 'decline' | 'cancel') => {
+  const link = (a: 'approve' | 'decline' | 'cancel' | 'reschedule') => {
     const claim: ReservationClaim = {
       r: ref,
       c: calendarId,
@@ -131,7 +131,16 @@ export const POST: APIRoute = async ({request}) => {
        * has to outlive that — a booking made in March is cancelled in May —
        * so it runs to the day after the booking ends.
        */
-      x: a === 'cancel' ? Date.parse(`${req.endAt}T23:59:59Z`) : Date.now() + SEVEN_DAYS,
+      /*
+       * Answering a request is a this-week job, so Zusagen and Absagen lapse
+       * after a week. Changing or calling off a booking is not — a March
+       * booking is moved in May — so those two run to the end of the days
+       * they are about.
+       */
+      x:
+        a === 'cancel' || a === 'reschedule'
+          ? Date.parse(`${req.endAt}T23:59:59Z`)
+          : Date.now() + SEVEN_DAYS,
     }
     return `${site.replace(/\/$/, '')}/api/reservation/${a}?t=${seal(claim, key)}`
   }
@@ -142,7 +151,7 @@ export const POST: APIRoute = async ({request}) => {
    * fails, the hold goes with it.
    */
   try {
-    const message = toStudio(req, ref, {approve: link('approve'), decline: link('decline')})
+    const message = toStudio(req, ref, {approve: link('approve'), decline: link('decline'), reschedule: link('reschedule')})
     await sendMail({
       to,
       replyTo: {name: oneLine(req.name), address: req.email},
