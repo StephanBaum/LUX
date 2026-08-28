@@ -1,7 +1,8 @@
 import type {APIRoute} from 'astro'
-import {watchCalendar, stopWatch, changedEvents} from '../../../lib/google/calendar'
+import {watchCalendar, stopWatch, changedEvents, listEvents, deleteEvent} from '../../../lib/google/calendar'
 import {calendarCredentials} from '../../../lib/google/auth'
 import {readChannels, writeChannels, type Channels} from '../../../lib/sync/state'
+import {expireHolds} from '../../../lib/reservation/expire'
 
 /**
  * Ask Google to keep calling us.
@@ -99,14 +100,36 @@ async function run(request: Request) {
 
   if (!calendarCredentials()) return json({skipped: 'Google ist nicht eingerichtet.'})
 
+  const force = new URL(request.url).searchParams.get('force') === '1'
+
+  let registered: unknown
+  let registerError: string | undefined
   try {
-    const force = new URL(request.url).searchParams.get('force') === '1'
-    return json({registered: await register(force)})
+    registered = await register(force)
   } catch (error: any) {
-    const message = error?.message ?? String(error)
-    await writeChannels(await readChannels(), {lastError: message}).catch(() => {})
-    return json({error: message}, 502)
+    registerError = error?.message ?? String(error)
+    await writeChannels(await readChannels(), {lastError: registerError}).catch(() => {})
   }
+
+  /*
+   * The same 04:00 job drops holds nobody answered. It rides along here
+   * rather than taking a second cron entry, because Vercel Hobby has very
+   * few of those and both jobs want the same hour.
+   */
+  let holds: unknown = 'übersprungen'
+  try {
+    holds = await expireHolds({
+      calendarId: import.meta.env.GOOGLE_CALENDAR_RESERVATIONS ?? '',
+      list: listEvents,
+      remove: deleteEvent,
+    })
+  } catch (error: any) {
+    console.error('[register-watch] expiring holds failed', error?.message ?? error)
+    holds = {error: error?.message ?? 'unbekannt'}
+  }
+
+  if (registerError) return json({error: registerError, holds}, 502)
+  return json({registered, holds})
 }
 
 export const GET: APIRoute = ({request}) => run(request)
